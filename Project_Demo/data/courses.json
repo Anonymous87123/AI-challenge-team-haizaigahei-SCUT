@@ -1,0 +1,98 @@
+{
+  "courses": {
+    "monday": [
+      {
+        "name": "计算机科学导论",
+        "location": "理科楼 A301",
+        "time": "08:00-09:40",
+        "teacher": "张教授",
+        "status": "进行中"
+      },
+      {
+        "name": "高等数学",
+        "location": "文科楼 B205",
+        "time": "10:00-11:40",
+        "teacher": "李教授",
+        "status": "即将开始"
+      },
+      {
+        "name": "英语听说",
+        "location": "外语楼 C102",
+        "time": "14:00-15:40",
+        "teacher": "王老师",
+        "status": "即将开始"
+      }
+    ],
+    "tuesday": [
+      {
+        "name": "数据结构",
+        "location": "理科楼 A302",
+        "time": "08:00-09:40",
+        "teacher": "刘教授",
+        "status": "即将开始"
+      },
+      {
+        "name": "大学物理",
+        "location": "实验楼 D101",
+        "time": "10:00-11:40",
+        "teacher": "陈教授",
+        "status": "即将开始"
+      },
+      {
+        "name": "体育",
+        "location": "体育馆",
+        "time": "15:00-16:40",
+        "teacher": "赵教练",
+        "status": "即将开始"
+      }
+    ],
+    "wednesday": [
+      {
+        "name": "计算机网络",
+        "location": "理科楼 A303",
+        "time": "09:00-10:40",
+        "teacher": "孙教授",
+        "status": "即将开始"
+      },
+      {
+        "name": "数据库原理",
+        "location": "理科楼 A304",
+        "time": "14:00-15:40",
+        "teacher": "周教授",
+        "status": "即将开始"
+      }
+    ],
+    "thursday": [
+      {
+        "name": "操作系统",
+        "location": "理科楼 A305",
+        "time": "08:00-09:40",
+        "teacher": "吴教授",
+        "status": "即将开始"
+      },
+      {
+        "name": "软件工程",
+        "location": "理科楼 A306",
+        "time": "10:00-11:40",
+        "teacher": "郑教授",
+        "status": "即将开始"
+      }
+    ],
+    "friday": [
+      {
+        "name": "人工智能",
+        "location": "理科楼 A307",
+        "time": "09:00-10:40",
+        "teacher": "冯教授",
+        "status": "即将开始"
+      },
+      {
+        "name": "Web开发",
+        "location": "理科楼 A308",
+        "time": "14:00-15:40",
+        "teacher": "何教授",
+        "status": "即将开始"
+      }
+    ]
+  }
+}

@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>校园AI助手 - 智能校园向导</title>
+    
+    <!-- 修复1：确保所有CSS正确加载 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- 备用样式文件 -->
+    <link rel="stylesheet" href="css/style.css">
+    
+    <style>
+        /* 关键CSS样式 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            transition: all 0.3s ease;
+        }
+        
+        /* 确保页面可见性 */
+        #loginPage {
+            display: grid !important;
+            min-height: 100vh;
+            width: 100vw;
+            visibility: visible !important;
+            opacity: 1 !important;
+        }
+        
+        /* 页面过渡动画 */
+        #loginPage, #mainApp {
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        /* 强制显示主应用 */
+        #mainApp:not(.hidden) {
+            display: flex !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+        }
+        
+        /* 确保登录页完全隐藏 */
+        #loginPage.hidden {
+            display: none !important;
+            visibility: hidden !important;
+            opacity: 0 !important;
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+        
+        /* 加载动画 */
+        #appLoading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <!-- 加载动画 -->
+    <div id="appLoading">
+        <div class="text-center text-white">
+            <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-white bg-opacity-20 flex items-center justify-center">
+                <i class="fas fa-graduation-cap text-4xl"></i>
+            </div>
+            <h2 class="text-2xl font-bold mb-2">校园AI助手</h2>
+            <p class="text-sm opacity-80">正在加载...</p>
+        </div>
+    </div>
+
+    <!-- 登录页面 -->
+    <div id="loginPage" class="min-h-screen grid grid-cols-1 lg:grid-cols-2">
+        <!-- 左侧品牌区 -->
+        <div class="flex items-center justify-center p-8 text-white">
+            <div class="max-w-md text-center lg:text-left">
+                <div class="w-20 h-20 mx-auto lg:mx-0 mb-6 rounded-full bg-white bg-opacity-20 flex items-center justify-center">
+                    <i class="fas fa-graduation-cap text-3xl"></i>
+                </div>
+                <h1 class="text-4xl font-bold mb-4">校园AI助手</h1>
+                <p class="text-xl opacity-90 mb-8">智能校园向导，让大学生活更便捷</p>
+                
+                <div class="space-y-4">
+                    <div class="flex items-center">
+                        <i class="fas fa-robot text-xl mr-3"></i>
+                        <span>智能课程管理与问答</span>
+                    </div>
+                    <div class="flex items-center">
+                        <i class="fas fa-calendar-alt text-xl mr-3"></i>
+                        <span>个性化课表与提醒</span>
+                    </div>
+                    <div class="flex items-center">
+                        <i class="fas fa-map-marker-alt text-xl mr-3"></i>
+                        <span>校园导航与服务查询</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 右侧登录表单 -->
+        <div class="flex items-center justify-center p-8">
+            <div class="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md">
+                <div class="text-center mb-8">
+                    <h2 class="text-2xl font-bold text-gray-800">用户登录</h2>
+                    <p class="text-gray-600">请输入您的账号信息</p>
+                </div>
+                
+                <!-- 登录选项 -->
+                <div class="flex space-x-1 mb-6 bg-gray-100 rounded-lg p-1">
+                    <button class="flex-1 py-2 px-4 rounded-md font-medium bg-white text-blue-600 shadow-sm login-option active" data-type="password">
+                        学号登录
+                    </button>
+                    <button class="flex-1 py-2 px-4 rounded-md font-medium text-gray-600 login-option" data-type="qr">
+                        扫码登录
+                    </button>
+                    <button class="flex-1 py-2 px-4 rounded-md font-medium text-gray-600 login-option" data-type="guest">
+                        游客体验
+                    </button>
+                </div>
+
+                <!-- 登录表单 -->
+                <form id="loginForm">
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">学号</label>
+                            <input type="text" id="studentId" placeholder="请输入8位学号" 
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                   maxlength="8" required>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">密码</label>
+                            <div class="relative">
+                                <input type="password" id="password" placeholder="请输入密码"
+                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent pr-10"
+                                       required>
+                                <button type="button" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500" id="togglePassword">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-between mt-4">
+                        <label class="flex items-center">
+                            <input type="checkbox" id="rememberMe" class="mr-2">
+                            <span class="text-sm text-gray-600">记住我</span>
+                        </label>
+                        <a href="#" class="text-sm text-blue-600">忘记密码？</a>
+                    </div>
+
+                    <button type="submit" class="w-full mt-6 bg-blue-500 text-white py-3 rounded-lg font-semibold hover:bg-blue-600 transition-colors">
+                        登录
+                    </button>
+
+                    <div class="mt-4 text-center">
+                        <button type="button" id="guestLoginBtn" class="text-blue-600 hover:text-blue-800">
+                            游客体验
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- 主应用容器（初始隐藏） -->
+    <div id="mainApp" class="hidden">
+        <!-- 主应用内容 -->
+    </div>
+
+    <script>
+        // 修复2：简化初始化逻辑，确保事件正确绑定
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM加载完成，开始初始化...');
+            
+            // 立即隐藏加载动画
+            const appLoading = document.getElementById('appLoading');
+            if (appLoading) {
+                appLoading.style.display = 'none';
+                console.log('✅ 加载动画已隐藏');
+            }
+            
+            // 确保登录页面可见
+            const loginPage = document.getElementById('loginPage');
+            if (loginPage) {
+                loginPage.classList.remove('hidden');
+                loginPage.style.display = 'grid';
+                console.log('✅ 登录页面已显示');
+            }
+            
+            // 绑定事件监听器（只绑定一次）
+            if (typeof window.eventsBound === 'undefined') {
+                bindEvents();
+                window.eventsBound = true;
+                console.log('✅ 事件首次绑定完成');
+            } else {
+                console.log('⚠️ 事件已绑定，跳过重复绑定');
+            }
+            
+            // 检查登录状态
+            checkLoginStatus();
+        });
+
+        // 修复3：修复事件绑定函数，防止重复绑定
+        function bindEvents() {
+            console.log('开始绑定事件监听器...');
+            
+            // 先移除所有现有的事件监听器（通过克隆元素）
+            const guestBtn = document.getElementById('guestLoginBtn');
+            const loginForm = document.getElementById('loginForm');
+            
+            // 克隆元素并替换来移除所有事件监听器
+            if (guestBtn) {
+                const newGuestBtn = guestBtn.cloneNode(true);
+                guestBtn.parentNode.replaceChild(newGuestBtn, guestBtn);
+            }
+            
+            if (loginForm) {
+                // 注意：这里不克隆整个form，只克隆按钮以防冲突
+                const submitBtn = loginForm.querySelector('button[type="submit"]');
+                const newSubmitBtn = submitBtn.cloneNode(true);
+                submitBtn.parentNode.replaceChild(newSubmitBtn, submitBtn);
+            }
+            
+            // 重新绑定事件（使用一次性绑定标志防止重复触发）
+            let loginHandled = false;
+            let guestHandled = false;
+            
+            // 登录表单提交事件
+            document.getElementById('loginForm')?.addEventListener('submit', function(e) {
+                e.preventDefault();
+                if (loginHandled) {
+                    console.log('⚠️ 登录请求正在处理中，忽略重复请求');
+                    return;
+                }
+                loginHandled = true;
+                
+                console.log('处理登录请求...');
+                handleLogin();
+                
+                // 3秒后重置，防止长时间锁定
+                setTimeout(() => { loginHandled = false; }, 3000);
+            });
+            
+            // 游客登录事件
+            document.getElementById('guestLoginBtn')?.addEventListener('click', function() {
+                if (guestHandled) {
+                    console.log('⚠️ 游客登录正在处理中，忽略重复请求');
+                    return;
+                }
+                guestHandled = true;
+                
+                console.log('游客登录...');
+                guestLogin();
+                
+                // 3秒后重置
+                setTimeout(() => { guestHandled = false; }, 3000);
+            });
+            
+            // 密码显示/隐藏切换
+            const togglePwd = document.getElementById('togglePassword');
+            if (togglePwd && !togglePwd.hasAttribute('data-bound')) {
+                togglePwd.addEventListener('click', function() {
+                    const pwdInput = document.getElementById('password');
+                    if (pwdInput.type === 'password') {
+                        pwdInput.type = 'text';
+                        this.innerHTML = '<i class="fas fa-eye-slash"></i>';
+                    } else {
+                        pwdInput.type = 'password';
+                        this.innerHTML = '<i class="fas fa-eye"></i>';
+                    }
+                });
+                togglePwd.setAttribute('data-bound', 'true');
+                console.log('✅ 密码切换事件已绑定');
+            }
+            
+            // 登录选项切换（修复重复绑定问题）
+            const loginOptions = document.querySelectorAll('.login-option');
+            loginOptions.forEach(function(option) {
+                if (!option.hasAttribute('data-bound')) {
+                    option.addEventListener('click', function() {
+                        loginOptions.forEach(function(opt) {
+                            opt.classList.remove('active', 'bg-white', 'text-blue-600');
+                            opt.classList.add('text-gray-600');
+                        });
+                        this.classList.add('active', 'bg-white', 'text-blue-600');
+                        this.classList.remove('text-gray-600');
+                        
+                        // 如果点击游客体验，直接执行游客登录
+                        if (this.getAttribute('data-type') === 'guest') {
+                            guestLogin();
+                        }
+                    });
+                    option.setAttribute('data-bound', 'true');
+                }
+            });
+            
+            console.log('✅ 所有事件绑定完成');
+        }
+
+        // 修复4：增强登录处理（防止重复提交）
+        function handleLogin() {
+            console.log('=== 开始处理登录 ===');
+            
+            const studentId = document.getElementById('studentId').value;
+            const password = document.getElementById('password').value;
+            
+            console.log('学号:', studentId);
+            console.log('密码长度:', password.length);
+            
+            if (!studentId || !password) {
+                alert('请输入学号和密码');
+                return;
+            }
+            
+            if (studentId.length !== 8) {
+                alert('学号必须是8位数字');
+                return;
+            }
+            
+            // 显示加载状态
+            const loginForm = document.getElementById('loginForm');
+            const submitBtn = loginForm.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 登录中...';
+            submitBtn.disabled = true;
+            
+            // 模拟登录请求
+            setTimeout(() => {
+                console.log('✅ 登录验证成功');
+                
+                // 模拟登录成功
+                localStorage.setItem('isLoggedIn', 'true');
+                localStorage.setItem('studentId', studentId);
+                localStorage.setItem('authToken', 'mock_token_' + Date.now());
+                
+                // 显示成功消息
+                submitBtn.innerHTML = '<i class="fas fa-check"></i> 登录成功';
+                submitBtn.style.background = '#10b981';
+                
+                console.log('✅ 登录信息已保存，准备切换页面');
+                
+                // 跳转到主应用
+                setTimeout(() => {
+                    showMainApp();
+                }, 1000);
+                
+            }, 1500);
+        }
+
+        // 修复5：游客登录功能（增强版）
+        function guestLogin() {
+            console.log('=== 开始游客体验 ===');
+            
+            // 检查是否已经在处理中
+            if (localStorage.getItem('guestMode') === 'true') {
+                console.log('⚠️ 已经是游客模式，跳过重复处理');
+                return;
+            }
+            
+            localStorage.setItem('isLoggedIn', 'true');
+            localStorage.setItem('guestMode', 'true');
+            localStorage.setItem('guestLoginTime', new Date().toISOString());
+            
+            console.log('✅ 游客模式已设置');
+            
+            // 显示提示
+            alert('欢迎进入游客模式！');
+            
+            // 切换到主应用
+            showMainApp();
+        }
+
+        // 修复6：增强页面切换逻辑
+        function showMainApp() {
+            console.log('=== 开始切换到主应用 ===');
+            
+            const loginPage = document.getElementById('loginPage');
+            const mainApp = document.getElementById('mainApp');
+            
+            console.log('登录页面元素:', loginPage);
+            console.log('主应用元素:', mainApp);
+            
+            if (!loginPage) {
+                console.error('❌ 登录页面元素未找到');
+                return;
+            }
+            
+            // 添加过渡样式
+            loginPage.style.transition = 'all 0.5s ease';
+            if (mainApp) {
+                mainApp.style.transition = 'all 0.5s ease';
+            }
+            
+            // 先隐藏登录页面（淡出动画）
+            console.log('步骤1: 隐藏登录页面');
+            loginPage.style.opacity = '0';
+            loginPage.style.transform = 'translateY(-20px)';
+            
+            setTimeout(() => {
+                // 完全隐藏登录页
+                loginPage.classList.add('hidden');
+                loginPage.style.display = 'none';
+                console.log('✅ 登录页面已完全隐藏');
+                
+                // 检查主应用元素
+                if (mainApp) {
+                    console.log('步骤2: 显示主应用容器');
+                    
+                    // 显示主应用（淡入动画）
+                    mainApp.classList.remove('hidden');
+                    mainApp.style.display = 'flex';
+                    mainApp.style.visibility = 'visible';
+                    mainApp.style.opacity = '0';
+                    mainApp.style.transform = 'translateY(20px)';
+                    
+                    // 强制重绘
+                    void mainApp.offsetHeight;
+                    
+                    // 显示动画
+                    setTimeout(() => {
+                        mainApp.style.opacity = '1';
+                        mainApp.style.transform = 'translateY(0)';
+                        console.log('✅ 主应用显示动画完成');
+                        
+                        // 检查主应用内容
+                        if (mainApp.innerHTML.trim() === '') {
+                            console.log('主应用内容为空，跳转到assistant.html');
+                            loadMainAppContent();
+                        } else {
+                            console.log('✅ 主应用内容已存在');
+                        }
+                        
+                    }, 50);
+                    
+                } else {
+                    // 如果主应用容器不存在，直接跳转到assistant.html
+                    console.log('⚠️ 主应用容器不存在，跳转到assistant.html');
+                    loadMainAppContent();
+                }
+                
+            }, 500);
+            
+            console.log('✅ 页面切换流程已启动');
+        }
+
+        // 修复7：加载主应用内容
+        function loadMainAppContent() {
+            console.log('=== 加载主应用内容 ===');
+            
+            // 显示加载提示
+            const loadingDiv = document.createElement('div');
+            loadingDiv.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 10000;
+                color: white;
+                font-size: 1.2rem;
+            `;
+            loadingDiv.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>正在加载主应用...';
+            document.body.appendChild(loadingDiv);
+            
+            // 延迟跳转，让用户看到加载提示
+            setTimeout(() => {
+                console.log('跳转到campus-ai-assistant.html');
+                window.location.href = 'campus-ai-assistant.html';
+            }, 500);
+        }
+
+        // 修复8：增强登录状态检查（防止重复切换）
+        function checkLoginStatus() {
+            // 检查是否已经在切换中
+            if (typeof window.isSwitchingPage !== 'undefined' && window.isSwitchingPage) {
+                console.log('⚠️ 页面正在切换中，跳过登录状态检查');
+                return;
+            }
+            
+            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+            const guestMode = localStorage.getItem('guestMode') === 'true';
+            
+            console.log('登录状态检查 - 已登录:', isLoggedIn, '游客模式:', guestMode);
+            
+            if (isLoggedIn || guestMode) {
+                console.log('✅ 用户已登录，准备显示主应用');
+                // 设置切换标志
+                window.isSwitchingPage = true;
+                showMainApp();
+            } else {
+                console.log('✅ 用户未登录，显示登录页面');
+                // 确保登录页面可见
+                const loginPage = document.getElementById('loginPage');
+                if (loginPage) {
+                    loginPage.classList.remove('hidden');
+                    loginPage.style.display = 'grid';
+                    loginPage.style.opacity = '1';
+                    loginPage.style.transform = 'translateY(0)';
+                }
+                
+                // 确保主应用隐藏
+                const mainApp = document.getElementById('mainApp');
+                if (mainApp) {
+                    mainApp.classList.add('hidden');
+                    mainApp.style.display = 'none';
+                }
+            }
+        }
+
+        // 修复9：增强错误处理
+        window.addEventListener('error', function(e) {
+            console.error('全局错误:', e.error);
+            
+            // 避免重复显示错误
+            if (document.querySelector('.error-message')) {
+                console.log('⚠️ 错误提示已存在，跳过重复显示');
+                return;
+            }
+            
+            // 显示友好的错误信息
+            const errorMsg = document.createElement('div');
+            errorMsg.className = 'error-message';
+            errorMsg.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: #ef4444;
+                color: white;
+                padding: 16px;
+                border-radius: 8px;
+                z-index: 10000;
+                max-width: 300px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            `;
+            errorMsg.innerHTML = `
+                <div class="font-bold">⚠️ 应用遇到问题</div>
+                <div class="text-sm mt-1">${e.message || '请刷新页面重试'}</div>
+                <button onclick="this.parentElement.remove()" class="float-right text-xs underline mt-2 bg-white bg-opacity-20 px-2 py-1 rounded">关闭</button>
+            `;
+            document.body.appendChild(errorMsg);
+            
+            // 5秒后自动消失
+            setTimeout(() => {
+                if (errorMsg.parentNode) {
+                    errorMsg.style.opacity = '0';
+                    errorMsg.style.transition = 'opacity 0.3s ease';
+                    setTimeout(() => errorMsg.remove(), 300);
+                }
+            }, 5000);
+        });
+
+        // 修复10：页面完全加载后的最终检查
+        window.addEventListener('load', function() {
+            console.log('✅ 页面完全加载完成');
+            
+            // 2秒后执行最终检查，确保所有初始化完成
+            setTimeout(() => {
+                const loginPage = document.getElementById('loginPage');
+                const mainApp = document.getElementById('mainApp');
+                
+                const loginDisplay = loginPage ? getComputedStyle(loginPage).display : 'none';
+                const mainDisplay = mainApp ? getComputedStyle(mainApp).display : 'none';
+                
+                console.log('最终页面状态检查 - 登录页:', loginDisplay, '主应用:', mainDisplay);
+                
+                // 如果两个页面都不可见，强制显示登录页面
+                if (loginDisplay === 'none' && mainDisplay === 'none') {
+                    console.log('⚠️ 强制显示登录页面');
+                    if (loginPage) {
+                        loginPage.style.display = 'grid';
+                        loginPage.classList.remove('hidden');
+                        loginPage.style.opacity = '1';
+                        loginPage.style.visibility = 'visible';
+                    }
+                } else if (loginDisplay !== 'none' && mainDisplay !== 'none') {
+                    // 如果两个页面都可见，隐藏主应用
+                    console.log('⚠️ 两个页面都可见，隐藏主应用');
+                    if (mainApp) {
+                        mainApp.classList.add('hidden');
+                        mainApp.style.display = 'none';
+                    }
+                }
+                
+                // 重置切换标志
+                window.isSwitchingPage = false;
+                
+            }, 2000);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>离线 - 校园AI助手</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            color: white;
+            padding: 20px;
+        }
+
+        .container {
+            text-align: center;
+            max-width: 500px;
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .icon {
+            font-size: 6rem;
+            margin-bottom: 2rem;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+            line-height: 1.6;
+        }
+
+        .status-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .status-title {
+            font-weight: 600;
+            margin-bottom: 12px;
+            font-size: 1.1rem;
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .status-item:last-child {
+            border-bottom: none;
+        }
+
+        .status-label {
+            opacity: 0.9;
+        }
+
+        .status-value {
+            font-weight: 600;
+        }
+
+        .status-value.online {
+            color: #4ade80;
+        }
+
+        .status-value.offline {
+            color: #f87171;
+        }
+
+        .actions {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            align-items: center;
+        }
+
+        button {
+            background: white;
+            color: #667eea;
+            border: none;
+            padding: 14px 40px;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 200px;
+        }
+
+        button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        button.secondary {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        button.secondary:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .tips {
+            margin-top: 2rem;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .tips-title {
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .tips-list {
+            text-align: left;
+            padding-left: 20px;
+        }
+
+        .tips-list li {
+            margin-bottom: 4px;
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 2rem;
+            }
+
+            .icon {
+                font-size: 4rem;
+            }
+
+            button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="icon">📶</div>
+        <h1>您当前处于离线状态</h1>
+        <p class="subtitle">
+            网络连接已断开，但您仍可使用部分缓存功能<br>
+            请检查网络连接后重新加载
+        </p>
+
+        <div class="status-card">
+            <div class="status-title">功能状态</div>
+            <div class="status-item">
+                <span class="status-label">课程表</span>
+                <span class="status-value online">可用（缓存）</span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">FAQ问答</span>
+                <span class="status-value online">可用（缓存）</span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">AI对话</span>
+                <span class="status-value offline">不可用</span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">数据同步</span>
+                <span class="status-value offline">已暂停</span>
+            </div>
+        </div>
+
+        <div class="actions">
+            <button onclick="location.reload()">
+                <i class="fas fa-sync-alt"></i> 重新连接
+            </button>
+            <button class="secondary" onclick="window.close()">
+                <i class="fas fa-times"></i> 关闭页面
+            </button>
+        </div>
+
+        <div class="tips">
+            <div class="tips-title">💡 提示</div>
+            <ul class="tips-list">
+                <li>离线时可以查看已缓存的课程表</li>
+                <li>常见问题仍可正常浏览</li>
+                <li>重新连接后自动同步离线操作</li>
+                <li>建议安装应用以获得更好的离线体验</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // 网络恢复提示容器
+        let reconnectShown = false;
+        
+        // 监听网络状态变化
+        window.addEventListener('online', () => {
+            const statusValue = document.querySelector('.status-item:nth-child(5) .status-value');
+            const button = document.querySelector('.actions button');
+            
+            if (statusValue) {
+                statusValue.textContent = '已恢复';
+                statusValue.className = 'status-value online';
+            }
+            
+            // 更新按钮文本，提示用户可以重新连接
+            if (button && !reconnectShown) {
+                button.innerHTML = '<i class="fas fa-check-circle"></i> 网络已恢复';
+                button.style.background = '#4ade80';
+                button.style.color = '#000';
+            }
+        });
+
+        window.addEventListener('offline', () => {
+            const statusValue = document.querySelector('.status-item:nth-child(5) .status-value');
+            const button = document.querySelector('.actions button');
+            
+            if (statusValue) {
+                statusValue.textContent = '已暂停';
+                statusValue.className = 'status-value offline';
+            }
+            
+            // 恢复按钮原始状态
+            if (button) {
+                button.innerHTML = '<i class="fas fa-sync-alt"></i> 重新连接';
+                button.style.background = 'white';
+                button.style.color = '#667eea';
+            }
+        });
+        
+        // 定期检查网络状态（仅更新状态，不自动跳转）
+        let checkCount = 0;
+        const networkCheckInterval = setInterval(() => {
+            checkCount++;
+            
+            // 只显示提示，保留用户控制权
+            if (navigator.onLine) {
+                const statusValue = document.querySelector('.status-item:nth-child(5) .status-value');
+                if (statusValue && statusValue.textContent === '已暂停') {
+                    statusValue.textContent = '已恢复';
+                    statusValue.className = 'status-value online';
+                    
+                    const button = document.querySelector('.actions button');
+                    if (button && !reconnectShown) {
+                        button.innerHTML = '<i class="fas fa-check-circle"></i> 网络已恢复';
+                        button.style.background = '#4ade80';
+                        button.style.color = '#000';
+                        reconnectShown = true;
+                    }
+                }
+                
+                // 检查30秒后停止定期检查，避免无限运行
+                if (checkCount > 10) {
+                    clearInterval(networkCheckInterval);
+                }
+            }
+        }, 3000);
+    </script>
+</body>
+</html>

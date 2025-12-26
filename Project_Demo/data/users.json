@@ -1,0 +1,27 @@
+{
+  "users": {
+    "20210001": {
+      "password": "123456",
+      "name": "张三",
+      "major": "计算机科学",
+      "class": "计科2101",
+      "phone": "138****1234"
+    },
+    "20210002": {
+      "password": "password",
+      "name": "李四",
+      "major": "软件工程",
+      "class": "软件2102",
+      "phone": "139****5678"
+    },
+    "20210003": {
+      "password": "abc123",
+      "name": "王五",
+      "major": "人工智能",
+      "class": "人工2103",
+      "phone": "137****9012"
+    }
+  },
+  "sessionTimeout": 30,
+  "maxLoginAttempts": 3
+}

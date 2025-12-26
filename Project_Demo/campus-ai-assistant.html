@@ -1,0 +1,3743 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>校园AI助手 - 智能校园向导</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --campus-blue: #4A6FA5;
+            --campus-orange: #FF8C42;
+            --campus-green: #2ECC71;
+            --campus-purple: #9B59B6;
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --text-primary: #2c3e50;
+            --text-secondary: #7f8c8d;
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8f9fa;
+            --bg-tertiary: #e9ecef;
+            --login-gradient-start: #667eea;
+            --login-gradient-end: #764ba2;
+        }
+
+        [data-theme="dark"] {
+            --glass-bg: rgba(0, 0, 0, 0.3);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --text-primary: #ecf0f1;
+            --text-secondary: #bdc3c7;
+            --bg-primary: #1a1a1a;
+            --bg-secondary: #2c2c2c;
+            --bg-tertiary: #3a3a3a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, var(--campus-blue) 0%, var(--campus-purple) 100%);
+            min-height: 100vh;
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+        }
+
+        /* 毛玻璃效果 */
+        .glass-effect {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        [data-theme="dark"] .glass-card {
+            background: rgba(30, 30, 30, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* 动画效果 */
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.05); }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .slide-in-up { animation: slideInUp 0.5s ease-out; }
+        .slide-in-left { animation: slideInLeft 0.5s ease-out; }
+        .slide-in-right { animation: slideInRight 0.5s ease-out; }
+        .pulse-animation { animation: pulse 2s ease-in-out infinite; }
+        .float-animation { animation: float 3s ease-in-out infinite; }
+        .fade-in { animation: fadeIn 0.3s ease-out; }
+
+        /* 滚动条样式 */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: var(--campus-blue);
+            border-radius: 10px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: var(--campus-orange);
+        }
+
+        /* 按钮悬停效果 */
+        .hover-scale {
+            transition: all 0.3s ease;
+        }
+
+        .hover-scale:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .hover-lift {
+            transition: all 0.3s ease;
+        }
+
+        .hover-lift:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        /* 消息气泡样式 */
+        .message-bubble {
+            position: relative;
+            border-radius: 18px;
+            padding: 12px 16px;
+            max-width: 70%;
+            word-wrap: break-word;
+            transition: all 0.3s ease;
+        }
+
+        .message-bubble:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .ai-message {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            border-bottom-left-radius: 4px;
+        }
+
+        .user-message {
+            background: var(--campus-blue);
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+
+        /* 课程卡片样式 */
+        .course-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 12px;
+            padding: 16px;
+            color: white;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .course-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: float 4s ease-in-out infinite;
+        }
+
+        .course-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        /* 倒计时样式 */
+        .countdown-timer {
+            background: linear-gradient(135deg, var(--campus-orange), #ff6b6b);
+            border-radius: 12px;
+            padding: 12px 20px;
+            color: white;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .countdown-timer:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(255, 140, 66, 0.4);
+        }
+
+        /* 快捷按钮样式 */
+        .quick-action-btn {
+            background: rgba(255, 255, 255, 0.9);
+            border: 2px solid transparent;
+            border-radius: 12px;
+            padding: 12px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .quick-action-btn:hover {
+            border-color: var(--campus-blue);
+            background: white;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(74, 111, 165, 0.2);
+        }
+
+        /* 浮动按钮样式 */
+        .floating-btn {
+            position: fixed;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: var(--campus-orange);
+            color: white;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .floating-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        /* 侧边栏样式 */
+        .sidebar {
+            width: 280px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(15px);
+            border-right: 1px solid var(--glass-border);
+            transition: all 0.3s ease;
+        }
+
+        .sidebar.collapsed {
+            width: 80px;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .sidebar {
+                position: fixed;
+                left: -280px;
+                top: 0;
+                height: 100vh;
+                z-index: 999;
+                transition: left 0.3s ease;
+            }
+
+            .sidebar.open {
+                left: 0;
+            }
+
+            .main-content {
+                margin-left: 0 !important;
+            }
+
+            .message-bubble {
+                max-width: 85%;
+            }
+        }
+
+        /* 加载动画 */
+        .typing-indicator {
+            display: inline-flex;
+            gap: 4px;
+            padding: 8px 12px;
+        }
+
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--campus-blue);
+            border-radius: 50%;
+            animation: typing 1.4s ease-in-out infinite;
+        }
+
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes typing {
+            0%, 60%, 100% {
+                transform: translateY(0);
+                opacity: 0.7;
+            }
+            30% {
+                transform: translateY(-10px);
+                opacity: 1;
+            }
+        }
+
+        /* 主题切换动画 */
+        .theme-transition {
+            transition: all 0.5s ease;
+        }
+
+        /* 打字机效果 */
+        @keyframes typewriter {
+            from { width: 0; }
+            to { width: 100%; }
+        }
+
+        .typewriter {
+            overflow: hidden;
+            white-space: nowrap;
+            animation: typewriter 2s steps(40, end);
+        }
+
+        /* 脉冲光晕效果 */
+        .pulse-glow {
+            position: relative;
+        }
+
+        .pulse-glow::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: inherit;
+            border-radius: inherit;
+            animation: pulse-glow 2s ease-in-out infinite;
+            z-index: -1;
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% {
+                opacity: 0.5;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 0;
+                transform: scale(1.2);
+            }
+        }
+
+        /* Markdown内容样式 */
+        .markdown-content {
+            line-height: 1.6;
+        }
+
+        .markdown-content h1, .markdown-content h2, .markdown-content h3 {
+            margin: 1rem 0 0.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .markdown-content ul, .markdown-content ol {
+            margin: 0.5rem 0 0.5rem 1.5rem;
+        }
+
+        .markdown-content li {
+            margin: 0.25rem 0;
+        }
+
+        .markdown-content code {
+            background: rgba(74, 111, 165, 0.1);
+            color: var(--campus-blue);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+
+        .markdown-content pre {
+            background: var(--bg-secondary);
+            padding: 12px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 0.5rem 0;
+            border: 1px solid var(--glass-border);
+        }
+
+        .markdown-content strong {
+            color: var(--campus-blue);
+            font-weight: 600;
+        }
+
+        .markdown-content a {
+            color: var(--campus-blue);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .markdown-content a:hover {
+            color: var(--campus-orange);
+            text-decoration: underline;
+        }
+
+        /* 特殊卡片样式 */
+        .info-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 16px;
+            padding: 20px;
+            color: white;
+            margin: 12px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .info-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+        }
+
+        .warning-card {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            border-radius: 16px;
+            padding: 20px;
+            color: white;
+            margin: 12px 0;
+        }
+
+        .success-card {
+            background: linear-gradient(135deg, #2ECC71 0%, #27AE60 100%);
+            border-radius: 16px;
+            padding: 20px;
+            color: white;
+            margin: 12px 0;
+        }
+
+        /* 隐藏滚动条但保持功能 */
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* 登录页面样式 */
+        .login-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 9999;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            background: white;
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .login-container.hidden {
+            transform: translateY(-100%);
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* 左侧品牌展示区 */
+        .login-brand {
+            background: linear-gradient(135deg, var(--login-gradient-start) 0%, var(--login-gradient-end) 100%);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 3rem;
+            color: white;
+        }
+
+        .login-brand::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .brand-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            max-width: 500px;
+        }
+
+        .brand-logo {
+            width: 120px;
+            height: 120px;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 2rem;
+            animation: pulse 3s ease-in-out infinite;
+        }
+
+        .brand-title {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, #fff, #f0f0f0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .brand-subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        .brand-features {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .feature-item {
+            text-align: center;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+            border-radius: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .feature-item:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .feature-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        /* 右侧登录表单区 */
+        .login-form-container {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+            position: relative;
+        }
+
+        .login-form-wrapper {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(20px);
+            border-radius: 30px;
+            padding: 3rem;
+            width: 100%;
+            max-width: 450px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .login-form-wrapper:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.15);
+        }
+
+        /* 新拟物输入框样式 */
+        .neumorph-input {
+            background: #f0f3f7;
+            border: none;
+            border-radius: 15px;
+            padding: 1rem 1.5rem;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.1),
+                        inset -2px -2px 5px rgba(255, 255, 255, 0.7);
+            width: 100%;
+            margin-bottom: 1rem;
+        }
+
+        .neumorph-input:focus {
+            outline: none;
+            box-shadow: inset 1px 1px 3px rgba(0, 0, 0, 0.1),
+                        inset -1px -1px 3px rgba(255, 255, 255, 0.7),
+                        0 0 0 3px var(--campus-blue);
+            transform: scale(1.02);
+        }
+
+        .neumorph-input.error {
+            box-shadow: inset 2px 2px 5px rgba(231, 76, 60, 0.3),
+                        inset -2px -2px 5px rgba(255, 255, 255, 0.7),
+                        0 0 0 2px #e74c3c;
+            animation: shake 0.5s ease-in-out;
+        }
+
+        .neumorph-input.success {
+            box-shadow: inset 2px 2px 5px rgba(46, 204, 113, 0.3),
+                        inset -2px -2px 5px rgba(255, 255, 255, 0.7),
+                        0 0 0 2px #2ecc71;
+        }
+
+        /* 震动动画 */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+
+        /* 登录按钮样式 */
+        .login-btn {
+            background: linear-gradient(135deg, var(--campus-blue), var(--campus-purple));
+            color: white;
+            border: none;
+            border-radius: 15px;
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .login-btn:hover::before {
+            left: 100%;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(74, 111, 165, 0.3);
+        }
+
+        .login-btn:active {
+            transform: translateY(0);
+        }
+
+        .login-btn.loading {
+            pointer-events: none;
+            opacity: 0.8;
+        }
+
+        .login-btn.loading .btn-text {
+            opacity: 0;
+        }
+
+        .login-btn .spinner {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 20px;
+            height: 20px;
+            border: 2px solid transparent;
+            border-top: 2px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            display: none;
+        }
+
+        .login-btn.loading .spinner {
+            display: block;
+        }
+
+        @keyframes spin {
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        /* 登录选项切换 */
+        .login-options {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            padding-bottom: 1rem;
+        }
+
+        .login-option {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            padding: 0.5rem 1rem;
+        }
+
+        .login-option.active {
+            color: var(--campus-blue);
+            font-weight: 600;
+        }
+
+        .login-option.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1rem;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--campus-blue);
+            animation: slideInLeft 0.3s ease;
+        }
+
+        /* 验证提示 */
+        .validation-hint {
+            font-size: 0.85rem;
+            margin-top: -0.5rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .validation-hint.error {
+            color: #e74c3c;
+        }
+
+        .validation-hint.success {
+            color: #2ecc71;
+        }
+
+        .validation-hint.info {
+            color: var(--campus-blue);
+        }
+
+        /* 记住我选项 */
+        .remember-me {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 1.5rem 0;
+        }
+
+        .remember-duration {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .duration-btn {
+            padding: 0.25rem 0.75rem;
+            border: 1px solid var(--campus-blue);
+            background: white;
+            color: var(--campus-blue);
+            border-radius: 8px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .duration-btn.active {
+            background: var(--campus-blue);
+            color: white;
+        }
+
+        /* 用户协议 */
+        .user-agreement {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+            margin: 1rem 0;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .user-agreement input[type="checkbox"] {
+            margin-top: 0.25rem;
+            cursor: pointer;
+        }
+
+        .user-agreement label {
+            cursor: pointer;
+            line-height: 1.4;
+        }
+
+        .user-agreement a {
+            color: var(--campus-blue);
+            text-decoration: none;
+        }
+
+        .user-agreement a:hover {
+            text-decoration: underline;
+        }
+
+        /* 二维码登录 */
+        .qr-login {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .qr-code {
+            width: 200px;
+            height: 200px;
+            background: #f0f3f7;
+            border-radius: 15px;
+            margin: 0 auto 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .qr-code::before {
+            content: '';
+            position: absolute;
+            width: 150px;
+            height: 150px;
+            background: repeating-linear-gradient(
+                45deg,
+                #333,
+                #333 10px,
+                #666 10px,
+                #666 20px
+            );
+            opacity: 0.1;
+        }
+
+        .qr-code-text {
+            position: relative;
+            z-index: 2;
+            font-size: 3rem;
+            color: var(--campus-blue);
+            opacity: 0.3;
+        }
+
+        /* 游客体验 */
+        .guest-login {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .guest-icon {
+            font-size: 4rem;
+            color: var(--campus-orange);
+            margin-bottom: 1rem;
+        }
+
+        .guest-description {
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .login-container {
+                grid-template-columns: 1fr;
+                grid-template-rows: 1fr 1fr;
+            }
+
+            .login-brand {
+                padding: 2rem;
+                min-height: 50vh;
+            }
+
+            .brand-title {
+                font-size: 2rem;
+            }
+
+            .brand-features {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .login-form-wrapper {
+                padding: 2rem;
+                margin: 1rem;
+            }
+
+            .login-options {
+                gap: 1rem;
+            }
+
+            .remember-duration {
+                flex-wrap: wrap;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .login-brand {
+                display: none;
+            }
+
+            .login-container {
+                grid-template-columns: 1fr;
+                grid-template-rows: 1fr;
+            }
+
+            .login-form-wrapper {
+                padding: 1.5rem;
+            }
+        }
+
+        /* 页面切换动画 */
+        .fade-transition {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* 密码强度指示器 */
+        .password-strength {
+            height: 4px;
+            background: #e0e0e0;
+            border-radius: 2px;
+            margin-top: 0.5rem;
+            overflow: hidden;
+        }
+
+        .password-strength-bar {
+            height: 100%;
+            transition: all 0.3s ease;
+            border-radius: 2px;
+        }
+
+        .password-strength-bar.weak {
+            width: 33%;
+            background: #e74c3c;
+        }
+
+        .password-strength-bar.medium {
+            width: 66%;
+            background: #f39c12;
+        }
+
+        .password-strength-bar.strong {
+            width: 100%;
+            background: #2ecc71;
+        }
+    </style>
+</head>
+<body class="theme-transition">
+    <!-- 登录页面 -->
+    <div id="loginPage" class="login-container">
+        <!-- 左侧品牌展示区 -->
+        <div class="login-brand">
+            <div class="brand-content">
+                <div class="brand-logo">
+                    <i class="fas fa-graduation-cap text-5xl text-white"></i>
+                </div>
+                <h1 class="brand-title">校园AI助手</h1>
+                <p class="brand-subtitle">
+                    智能校园向导，让大学生活更便捷<br>
+                    AI驱动的个性化服务，您的贴心助手
+                </p>
+                
+                <div class="brand-features">
+                    <div class="feature-item">
+                        <div class="feature-icon">📚</div>
+                        <div>智能课程管理</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">🍽️</div>
+                        <div>校园美食推荐</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">⏰</div>
+                        <div>智能提醒服务</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">📍</div>
+                        <div>校园位置导航</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 右侧登录表单区 -->
+        <div class="login-form-container">
+            <div class="login-form-wrapper fade-transition">
+                <!-- 登录选项切换 -->
+                <div class="login-options">
+                    <button class="login-option active" onclick="switchLoginType('password')">
+                        <i class="fas fa-key mr-2"></i>学号登录
+                    </button>
+                    <button class="login-option" onclick="switchLoginType('qr')">
+                        <i class="fas fa-qrcode mr-2"></i>扫码登录
+                    </button>
+                    <button class="login-option" onclick="switchLoginType('guest')">
+                        <i class="fas fa-user mr-2"></i>游客体验
+                    </button>
+                </div>
+
+                <!-- 学号密码登录 -->
+                <div id="passwordLogin" class="login-form">
+                    <form onsubmit="handleLogin(event)">
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">学号</label>
+                            <input
+                                type="text"
+                                id="studentId"
+                                class="neumorph-input"
+                                placeholder="请输入8位学号"
+                                maxlength="8"
+                                oninput="validateStudentId(this)"
+                                required>
+                            <div id="studentIdHint" class="validation-hint info">
+                                <i class="fas fa-info-circle"></i>
+                                <span>请输入8位数字学号</span>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">密码</label>
+                            <div class="relative">
+                                <input
+                                    type="password"
+                                    id="password"
+                                    class="neumorph-input pr-10"
+                                    placeholder="请输入密码"
+                                    oninput="validatePassword(this)"
+                                    required>
+                                <button type="button" onclick="togglePassword()" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700">
+                                    <i class="fas fa-eye" id="passwordToggle"></i>
+                                </button>
+                            </div>
+                            <div id="passwordHint" class="validation-hint info">
+                                <i class="fas fa-info-circle"></i>
+                                <span>密码长度至少6位</span>
+                            </div>
+                            <div class="password-strength">
+                                <div id="passwordStrengthBar" class="password-strength-bar"></div>
+                            </div>
+                        </div>
+
+                        <!-- 记住我选项 -->
+                        <div class="remember-me">
+                            <label class="flex items-center">
+                                <input type="checkbox" id="rememberMe" class="mr-2">
+                                <span class="text-sm">记住我</span>
+                            </label>
+                            <div class="remember-duration" id="rememberDuration" style="display: none;">
+                                <button type="button" class="duration-btn" onclick="setRememberDuration(1)">1天</button>
+                                <button type="button" class="duration-btn active" onclick="setRememberDuration(7)">7天</button>
+                                <button type="button" class="duration-btn" onclick="setRememberDuration(30)">30天</button>
+                            </div>
+                        </div>
+
+                        <!-- 用户协议 -->
+                        <div class="user-agreement">
+                            <input type="checkbox" id="agreement" required>
+                            <label for="agreement">
+                                我已阅读并同意<a href="#" onclick="showAgreement('privacy')">《隐私政策》</a>和<a href="#" onclick="showAgreement('terms')">《用户协议》</a>
+                            </label>
+                        </div>
+
+                        <!-- 登录按钮 -->
+                        <button type="submit" class="login-btn" id="loginBtn">
+                            <span class="btn-text">登录</span>
+                            <div class="spinner"></div>
+                        </button>
+
+                        <!-- 忘记密码 -->
+                        <div class="text-center mt-4">
+                            <a href="#" onclick="forgotPassword()" class="text-sm text-blue-500 hover:text-blue-700">
+                                忘记密码？
+                            </a>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- 二维码登录 -->
+                <div id="qrLogin" class="login-form" style="display: none;">
+                    <div class="qr-login">
+                        <div class="qr-code">
+                            <i class="fas fa-qrcode qr-code-text"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold mb-2">扫码登录</h3>
+                        <p class="text-gray-500 mb-4">请使用校园APP扫描二维码登录</p>
+                        <div class="warning-card">
+                            <i class="fas fa-tools mr-2"></i>
+                            功能开发中，敬请期待
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 游客体验 -->
+                <div id="guestLogin" class="login-form" style="display: none;">
+                    <div class="guest-login">
+                        <div class="guest-icon">
+                            <i class="fas fa-user-circle"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold mb-2">游客体验</h3>
+                        <p class="guest-description">
+                            无需登录即可体验校园AI助手的基础功能<br>
+                            部分个性化功能需要登录后使用
+                        </p>
+                        <button onclick="guestExperience()" class="login-btn">
+                            开始体验
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 主应用容器 -->
+    <div id="mainApp" class="flex h-screen overflow-hidden" style="display: none;">
+        <!-- 左侧边栏 -->
+        <aside id="sidebar" class="sidebar glass-effect flex flex-col">
+            <!-- 用户信息区域 -->
+            <div class="p-6 border-b border-gray-200 border-opacity-20">
+                <div class="flex items-center space-x-3">
+                    <div class="w-12 h-12 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold text-lg">
+                        <span id="userAvatar">学</span>
+                    </div>
+                    <div class="sidebar-content">
+                        <h3 class="font-semibold text-white" id="userName">学生用户</h3>
+                        <p class="text-sm text-gray-300">在线</p>
+                    </div>
+                    <button class="sidebar-toggle ml-auto text-white hover:text-gray-300 md:hidden">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 快捷功能 -->
+            <div class="flex-1 p-4 space-y-2">
+                <h4 class="text-sm font-semibold text-gray-300 mb-3 sidebar-content">快捷功能</h4>
+                
+                <button onclick="quickAction('schedule')" class="quick-action-btn w-full flex items-center space-x-3">
+                    <i class="fas fa-calendar-alt text-blue-500"></i>
+                    <span class="sidebar-content">课程表</span>
+                </button>
+
+                <button onclick="quickAction('canteen')" class="quick-action-btn w-full flex items-center space-x-3">
+                    <i class="fas fa-utensils text-orange-500"></i>
+                    <span class="sidebar-content">食堂菜单</span>
+                </button>
+
+                <button onclick="quickAction('library')" class="quick-action-btn w-full flex items-center space-x-3">
+                    <i class="fas fa-book text-green-500"></i>
+                    <span class="sidebar-content">图书馆</span>
+                </button>
+
+                <button onclick="quickAction('shuttle')" class="quick-action-btn w-full flex items-center space-x-3">
+                    <i class="fas fa-bus text-purple-500"></i>
+                    <span class="sidebar-content">校车时刻</span>
+                </button>
+
+                <button onclick="quickAction('express')" class="quick-action-btn w-full flex items-center space-x-3">
+                    <i class="fas fa-box text-red-500"></i>
+                    <span class="sidebar-content">快递点</span>
+                </button>
+
+                <button onclick="quickAction('activities')" class="quick-action-btn w-full flex items-center space-x-3">
+                    <i class="fas fa-star text-yellow-500"></i>
+                    <span class="sidebar-content">校园活动</span>
+                </button>
+            </div>
+
+            <!-- 用户信息区域扩展 -->
+            <div class="p-4 border-t border-gray-200 border-opacity-20">
+                <button onclick="showProfile()" class="quick-action-btn w-full flex items-center space-x-3">
+                    <i class="fas fa-user-circle text-blue-500"></i>
+                    <span class="sidebar-content">个人资料</span>
+                </button>
+                
+                <button onclick="showDataManagement()" class="quick-action-btn w-full flex items-center space-x-3 mt-2">
+                    <i class="fas fa-database text-green-500"></i>
+                    <span class="sidebar-content">数据管理</span>
+                </button>
+            </div>
+            
+            <!-- 设置区域 -->
+            <div class="p-4 border-t border-gray-200 border-opacity-20">
+                <button onclick="toggleTheme()" class="quick-action-btn w-full flex items-center space-x-3">
+                    <i class="fas fa-moon text-indigo-500" id="themeIcon"></i>
+                    <span class="sidebar-content">切换主题</span>
+                </button>
+
+                <button onclick="showSettings()" class="quick-action-btn w-full flex items-center space-x-3 mt-2">
+                    <i class="fas fa-cog text-gray-500"></i>
+                    <span class="sidebar-content">设置</span>
+                </button>
+                
+                <button onclick="exportChatHistory()" class="quick-action-btn w-full flex items-center space-x-3 mt-2">
+                    <i class="fas fa-download text-purple-500"></i>
+                    <span class="sidebar-content">导出记录</span>
+                </button>
+                
+                <button onclick="logout()" class="quick-action-btn w-full flex items-center space-x-3 mt-2">
+                    <i class="fas fa-sign-out-alt text-red-500"></i>
+                    <span class="sidebar-content">退出登录</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- 主内容区域 -->
+        <main class="main-content flex-1 flex flex-col" style="margin-left: 280px;">
+            <!-- 顶部栏 -->
+            <header class="glass-effect px-6 py-4 flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <button class="sidebar-toggle text-white hover:text-gray-300" style="display: none;">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                    <div>
+                        <h1 class="text-xl font-bold text-white">校园AI助手</h1>
+                        <p class="text-sm text-gray-300">您的智能校园向导</p>
+                    </div>
+                </div>
+
+                <!-- 倒计时组件 -->
+                <div class="countdown-timer" id="countdownTimer">
+                    <i class="fas fa-clock"></i>
+                    <span id="countdownText">距离下课还有 45 分钟</span>
+                </div>
+            </header>
+
+            <!-- 聊天区域 -->
+            <div class="flex-1 overflow-hidden flex flex-col">
+                <!-- 消息容器 -->
+                <div id="messageContainer" class="flex-1 overflow-y-auto px-6 py-6 space-y-4 custom-scrollbar">
+                    <!-- 欢迎消息 -->
+                    <div class="flex items-start space-x-3 slide-in-up">
+                        <div class="w-10 h-10 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-robot text-white"></i>
+                        </div>
+                        <div class="max-w-2xl">
+                            <div class="glass-card message-bubble ai-message">
+                                <div class="markdown-content">
+                                    <p>👋 你好！我是校园AI助手，您的智能校园向导！</p>
+                                    <p>我可以帮您：</p>
+                                    <ul>
+                                        <li>📚 查询课程表和考试安排</li>
+                                        <li>📍 校园位置导航和信息服务</li>
+                                        <li>⏰ 设置智能提醒和倒计时</li>
+                                        <li>🍽️ <strong>今日食堂菜单查询</strong></li>
+                                        <li>📚 <strong>图书馆开放时间和借书流程</strong></li>
+                                        <li>🚌 <strong>校车详细时刻表</strong></li>
+                                        <li>📦 <strong>快递站位置和取件信息</strong></li>
+                                        <li>📝 <strong>作业截止时间查询</strong></li>
+                                        <li>🏟️ 体育馆、校医院、打印点等<strong>生活服务</strong></li>
+                                        <li>🎯 校园活动和通知</li>
+                                    </ul>
+                                    <p>请问有什么可以帮助您的吗？您可以问我：</p>
+                                    <ul class="text-sm opacity-90">
+                                        <li>"<strong>食堂今天有什么菜？</strong>" - 查看今日菜单</li>
+                                        <li>"<strong>高数作业什么时候交？</strong>" - 查询作业截止时间</li>
+                                        <li>"<strong>图书馆什么时候开门？</strong>" - 查看开放时间</li>
+                                        <li>"<strong>校车几点发车？</strong>" - 查看时刻表</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <!-- 快速回复按钮 -->
+                            <div class="mt-4 flex flex-wrap gap-2">
+                                <button onclick="sendQuickMessage('食堂今天有什么菜')" class="px-4 py-2 bg-orange-500 text-white rounded-full text-sm hover-scale">
+                                    <i class="fas fa-utensils mr-1"></i> 今日菜单
+                                </button>
+                                <button onclick="sendQuickMessage('高数作业什么时候交')" class="px-4 py-2 bg-red-500 text-white rounded-full text-sm hover-scale">
+                                    <i class="fas fa-file-alt mr-1"></i> 作业查询
+                                </button>
+                                <button onclick="sendQuickMessage('图书馆什么时候开门')" class="px-4 py-2 bg-green-500 text-white rounded-full text-sm hover-scale">
+                                    <i class="fas fa-clock mr-1"></i> 开放时间
+                                </button>
+                                <button onclick="sendQuickMessage('校车几点发车')" class="px-4 py-2 bg-purple-500 text-white rounded-full text-sm hover-scale">
+                                    <i class="fas fa-bus mr-1"></i> 校车时刻
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 输入区域 -->
+                <div class="glass-effect px-6 py-4">
+                    <div class="flex items-end space-x-3">
+                        <!-- 语音按钮 -->
+                        <button class="text-gray-400 hover:text-gray-600 transition-colors p-2">
+                            <i class="fas fa-microphone text-xl"></i>
+                        </button>
+
+                        <!-- 输入框 -->
+                        <div class="flex-1">
+                            <textarea 
+                                id="messageInput" 
+                                placeholder="输入您的问题..." 
+                                class="w-full px-4 py-3 rounded-2xl resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white bg-opacity-90 border border-gray-200"
+                                rows="1"
+                                onkeydown="handleKeyPress(event)"
+                                oninput="autoResize(this); showSuggestions(this.value)"></textarea>
+                            
+                            <!-- 智能建议 -->
+                            <div id="suggestions" class="mt-2 flex flex-wrap gap-2 hidden">
+                                <!-- 动态生成建议 -->
+                            </div>
+                        </div>
+
+                        <!-- 表情按钮 -->
+                        <button class="text-gray-400 hover:text-gray-600 transition-colors p-2">
+                            <i class="fas fa-smile text-xl"></i>
+                        </button>
+
+                        <!-- 发送按钮 -->
+                        <button 
+                            id="sendButton"
+                            onclick="sendMessage()" 
+                            class="bg-gradient-to-r from-blue-500 to-purple-600 text-white p-3 rounded-full transition-all hover-scale">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- 浮动按钮组 -->
+    <button class="floating-btn" style="bottom: 80px; right: 20px;" onclick="toggleSchedule()" title="课程表">
+        <i class="fas fa-calendar-alt"></i>
+    </button>
+
+    <button class="floating-btn" style="bottom: 150px; right: 20px; background: var(--campus-green);" onclick="emergencyHelp()" title="紧急求助">
+        <i class="fas fa-question"></i>
+    </button>
+
+    <!-- 课程表模态框 -->
+    <div id="scheduleModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="glass-card rounded-2xl p-6 max-w-4xl w-full mx-4 max-h-[80vh] overflow-hidden slide-in-up">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-xl font-bold text-gray-900">课程表</h3>
+                <div class="flex items-center space-x-2">
+                    <button onclick="switchScheduleView('day')" class="px-3 py-1 bg-blue-500 text-white rounded-lg text-sm" id="dayViewBtn">日视图</button>
+                    <button onclick="switchScheduleView('week')" class="px-3 py-1 bg-gray-300 text-gray-700 rounded-lg text-sm" id="weekViewBtn">周视图</button>
+                    <button onclick="closeScheduleModal()" class="text-gray-400 hover:text-gray-600 ml-4">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div id="scheduleContent" class="overflow-y-auto custom-scrollbar max-h-[60vh]">
+                <!-- 动态生成课程表内容 -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 设置模态框 -->
+    <div id="settingsModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="glass-card rounded-2xl p-6 max-w-md w-full mx-4 slide-in-up">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold text-gray-900">设置</h3>
+                <button onclick="closeSettingsModal()" class="text-gray-400 hover:text-gray-600">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">用户昵称</label>
+                    <input 
+                        type="text" 
+                        id="userNickname" 
+                        placeholder="输入您的昵称"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">通知设置</label>
+                    <div class="space-y-2">
+                        <label class="flex items-center">
+                            <input type="checkbox" id="classReminder" checked class="mr-2">
+                            <span class="text-sm">上课提醒</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" id="activityReminder" checked class="mr-2">
+                            <span class="text-sm">活动提醒</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="flex space-x-3 pt-2">
+                    <button onclick="saveSettings()" class="flex-1 bg-blue-500 hover:bg-blue-600 text-white py-2 rounded-lg transition-colors">
+                        保存设置
+                    </button>
+                    <button onclick="closeSettingsModal()" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-700 py-2 rounded-lg transition-colors">
+                        取消
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 个人资料模态框 -->
+    <div id="profileModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="glass-card rounded-2xl p-6 max-w-md w-full mx-4 slide-in-up">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold text-gray-900">个人资料</h3>
+                <button onclick="closeProfileModal()" class="text-gray-400 hover:text-gray-600">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="space-y-4">
+                <div class="text-center">
+                    <div class="w-20 h-20 mx-auto rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center text-white text-2xl font-bold mb-3">
+                        <span id="profileAvatar">学</span>
+                    </div>
+                    <h4 class="text-xl font-bold text-gray-900" id="profileName">学生用户</h4>
+                    <p class="text-gray-500" id="profileStudentId">20210001</p>
+                </div>
+                
+                <div class="border-t pt-4">
+                    <div class="grid grid-cols-2 gap-4 text-sm">
+                        <div class="bg-gray-50 p-3 rounded-lg">
+                            <p class="text-gray-500">专业</p>
+                            <p class="font-semibold" id="profileMajor">计算机科学</p>
+                        </div>
+                        <div class="bg-gray-50 p-3 rounded-lg">
+                            <p class="text-gray-500">班级</p>
+                            <p class="font-semibold" id="profileClass">计科2101</p>
+                        </div>
+                        <div class="bg-gray-50 p-3 rounded-lg">
+                            <p class="text-gray-500">手机号</p>
+                            <p class="font-semibold" id="profilePhone">138****1234</p>
+                        </div>
+                        <div class="bg-gray-50 p-3 rounded-lg">
+                            <p class="text-gray-500">登录天数</p>
+                            <p class="font-semibold" id="profileDays">7天</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">修改昵称</label>
+                    <input
+                        type="text"
+                        id="editNickname"
+                        placeholder="输入新昵称"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                
+                <button onclick="updateProfile()" class="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded-lg transition-colors">
+                    保存修改
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 数据管理模态框 -->
+    <div id="dataManagementModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="glass-card rounded-2xl p-6 max-w-2xl w-full mx-4 slide-in-up max-h-[80vh] overflow-hidden">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold text-gray-900">数据管理</h3>
+                <button onclick="closeDataManagementModal()" class="text-gray-400 hover:text-gray-600">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="space-y-4 overflow-y-auto max-h-[60vh]">
+                <!-- 聊天记录管理 -->
+                <div class="bg-gray-50 p-4 rounded-lg">
+                    <h4 class="font-semibold mb-3 flex items-center">
+                        <i class="fas fa-comments text-blue-500 mr-2"></i> 聊天记录
+                    </h4>
+                    <p class="text-sm text-gray-600 mb-3">共保存 <span id="chatCount">0</span> 条聊天记录</p>
+                    <div class="flex space-x-2">
+                        <button onclick="exportChatHistory()" class="flex-1 bg-green-500 hover:bg-green-600 text-white py-2 rounded-lg transition-colors text-sm">
+                            <i class="fas fa-download mr-1"></i> 导出TXT
+                        </button>
+                        <button onclick="clearChatHistory()" class="flex-1 bg-red-500 hover:bg-red-600 text-white py-2 rounded-lg transition-colors text-sm">
+                            <i class="fas fa-trash mr-1"></i> 清空记录
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- 课程管理 -->
+                <div class="bg-gray-50 p-4 rounded-lg">
+                    <h4 class="font-semibold mb-3 flex items-center">
+                        <i class="fas fa-calendar text-orange-500 mr-2"></i> 课程管理
+                    </h4>
+                    <div id="courseManagementList" class="space-y-2 max-h-40 overflow-y-auto mb-3">
+                        <!-- 动态生成课程列表 -->
+                    </div>
+                    <button onclick="showAddCourseForm()" class="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded-lg transition-colors text-sm">
+                        <i class="fas fa-plus mr-1"></i> 添加课程
+                    </button>
+                </div>
+                
+                <!-- 课程添加表单（隐藏） -->
+                <div id="addCourseForm" class="hidden bg-blue-50 p-4 rounded-lg">
+                    <h5 class="font-semibold mb-3">添加新课程</h5>
+                    <div class="grid grid-cols-2 gap-3 mb-3">
+                        <input type="text" id="newCourseName" placeholder="课程名称" class="px-3 py-2 border rounded-lg text-sm">
+                        <input type="text" id="newCourseLocation" placeholder="教室位置" class="px-3 py-2 border rounded-lg text-sm">
+                        <input type="text" id="newCourseTime" placeholder="上课时间" class="px-3 py-2 border rounded-lg text-sm">
+                        <input type="text" id="newCourseTeacher" placeholder="任课教师" class="px-3 py-2 border rounded-lg text-sm">
+                    </div>
+                    <div class="flex space-x-2">
+                        <button onclick="addCourse()" class="flex-1 bg-green-500 hover:bg-green-600 text-white py-2 rounded-lg transition-colors text-sm">添加</button>
+                        <button onclick="hideAddCourseForm()" class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 py-2 rounded-lg transition-colors text-sm">取消</button>
+                    </div>
+                </div>
+                
+                <!-- 提醒管理 -->
+                <div class="bg-gray-50 p-4 rounded-lg">
+                    <h4 class="font-semibold mb-3 flex items-center">
+                        <i class="fas fa-bell text-purple-500 mr-2"></i> 提醒事项
+                    </h4>
+                    <div id="reminderList" class="space-y-2 max-h-40 overflow-y-auto mb-3">
+                        <!-- 动态生成提醒列表 -->
+                    </div>
+                    <button onclick="showReminderModal()" class="w-full bg-purple-500 hover:bg-purple-600 text-white py-2 rounded-lg transition-colors text-sm">
+                        <i class="fas fa-plus mr-1"></i> 添加提醒
+                    </button>
+                </div>
+                
+                <!-- 存储空间 -->
+                <div class="bg-gray-50 p-4 rounded-lg">
+                    <h4 class="font-semibold mb-3 flex items-center">
+                        <i class="fas fa-hdd text-green-500 mr-2"></i> 存储空间
+                    </h4>
+                    <div class="w-full bg-gray-200 rounded-full h-2 mb-2">
+                        <div id="storageBar" class="bg-blue-500 rounded-full h-2" style="width: 25%"></div>
+                    </div>
+                    <p class="text-sm text-gray-600">已使用 <span id="storageUsed">25%</span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 提醒设置模态框 -->
+    <div id="reminderModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="glass-card rounded-2xl p-6 max-w-md w-full mx-4 slide-in-up">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold text-gray-900">设置提醒</h3>
+                <button onclick="closeReminderModal()" class="text-gray-400 hover:text-gray-600">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">提醒内容</label>
+                    <input 
+                        type="text" 
+                        id="reminderContent" 
+                        placeholder="例如：下午3点开会"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">提醒时间</label>
+                    <input 
+                        type="datetime-local" 
+                        id="reminderTime"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                
+                <div class="flex space-x-3 pt-2">
+                    <button onclick="saveReminder()" class="flex-1 bg-blue-500 hover:bg-blue-600 text-white py-2 rounded-lg transition-colors">
+                        保存提醒
+                    </button>
+                    <button onclick="closeReminderModal()" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-700 py-2 rounded-lg transition-colors">
+                        取消
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 全局变量
+        let messageHistory = [];
+        let conversationContext = [];
+        let isLoading = false;
+        let currentScheduleView = 'day';
+        let userSettings = {
+            nickname: '学生用户',
+            theme: 'light',
+            notifications: {
+                class: true,
+                activity: true
+            }
+        };
+
+        // 校园数据 - 扩展版
+        const campusData = {
+            // 用户数据存储
+            users: {
+                '20210001': { password: '123456', name: '张三', major: '计算机科学', class: '计科2101', phone: '138****1234' },
+                '20210002': { password: 'password', name: '李四', major: '软件工程', class: '软件2102', phone: '139****5678' },
+                '20210003': { password: 'abc123', name: '王五', major: '人工智能', class: '人工2103', phone: '137****9012' }
+            },
+            // 课程数据
+            courses: {
+                monday: [
+                    { name: '计算机科学导论', location: '理科楼 A301', time: '08:00-09:40', teacher: '张教授', status: '进行中' },
+                    { name: '高等数学', location: '文科楼 B205', time: '10:00-11:40', teacher: '李教授', status: '即将开始' },
+                    { name: '英语听说', location: '外语楼 C102', time: '14:00-15:40', teacher: '王老师', status: '即将开始' }
+                ],
+                tuesday: [
+                    { name: '数据结构', location: '理科楼 A302', time: '08:00-09:40', teacher: '刘教授', status: '即将开始' },
+                    { name: '大学物理', location: '实验楼 D101', time: '10:00-11:40', teacher: '陈教授', status: '即将开始' },
+                    { name: '体育', location: '体育馆', time: '15:00-16:40', teacher: '赵教练', status: '即将开始' }
+                ],
+                wednesday: [
+                    { name: '计算机网络', location: '理科楼 A303', time: '09:00-10:40', teacher: '孙教授', status: '即将开始' },
+                    { name: '数据库原理', location: '理科楼 A304', time: '14:00-15:40', teacher: '周教授', status: '即将开始' }
+                ],
+                thursday: [
+                    { name: '操作系统', location: '理科楼 A305', time: '08:00-09:40', teacher: '吴教授', status: '即将开始' },
+                    { name: '软件工程', location: '理科楼 A306', time: '10:00-11:40', teacher: '郑教授', status: '即将开始' }
+                ],
+                friday: [
+                    { name: '人工智能', location: '理科楼 A307', time: '09:00-10:40', teacher: '冯教授', status: '即将开始' },
+                    { name: 'Web开发', location: '理科楼 A308', time: '14:00-15:40', teacher: '何教授', status: '即将开始' }
+                ]
+            },
+            canteens: {
+                first: {
+                    name: '第一食堂',
+                    location: '主校门东侧',
+                    hours: '06:30-21:00',
+                    menu: ['包子豆浆', '油条粥品', '面条水饺', '盖浇饭', '营养套餐']
+                },
+                second: {
+                    name: '第二食堂',
+                    location: '图书馆北侧',
+                    hours: '11:00-14:00, 17:00-20:00',
+                    menu: ['麻辣香锅', '铁板烧', '韩式料理', '日式拉面', '清真窗口']
+                },
+                third: {
+                    name: '第三食堂',
+                    location: '学生宿舍区',
+                    hours: '06:30-22:00',
+                    menu: ['粤菜', '川菜', '湘菜', '东北菜', '西北菜']
+                }
+            },
+            library: {
+                name: '中央图书馆',
+                location: '校园中心区',
+                hours: '08:00-22:00',
+                seats: {
+                    total: 2000,
+                    available: 856,
+                    floors: {
+                        first: 300,
+                        second: 500,
+                        third: 800,
+                        fourth: 400
+                    }
+                }
+            },
+            shuttle: {
+                routes: [
+                    {
+                        name: '主校区-东校区',
+                        schedule: ['07:00', '07:30', '08:00', '08:30', '09:00', '09:30', '10:00', '10:30', '11:00', '11:30', '12:00', '12:30', '13:00', '13:30', '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00', '17:30', '18:00', '18:30', '19:00', '19:30', '20:00', '20:30', '21:00'],
+                        duration: '15分钟'
+                    },
+                    {
+                        name: '主校区-西校区',
+                        schedule: ['07:15', '07:45', '08:15', '08:45', '09:15', '09:45', '10:15', '10:45', '11:15', '11:45', '12:15', '12:45', '13:15', '13:45', '14:15', '14:45', '15:15', '15:45', '16:15', '16:45', '17:15', '17:45', '18:15', '18:45', '19:15', '19:45', '20:15', '20:45', '21:15'],
+                        duration: '20分钟'
+                    }
+                ]
+            },
+            express: {
+                points: [
+                    {
+                        name: '菜鸟驿站',
+                        location: '学生宿舍1号楼下',
+                        hours: '09:00-21:00',
+                        companies: ['中通', '圆通', '申通', '韵达']
+                    },
+                    {
+                        name: '顺丰快递',
+                        location: '行政楼东侧',
+                        hours: '08:30-18:00',
+                        companies: ['顺丰速运']
+                    },
+                    {
+                        name: '京东快递',
+                        location: '体育馆南侧',
+                        hours: '09:00-19:00',
+                        companies: ['京东物流']
+                    }
+                ]
+            },
+            activities: [
+                {
+                    title: '校园音乐节',
+                    time: '本周六 19:00',
+                    location: '大学生活动中心',
+                    description: '校内乐队演出，免费入场',
+                    type: '娱乐'
+                },
+                {
+                    title: '趣味运动会',
+                    time: '下周三 14:00',
+                    location: '操场',
+                    description: '各班级体育委员处报名',
+                    type: '体育'
+                },
+                {
+                    title: '图书馆讲座',
+                    time: '周五 15:00',
+                    location: '图书馆电子阅览室',
+                    description: '学术资源检索技巧',
+                    type: '学术'
+                }
+            ],
+            // 今日食堂菜单
+            todayMenu: {
+                first: [
+                    { name: '鲜肉包子', price: 2.0, tag: '早餐' },
+                    { name: '豆浆', price: 1.5, tag: '早餐' },
+                    { name: '油条', price: 1.0, tag: '早餐' },
+                    { name: '红烧肉', price: 12.0, tag: '午餐' },
+                    { name: '宫保鸡丁', price: 10.0, tag: '午餐' },
+                    { name: '麻婆豆腐', price: 8.0, tag: '午餐' }
+                ],
+                second: [
+                    { name: '麻辣香锅', price: 15.0, tag: '午餐' },
+                    { name: '铁板烧', price: 18.0, tag: '午餐' },
+                    { name: '日式拉面', price: 16.0, tag: '午餐' }
+                ],
+                third: [
+                    { name: '粤菜套餐', price: 20.0, tag: '午餐' },
+                    { name: '川菜套餐', price: 18.0, tag: '午餐' },
+                    { name: '东北水饺', price: 15.0, tag: '午餐' }
+                ]
+            },
+            // 图书馆详细信息
+            libraryInfo: {
+                hours: '周一至周日 08:00-22:00',
+                services: ['借阅图书', '自习座位', '电子阅览', '打印复印', '学术讲座'],
+                rules: '每人最多借阅10本书，借期30天，可续借2次',
+                contact: '021-12345678'
+            },
+            // 作业信息
+            homework: {
+                '高等数学': { deadline: '本周五 23:59', content: '完成第三章习题1-15', status: '未完成' },
+                '计算机科学导论': { deadline: '下周三 12:00', content: '提交期中项目报告', status: '进行中' },
+                '数据结构': { deadline: '下周日 18:00', content: '完成链表实现作业', status: '未开始' }
+            },
+            // 教室位置
+            classrooms: {
+                '理科楼 A301': { floor: 3, building: '理科楼', capacity: 80, equipment: ['投影仪', '空调', '音响'] },
+                '理科楼 A302': { floor: 3, building: '理科楼', capacity: 60, equipment: ['投影仪', '空调'] },
+                '文科楼 B205': { floor: 2, building: '文科楼', capacity: 100, equipment: ['投影仪', '空调', '音响', '多媒体'] }
+            },
+            // 借书流程
+            borrowingProcess: [
+                '携带校园卡到图书馆',
+                '在书架上找到所需书籍',
+                '使用自助借书机或到服务台办理',
+                '扫描校园卡和书籍',
+                '确认借阅信息并完成',
+                '按期归还，逾期需缴纳罚款'
+            ],
+            // 体育馆信息
+            gym: {
+                hours: '周一至周五 06:00-22:00, 周末 08:00-21:00',
+                facilities: ['室内篮球场', '羽毛球馆', '乒乓球室', '健身房', '瑜伽室', '游泳池'],
+                contact: '021-87654321',
+                rules: '需穿运动鞋，禁止携带食物入内'
+            },
+            // 校医院信息
+            hospital: {
+                name: '校医院',
+                location: '行政楼北侧',
+                phone: '123-4567-8902',
+                hours: '周一至周日 08:00-21:00, 急诊24小时',
+                services: ['门急诊', '体检中心', '心理咨询', '疫苗接种', '药房']
+            },
+            // 打印点信息
+            printStations: [
+                { name: '图书馆打印室', location: '图书馆一楼西侧', hours: '08:00-22:00', price: 'A4: 0.3元/页, A3: 0.5元/页' },
+                { name: '学生服务中心', location: '行政楼一楼', hours: '09:00-18:00', price: 'A4: 0.2元/页, A3: 0.4元/页' },
+                { name: '教学楼自助打印', location: '各教学楼走廊', hours: '24小时', price: 'A4: 0.25元/页' }
+            ]
+        };
+
+        // 意图识别关键词映射 - 扩展版（AI生成部分）
+        const intentKeywords = {
+            course: ['课', '课程', '上课', '课程表', 'schedule', 'class'],
+            canteen: ['食堂', '吃饭', '餐厅', '美食', '菜单', 'food', '今天有什么菜', '菜'],
+            library: ['图书馆', '借书', '学习', '自习', 'library', '开放时间', '开门'],
+            shuttle: ['校车', '巴士', '班车', 'shuttle', 'bus', '几点发车', '时刻表'],
+            express: ['快递', '包裹', 'express', 'package', '快递站', '取件码'],
+            activity: ['活动', '演出', '比赛', 'event', 'activity'],
+            reminder: ['提醒', '闹钟', 'reminder', 'alarm'],
+            location: ['哪里', '位置', '怎么走', 'location', 'where'],
+            time: ['几点', '时间', '什么时候', 'time', 'when'],
+            homework: ['作业', '交', '高数', 'homework'],
+            classroom: ['教室', '计算机课', '计算机', 'classroom'],
+            gym: ['体育馆', '健身', 'gym', '开放时间'],
+            hospital: ['校医院', '医生', '看病', '电话'],
+            print: ['打印', 'copy', '打印店', '哪里可以打印']
+        };
+
+        // ========== 应用初始化 ==========
+        
+        // 初始化应用
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeApp();
+            loadUserSettings();
+            loadChatHistory();
+            setDefaultDateTime();
+            updateCountdown();
+            setInterval(updateCountdown, 60000); // 每分钟更新倒计时
+            setupResponsiveHandlers();
+            
+            // 检查登录状态
+            if (checkLoginStatus()) {
+                // 已登录，显示主应用
+                document.getElementById('loginPage').style.display = 'none';
+                showMainApp();
+            } else {
+                // 未登录，显示登录页面
+                document.getElementById('loginPage').style.display = 'grid';
+            }
+        });
+
+        // 初始化应用
+        function initializeApp() {
+            // 检查主题设置
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            if (savedTheme === 'dark') {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                document.getElementById('themeIcon').className = 'fas fa-sun text-yellow-500';
+            }
+
+            // 加载用户昵称
+            const nickname = localStorage.getItem('userNickname');
+            if (nickname) {
+                userSettings.nickname = nickname;
+                updateUserDisplay();
+            }
+        }
+
+        // 设置响应式处理
+        function setupResponsiveHandlers() {
+            const sidebarToggle = document.querySelectorAll('.sidebar-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.querySelector('.main-content');
+
+            sidebarToggle.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    sidebar.classList.toggle('open');
+                });
+            });
+
+            // 移动端适配
+            if (window.innerWidth <= 768) {
+                mainContent.style.marginLeft = '0';
+                document.querySelector('.sidebar-toggle').style.display = 'block';
+            }
+
+            window.addEventListener('resize', () => {
+                if (window.innerWidth <= 768) {
+                    mainContent.style.marginLeft = '0';
+                    document.querySelector('.sidebar-toggle').style.display = 'block';
+                } else {
+                    mainContent.style.marginLeft = '280px';
+                    document.querySelector('.sidebar-toggle').style.display = 'none';
+                    sidebar.classList.remove('open');
+                }
+            });
+        }
+
+        // 更新倒计时
+        function updateCountdown() {
+            const now = new Date();
+            const currentHour = now.getHours();
+            const currentMinute = now.getMinutes();
+            
+            let nextEvent = '';
+            let minutesUntil = 0;
+
+            // 简单的倒计时逻辑
+            if (currentHour < 8) {
+                nextEvent = '第一节课开始';
+                minutesUntil = (8 - currentHour) * 60 - currentMinute;
+            } else if (currentHour >= 8 && currentHour < 9) {
+                nextEvent = '第一节课结束';
+                minutesUntil = (9 - currentHour) * 60 - currentMinute + 40;
+            } else if (currentHour >= 9 && currentHour < 10) {
+                nextEvent = '第二节课开始';
+                minutesUntil = (10 - currentHour) * 60 - currentMinute;
+            } else if (currentHour >= 10 && currentHour < 12) {
+                nextEvent = '午休时间';
+                minutesUntil = (12 - currentHour) * 60 - currentMinute;
+            } else if (currentHour >= 12 && currentHour < 14) {
+                nextEvent = '下午课程开始';
+                minutesUntil = (14 - currentHour) * 60 - currentMinute;
+            } else if (currentHour >= 14 && currentHour < 18) {
+                nextEvent = '晚餐时间';
+                minutesUntil = (18 - currentHour) * 60 - currentMinute;
+            } else {
+                nextEvent = '明天课程开始';
+                minutesUntil = (24 - currentHour + 8) * 60 - currentMinute;
+            }
+
+            const hours = Math.floor(minutesUntil / 60);
+            const minutes = minutesUntil % 60;
+
+            let timeText = '';
+            if (hours > 0) {
+                timeText = `${hours}小时${minutes}分钟`;
+            } else {
+                timeText = `${minutes}分钟`;
+            }
+
+            document.getElementById('countdownText').textContent = `距离${nextEvent}还有 ${timeText}`;
+        }
+
+        // 自动调整输入框高度
+        function autoResize(textarea) {
+            textarea.style.height = 'auto';
+            textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px';
+        }
+
+        // 显示智能建议
+        function showSuggestions(value) {
+            const suggestionsDiv = document.getElementById('suggestions');
+            
+            if (value.length < 1) {
+                suggestionsDiv.classList.add('hidden');
+                return;
+            }
+
+            const suggestions = getSuggestions(value);
+            
+            if (suggestions.length > 0) {
+                suggestionsDiv.innerHTML = suggestions.map(suggestion => `
+                    <button onclick="selectSuggestion('${suggestion}')" class="px-3 py-1 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-full text-sm transition-colors">
+                        ${suggestion}
+                    </button>
+                `).join('');
+                suggestionsDiv.classList.remove('hidden');
+            } else {
+                suggestionsDiv.classList.add('hidden');
+            }
+        }
+
+        // 获取建议
+        function getSuggestions(input) {
+            const allSuggestions = [
+                '今天有什么课程',
+                '明天课程安排',
+                '本周课程表',
+                '食堂推荐菜品',
+                '图书馆空位',
+                '校车时刻表',
+                '快递点位置',
+                '校园活动',
+                '设置上课提醒',
+                '教室位置导航',
+                '食堂营业时间',
+                '图书馆开放时间'
+            ];
+
+            return allSuggestions.filter(suggestion => 
+                suggestion.toLowerCase().includes(input.toLowerCase())
+            ).slice(0, 4);
+        }
+
+        // 选择建议
+        function selectSuggestion(suggestion) {
+            document.getElementById('messageInput').value = suggestion;
+            document.getElementById('suggestions').classList.add('hidden');
+            sendMessage();
+        }
+
+        // 处理键盘事件
+        function handleKeyPress(event) {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
+                sendMessage();
+            }
+        }
+
+        // 发送消息
+        function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+            
+            if (!message || isLoading) return;
+            
+            // 添加用户消息
+            addMessage('user', message);
+            conversationContext.push({ type: 'user', content: message, timestamp: Date.now() });
+            
+            input.value = '';
+            autoResize(input);
+            document.getElementById('suggestions').classList.add('hidden');
+            
+            // 显示加载状态
+            showLoadingState();
+            
+            // 模拟AI响应
+            setTimeout(() => {
+                hideLoadingState();
+                generateAIResponse(message);
+            }, 800 + Math.random() * 1200);
+        }
+
+        // 快速回复
+        function sendQuickMessage(message) {
+            document.getElementById('messageInput').value = message;
+            sendMessage();
+        }
+
+        // 快捷操作
+        function quickAction(action) {
+            switch(action) {
+                case 'schedule':
+                    toggleSchedule();
+                    break;
+                case 'canteen':
+                    sendQuickMessage('食堂推荐菜品');
+                    break;
+                case 'library':
+                    sendQuickMessage('图书馆空位查询');
+                    break;
+                case 'shuttle':
+                    sendQuickMessage('校车时刻表');
+                    break;
+                case 'express':
+                    sendQuickMessage('快递点位置');
+                    break;
+                case 'activities':
+                    sendQuickMessage('校园活动');
+                    break;
+            }
+        }
+
+        // 添加消息到界面
+        function addMessage(type, content, extraData = null) {
+            const container = document.getElementById('messageContainer');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `flex items-start space-x-3 slide-in-up ${type === 'user' ? 'justify-end' : ''}`;
+            
+            if (type === 'user') {
+                messageDiv.innerHTML = `
+                    <div class="max-w-xl">
+                        <div class="message-bubble user-message">
+                            <p>${escapeHtml(content)}</p>
+                        </div>
+                        <div class="text-xs text-gray-500 mt-1 text-right">${getCurrentTime()}</div>
+                    </div>
+                    <div class="w-10 h-10 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center flex-shrink-0">
+                        <span class="text-white font-bold">${userSettings.nickname.charAt(0)}</span>
+                    </div>
+                `;
+            } else {
+                let messageContent = '';
+                
+                if (extraData) {
+                    messageContent = generateSpecialContent(extraData);
+                } else {
+                    messageContent = `<div class="markdown-content">${marked.parse(content)}</div>`;
+                }
+                
+                messageDiv.innerHTML = `
+                    <div class="w-10 h-10 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-robot text-white"></i>
+                    </div>
+                    <div class="max-w-2xl">
+                        <div class="message-bubble ai-message">
+                            ${messageContent}
+                        </div>
+                        <div class="text-xs text-gray-500 mt-1">${getCurrentTime()}</div>
+                    </div>
+                `;
+            }
+            
+            container.appendChild(messageDiv);
+            container.scrollTop = container.scrollHeight;
+            
+            // 保存到历史记录
+            messageHistory.push({ type, content, extraData, timestamp: Date.now() });
+            saveChatHistory();
+        }
+
+        // 生成特殊内容
+        function generateSpecialContent(extraData) {
+            switch(extraData.type) {
+                case 'schedule':
+                    return generateScheduleHTML(extraData.data);
+                case 'canteen':
+                    return generateCanteenHTML(extraData.data);
+                case 'library':
+                    return generateLibraryHTML(extraData.data);
+                case 'shuttle':
+                    return generateShuttleHTML(extraData.data);
+                case 'express':
+                    return generateExpressHTML(extraData.data);
+                case 'activity':
+                    return generateActivityHTML(extraData.data);
+                case 'location':
+                    return generateLocationHTML(extraData.data);
+                case 'countdown':
+                    return generateCountdownHTML(extraData.data);
+                default:
+                    return `<div class="markdown-content">${marked.parse(extraData.content || '')}</div>`;
+            }
+        }
+
+        // 生成课程表HTML
+        function generateScheduleHTML(courses) {
+            return `
+                <div class="space-y-3">
+                    <h4 class="font-bold text-lg mb-3">📅 课程安排</h4>
+                    ${courses.map((course, index) => `
+                        <div class="course-card">
+                            <div class="flex items-start justify-between relative z-10">
+                                <div class="flex-1">
+                                    <h5 class="font-bold text-lg">${course.name}</h5>
+                                    <p class="text-sm opacity-90 mt-1">📍 ${course.location}</p>
+                                    <p class="text-sm opacity-90">⏰ ${course.time}</p>
+                                    <p class="text-sm opacity-90">👨‍🏫 ${course.teacher}</p>
+                                </div>
+                                <span class="px-3 py-1 text-xs rounded-full bg-white bg-opacity-20 backdrop-blur">
+                                    ${course.status}
+                                </span>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        // 生成食堂HTML
+        function generateCanteenHTML(canteenData) {
+            return `
+                <div class="space-y-4">
+                    <h4 class="font-bold text-lg">🍽️ 食堂信息</h4>
+                    ${Object.entries(canteenData).map(([key, canteen]) => `
+                        <div class="info-card">
+                            <h5 class="font-bold text-lg mb-2">${canteen.name}</h5>
+                            <p class="text-sm opacity-90">📍 ${canteen.location}</p>
+                            <p class="text-sm opacity-90">⏰ ${canteen.hours}</p>
+                            <div class="mt-3">
+                                <p class="text-sm font-semibold mb-2">今日推荐：</p>
+                                <div class="flex flex-wrap gap-2">
+                                    ${canteen.menu.slice(0, 3).map(item => `
+                                        <span class="px-2 py-1 bg-white bg-opacity-20 rounded-full text-xs">${item}</span>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        // 生成图书馆HTML
+        function generateLibraryHTML(libraryData) {
+            const occupancyRate = ((libraryData.seats.total - libraryData.seats.available) / libraryData.seats.total * 100).toFixed(1);
+            
+            return `
+                <div class="space-y-4">
+                    <h4 class="font-bold text-lg">📚 图书馆信息</h4>
+                    <div class="info-card">
+                        <h5 class="font-bold text-lg mb-3">${libraryData.name}</h5>
+                        <p class="text-sm opacity-90">📍 ${libraryData.location}</p>
+                        <p class="text-sm opacity-90">⏰ ${libraryData.hours}</p>
+                        
+                        <div class="mt-4">
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-sm font-semibold">座位使用情况</span>
+                                <span class="text-sm">${libraryData.seats.available}/${libraryData.seats.total} 可用</span>
+                            </div>
+                            <div class="w-full bg-white bg-opacity-20 rounded-full h-2">
+                                <div class="bg-white rounded-full h-2" style="width: ${100 - occupancyRate}%"></div>
+                            </div>
+                            <p class="text-xs opacity-75 mt-1">使用率: ${occupancyRate}%</p>
+                        </div>
+                        
+                        <div class="mt-4">
+                            <p class="text-sm font-semibold mb-2">各楼层座位：</p>
+                            ${Object.entries(libraryData.seats.floors).map(([floor, seats]) => `
+                                <div class="flex justify-between text-sm opacity-90">
+                                    <span>${floor === 'first' ? '一楼' : floor === 'second' ? '二楼' : floor === 'third' ? '三楼' : '四楼'}</span>
+                                    <span>${seats}个座位</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // 生成校车HTML
+        function generateShuttleHTML(shuttleData) {
+            const now = new Date();
+            const currentTime = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+            
+            return `
+                <div class="space-y-4">
+                    <h4 class="font-bold text-lg">🚌 校车时刻表</h4>
+                    ${shuttleData.routes.map(route => {
+                        const nextBus = route.schedule.find(time => time > currentTime) || route.schedule[0];
+                        return `
+                            <div class="info-card">
+                                <h5 class="font-bold text-lg mb-2">${route.name}</h5>
+                                <p class="text-sm opacity-90">⏱️ 车程：${route.duration}</p>
+                                <p class="text-sm opacity-90">🕐 下一班：${nextBus}</p>
+                                
+                                <div class="mt-3">
+                                    <p class="text-sm font-semibold mb-2">主要班次：</p>
+                                    <div class="flex flex-wrap gap-2">
+                                        ${route.schedule.filter((_, index) => index % 4 === 0).slice(0, 6).map(time => `
+                                            <span class="px-2 py-1 bg-white bg-opacity-20 rounded-full text-xs">${time}</span>
+                                        `).join('')}
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+            `;
+        }
+
+        // 生成快递HTML
+        function generateExpressHTML(expressData) {
+            return `
+                <div class="space-y-4">
+                    <h4 class="font-bold text-lg">📦 快递点信息</h4>
+                    ${expressData.map(point => `
+                        <div class="info-card">
+                            <h5 class="font-bold text-lg mb-2">${point.name}</h5>
+                            <p class="text-sm opacity-90">📍 ${point.location}</p>
+                            <p class="text-sm opacity-90">⏰ ${point.hours}</p>
+                            <div class="mt-2">
+                                <p class="text-sm font-semibold mb-1">支持快递：</p>
+                                <div class="flex flex-wrap gap-1">
+                                    ${point.companies.map(company => `
+                                        <span class="px-2 py-1 bg-white bg-opacity-20 rounded text-xs">${company}</span>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        // 生成活动HTML
+        function generateActivityHTML(activityData) {
+            return `
+                <div class="space-y-4">
+                    <h4 class="font-bold text-lg">🎯 校园活动</h4>
+                    ${activityData.map(activity => `
+                        <div class="info-card">
+                            <h5 class="font-bold text-lg mb-2">${activity.title}</h5>
+                            <p class="text-sm opacity-90">⏰ ${activity.time}</p>
+                            <p class="text-sm opacity-90">📍 ${activity.location}</p>
+                            <p class="text-sm opacity-90 mt-2">${activity.description}</p>
+                            <div class="mt-2">
+                                <span class="px-2 py-1 bg-white bg-opacity-20 rounded-full text-xs">${activity.type}</span>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        // 生成位置信息HTML
+        function generateLocationHTML(locationData) {
+            return `
+                <div class="space-y-4">
+                    <h4 class="font-bold text-lg">📍 位置信息</h4>
+                    <div class="info-card">
+                        <h5 class="font-bold text-lg mb-2">${locationData.building}</h5>
+                        <p class="text-sm opacity-90">${locationData.address}</p>
+                        <p class="text-sm opacity-90">🚶 步行约${locationData.walkTime}分钟</p>
+                        <div class="mt-3 p-3 bg-white bg-opacity-20 rounded-lg">
+                            <p class="text-sm font-semibold mb-1">🧭 导航指引：</p>
+                            <p class="text-sm">${locationData.directions}</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // 生成倒计时HTML
+        function generateCountdownHTML(countdownData) {
+            return `
+                <div class="countdown-timer">
+                    <i class="fas fa-clock"></i>
+                    <span>${countdownData.text}</span>
+                </div>
+            `;
+        }
+
+        /**
+         * 意图识别函数 - 基于关键词匹配识别用户意图
+         * 功能扩展：支持多种校园服务问题的识别
+         *
+         * 支持的意图类型：
+         * - course: 课程相关
+         * - canteen/canteen_menu: 食堂和菜单相关
+         * - library/library_hours: 图书馆相关
+         * - shuttle/shuttle_schedule: 校车相关
+         * - express/express_location: 快递相关
+         * - homework: 作业查询
+         * - classroom: 教室位置
+         * - gym: 体育馆
+         * - hospital: 校医院
+         * - print: 打印服务
+         *
+         * @param {string} message - 用户消息
+         * @returns {string} 识别出的意图类型
+         */
+        function recognizeIntent(message) {
+            const lowerMessage = message.toLowerCase();
+            
+            for (const [intent, keywords] of Object.entries(intentKeywords)) {
+                for (const keyword of keywords) {
+                    if (lowerMessage.includes(keyword)) {
+                        return intent;
+                    }
+                }
+            }
+            
+            return 'unknown';
+        }
+
+        // 上下文理解 - 扩展版（AI生成部分）
+        function understandContext(message, intent) {
+            const lastContext = conversationContext[conversationContext.length - 2];
+            
+            if (lastContext && lastContext.type === 'ai') {
+                // 检查是否是追问
+                if (intent === 'time' && (lastContext.content.includes('图书馆') || lastContext.content.includes('library'))) {
+                    return 'library_hours';
+                }
+                if (intent === 'time' && (lastContext.content.includes('课程') || lastContext.content.includes('course'))) {
+                    return 'course_time';
+                }
+                if (intent === 'location' && (lastContext.content.includes('课程') || lastContext.content.includes('course'))) {
+                    return 'course_location';
+                }
+                if (intent === 'location' && (lastContext.content.includes('快递') || lastContext.content.includes('express'))) {
+                    return 'express_location';
+                }
+            }
+            
+            // 特定问题直接匹配（AI生成的智能匹配逻辑）
+            if (message.includes('今天有什么菜') || message.includes('今日菜单')) {
+                return 'canteen_menu';
+            }
+            if (message.includes('图书馆什么时候开门') || message.includes('图书馆开放时间')) {
+                return 'library_hours';
+            }
+            if (message.includes('校车几点发车') || message.includes('校车时刻表')) {
+                return 'shuttle_schedule';
+            }
+            if (message.includes('快递站在哪里') || message.includes('快递点位置') || message.includes('取件码')) {
+                return 'express_location';
+            }
+            if (message.includes('高数作业') || message.includes('作业什么时候交')) {
+                return 'homework';
+            }
+            if (message.includes('计算机课') && (message.includes('教室') || message.includes('位置'))) {
+                return 'classroom';
+            }
+            if (message.includes('怎么借书') || message.includes('借书流程')) {
+                return 'borrowing_process';
+            }
+            if (message.includes('体育馆开放时间') || message.includes('体育馆时间')) {
+                return 'gym_hours';
+            }
+            if (message.includes('校医院电话') || message.includes('医院号码')) {
+                return 'hospital_phone';
+            }
+            if (message.includes('哪里可以打印') || message.includes('打印点')) {
+                return 'print_location';
+            }
+            
+            return intent;
+        }
+
+        // ========== AI核心响应逻辑（功能扩展的核心部分）==========
+        
+        /**
+         * 生成AI响应 - 智能问答系统的核心函数
+         * 功能：
+         * 1. 意图识别：识别用户问题的类型
+         * 2. 上下文理解：基于对话历史理解深层意图
+         * 3. 响应生成：匹配合适的回答或数据
+         *
+         * @param {string} userMessage - 用户输入的消息
+         * @returns {void} 直接调用addMessage显示响应
+         */
+        function generateAIResponse(userMessage) {
+            const intent = recognizeIntent(userMessage);  // 识别用户意图
+            const context = understandContext(userMessage, intent);  // 理解上下文
+            
+            let response = '';
+            let extraData = null;
+            
+            switch(context) {
+                // 📚 课程相关查询
+                case 'course':
+                case 'course_location':
+                case 'course_time':
+                    const today = new Date().getDay();
+                    const dayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+                    const todayName = dayNames[today];
+                    const todayCourses = campusData.courses[todayName] || [];
+                    
+                    if (context === 'course_location' && todayCourses.length > 0) {
+                        const locationData = {
+                            building: todayCourses[0].location,
+                            address: '校园内具体教学楼',
+                            walkTime: '8',
+                            directions: `从主校门出发，前往${todayCourses[0].location}，建议提前10分钟到达。`
+                        };
+                        response = `下一节课的位置信息：`;
+                        extraData = { type: 'location', data: locationData };
+                    } else if (context === 'course_time' && todayCourses.length > 0) {
+                        response = `今天的课程时间安排：\n\n${todayCourses.map(course => `• ${course.name}: ${course.time}`).join('\n')}`;
+                    } else {
+                        response = '根据您的课程表，今天的安排如下：';
+                        extraData = { type: 'schedule', data: todayCourses };
+                    }
+                    break;
+                    
+                case 'canteen':
+                    response = '校园食堂信息：';
+                    extraData = { type: 'canteen', data: campusData.canteens };
+                    break;
+                    
+                case 'library':
+                case 'library_time':
+                    if (context === 'library_time') {
+                        response = `图书馆开放时间：${campusData.library.hours}\n\n建议您在开放时间内前往，目前空位充足。`;
+                    } else {
+                        response = '图书馆实时信息：';
+                        extraData = { type: 'library', data: campusData.library };
+                    }
+                    break;
+                    
+                case 'shuttle':
+                    response = '校车时刻表信息：';
+                    extraData = { type: 'shuttle', data: campusData.shuttle.routes };
+                    break;
+                    
+                case 'express':
+                    response = '校园快递点信息：';
+                    extraData = { type: 'express', data: campusData.express.points };
+                    break;
+                    
+                case 'activity':
+                    response = '近期校园活动：';
+                    extraData = { type: 'activity', data: campusData.activities };
+                    break;
+                
+                // 🍽️ 食堂今日菜单查询（AI生成部分）
+                case 'canteen_menu':
+                    const menuResponse = generateTodayMenu();
+                    response = menuResponse.text;
+                    extraData = menuResponse.extraData;
+                    break;
+                
+                // 📚 图书馆开放时间（AI生成部分）
+                case 'library_hours':
+                    response = `## 📚 图书馆开放时间\n\n**开放时间**：${campusData.libraryInfo.hours}\n\n**联系方式**：${campusData.libraryInfo.contact}\n\n**服务项目**：${campusData.libraryInfo.services.join('、')}\n\n**借阅规则**：${campusData.libraryInfo.rules}`;
+                    break;
+                
+                // 🚌 校车时刻表查询增强
+                case 'shuttle_schedule':
+                    const scheduleResponse = generateDetailedSchedule();
+                    response = '## 🚌 校车时刻表详情\n\n' + scheduleResponse;
+                    break;
+                
+                // 📦 快递站位置和取件码（AI生成部分）
+                case 'express_location':
+                    response = `## 📦 快递站位置信息\n\n${campusData.express.points.map(point => `### ${point.name}\n📍 **位置**：${point.location}\n⏰ **营业时间**：${point.hours}\n🚚 **支持快递**：${point.companies.join('、')}\n\n`).join('---\n\n')}\n**取件码提示**：取件码会通过短信发送，请携带校园卡领取。`;
+                    break;
+                
+                // 📝 作业查询（AI生成部分）
+                case 'homework':
+                    response = generateHomeworkInfo();
+                    break;
+                
+                // 🏫 教室位置查询（AI生成部分）
+                case 'classroom':
+                    const classroomInfo = generateClassroomInfo();
+                    response = classroomInfo.text;
+                    break;
+                
+                // 📚 借书流程（AI生成部分）
+                case 'borrowing_process':
+                    response = `## 📖 借书流程\n\n${campusData.borrowingProcess.map((step, index) => `${index + 1}. ${step}`).join('\n\n')}\n\n**注意事项**：\n• 请爱护书籍，不得涂画\n• 按期归还，逾期每天罚款0.5元\n• 书籍遗失需照价赔偿`;
+                    break;
+                
+                // 🏟️ 体育馆开放时间（AI生成部分）
+                case 'gym_hours':
+                    response = `## 🏟️ 体育馆信息\n\n**开放时间**：${campusData.gym.hours}\n\n**设施**：${campusData.gym.facilities.join('、')}\n\n**联系电话**：${campusData.gym.contact}\n\n**使用规则**：${campusData.gym.rules}`;
+                    break;
+                
+                // 🏥 校医院信息（AI生成部分）
+                case 'hospital_phone':
+                    response = `## 🏥 校医院信息\n\n**联系电话**：📞 ${campusData.hospital.phone}\n\n**位置**：${campusData.hospital.location}\n\n**服务时间**：${campusData.hospital.hours}\n\n**服务项目**：${campusData.hospital.services.join('、')}`;
+                    break;
+                
+                // 🖨️ 打印点查询（AI生成部分）
+                case 'print_location':
+                    response = `## 🖨️ 校园打印点\n\n${campusData.printStations.map(station => `### ${station.name}\n📍 **位置**：${station.location}\n⏰ **开放时间**：${station.hours}\n💰 **价格**：${station.price}\n\n`).join('---\n\n')}`;
+                    break;
+                    
+                case 'reminder':
+                    response = '我来帮您设置提醒。请问您需要设置什么内容的提醒？\n\n您可以告诉我：\n• 提醒内容（如：上课、会议等）\n• 提醒时间\n\n或者直接说"设置上课提醒"，我会为您设置下一节课的提醒。';
+                    setTimeout(() => {
+                        document.getElementById('reminderModal').style.display = 'flex';
+                    }, 1000);
+                    break;
+                    
+                case 'location':
+                    response = '请告诉我您要查找哪个具体位置？\n\n例如：\n• 图书馆在哪里\n• 理科楼怎么走\n• 食堂位置\n\n我可以为您提供详细的导航指引。';
+                    break;
+                    
+                default:
+                    const responses = [
+                        '我理解您的问题。作为校园AI助手，我可以帮您查询课程表、校园位置、食堂信息、图书馆空位、校车时刻等。请问需要什么具体帮助？',
+                        '感谢您的提问！我可以为您提供全方位的校园信息服务，包括课程安排、地点导航、提醒设置、食堂推荐等功能。您想了解哪个方面？',
+                        '我正在不断学习中，目前可以为您提供丰富的校园服务。您可以尝试询问：\n• "今天有什么课"\n• "食堂推荐菜品"\n• "图书馆空位查询"\n• "设置上课提醒"\n\n有什么需要帮助的吗？'
+                    ];
+                    
+                    response = responses[Math.floor(Math.random() * responses.length)];
+            }
+            
+            // 添加AI回复到上下文
+            conversationContext.push({ type: 'ai', content: response, timestamp: Date.now() });
+            
+            // 限制上下文长度
+            if (conversationContext.length > 10) {
+                conversationContext = conversationContext.slice(-8);
+            }
+            
+            addMessage('ai', response, extraData);
+        }
+
+        // 显示加载状态
+        function showLoadingState() {
+            isLoading = true;
+            const sendButton = document.getElementById('sendButton');
+            sendButton.disabled = true;
+            sendButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+            
+            // 添加加载消息
+            const container = document.getElementById('messageContainer');
+            const loadingDiv = document.createElement('div');
+            loadingDiv.id = 'loadingMessage';
+            loadingDiv.className = 'flex items-start space-x-3 slide-in-up';
+            loadingDiv.innerHTML = `
+                <div class="w-10 h-10 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center flex-shrink-0">
+                    <i class="fas fa-robot text-white"></i>
+                </div>
+                <div class="message-bubble ai-message">
+                    <div class="typing-indicator">
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                    </div>
+                </div>
+            `;
+            container.appendChild(loadingDiv);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        // 隐藏加载状态
+        function hideLoadingState() {
+            isLoading = false;
+            const sendButton = document.getElementById('sendButton');
+            sendButton.disabled = false;
+            sendButton.innerHTML = '<i class="fas fa-paper-plane"></i>';
+            
+            // 移除加载消息
+            const loadingMessage = document.getElementById('loadingMessage');
+            if (loadingMessage) {
+                loadingMessage.remove();
+            }
+        }
+
+        // 主题切换
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            
+            const themeIcon = document.getElementById('themeIcon');
+            if (newTheme === 'dark') {
+                themeIcon.className = 'fas fa-sun text-yellow-500';
+            } else {
+                themeIcon.className = 'fas fa-moon text-indigo-500';
+            }
+        }
+
+        // 切换课程表
+        function toggleSchedule() {
+            const modal = document.getElementById('scheduleModal');
+            modal.style.display = 'flex';
+            renderSchedule();
+        }
+
+        // 关闭课程表
+        function closeScheduleModal() {
+            document.getElementById('scheduleModal').style.display = 'none';
+        }
+
+        // 切换课程表视图
+        function switchScheduleView(view) {
+            currentScheduleView = view;
+            
+            const dayBtn = document.getElementById('dayViewBtn');
+            const weekBtn = document.getElementById('weekViewBtn');
+            
+            if (view === 'day') {
+                dayBtn.className = 'px-3 py-1 bg-blue-500 text-white rounded-lg text-sm';
+                weekBtn.className = 'px-3 py-1 bg-gray-300 text-gray-700 rounded-lg text-sm';
+            } else {
+                weekBtn.className = 'px-3 py-1 bg-blue-500 text-white rounded-lg text-sm';
+                dayBtn.className = 'px-3 py-1 bg-gray-300 text-gray-700 rounded-lg text-sm';
+            }
+            
+            renderSchedule();
+        }
+
+        // 渲染课程表
+        function renderSchedule() {
+            const content = document.getElementById('scheduleContent');
+            
+            if (currentScheduleView === 'day') {
+                const today = new Date().getDay();
+                const dayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+                const dayLabels = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+                const todayName = dayNames[today];
+                const todayLabel = dayLabels[today];
+                const todayCourses = campusData.courses[todayName] || [];
+                
+                content.innerHTML = `
+                    <div class="mb-4">
+                        <h3 class="text-lg font-bold">${todayLabel}课程</h3>
+                    </div>
+                    ${todayCourses.length > 0 ? todayCourses.map(course => `
+                        <div class="course-card mb-3">
+                            <div class="flex items-start justify-between relative z-10">
+                                <div class="flex-1">
+                                    <h5 class="font-bold text-lg">${course.name}</h5>
+                                    <p class="text-sm opacity-90 mt-1">📍 ${course.location}</p>
+                                    <p class="text-sm opacity-90">⏰ ${course.time}</p>
+                                    <p class="text-sm opacity-90">👨‍🏫 ${course.teacher}</p>
+                                </div>
+                                <span class="px-3 py-1 text-xs rounded-full bg-white bg-opacity-20 backdrop-blur">
+                                    ${course.status}
+                                </span>
+                            </div>
+                        </div>
+                    `).join('') : '<p class="text-gray-500 text-center py-8">今天没有课程安排</p>'}
+                `;
+            } else {
+                const dayLabels = ['周一', '周二', '周三', '周四', '周五'];
+                const dayNames = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'];
+                
+                content.innerHTML = `
+                    <div class="overflow-x-auto">
+                        <table class="w-full border-collapse">
+                            <thead>
+                                <tr>
+                                    <th class="border border-gray-300 p-2 bg-gray-100">时间</th>
+                                    ${dayLabels.map(day => `<th class="border border-gray-300 p-2 bg-gray-100">${day}</th>`).join('')}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="border border-gray-300 p-2 font-semibold">08:00-09:40</td>
+                                    ${dayNames.map(day => {
+                                        const course = campusData.courses[day]?.find(c => c.time.includes('08:00'));
+                                        return `<td class="border border-gray-300 p-2">${course ? `${course.name}<br><small>${course.location}</small>` : ''}</td>`;
+                                    }).join('')}
+                                </tr>
+                                <tr>
+                                    <td class="border border-gray-300 p-2 font-semibold">10:00-11:40</td>
+                                    ${dayNames.map(day => {
+                                        const course = campusData.courses[day]?.find(c => c.time.includes('10:00'));
+                                        return `<td class="border border-gray-300 p-2">${course ? `${course.name}<br><small>${course.location}</small>` : ''}</td>`;
+                                    }).join('')}
+                                </tr>
+                                <tr>
+                                    <td class="border border-gray-300 p-2 font-semibold">14:00-15:40</td>
+                                    ${dayNames.map(day => {
+                                        const course = campusData.courses[day]?.find(c => c.time.includes('14:00'));
+                                        return `<td class="border border-gray-300 p-2">${course ? `${course.name}<br><small>${course.location}</small>` : ''}</td>`;
+                                    }).join('')}
+                                </tr>
+                                <tr>
+                                    <td class="border border-gray-300 p-2 font-semibold">15:00-16:40</td>
+                                    ${dayNames.map(day => {
+                                        const course = campusData.courses[day]?.find(c => c.time.includes('15:00'));
+                                        return `<td class="border border-gray-300 p-2">${course ? `${course.name}<br><small>${course.location}</small>` : ''}</td>`;
+                                    }).join('')}
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+            }
+        }
+
+        // 紧急求助
+        function emergencyHelp() {
+            addMessage('ai', `
+## 🆘 紧急求助
+
+如果您遇到紧急情况，请立即联系：
+
+**校园安保处**：📞 123-4567-8901  
+**校医院**：📞 123-4567-8902  
+**心理咨询中心**：📞 123-4567-8903  
+
+**24小时紧急热线**：📞 123-4567-9999
+
+---
+
+### 常见紧急情况处理：
+
+**🚑 医疗急救**
+- 校医院：行政楼北侧，24小时值班
+- 距离最近的医院：市中心医院（车程15分钟）
+
+**🔥 火灾报警**
+- 拨打校内消防电话：123-4567-8888
+- 就近使用消防器材，按疏散路线撤离
+
+**👮‍♂️ 安全问题**
+- 保卫处：主校门东侧，24小时值班
+- 各教学楼均有紧急报警按钮
+
+**🧠 心理支持**
+- 心理咨询中心：学生活动中心3楼
+- 24小时心理热线：400-161-9995
+
+请保持冷静，您的安全是最重要的！
+            `);
+        }
+
+        // 显示设置
+        function showSettings() {
+            document.getElementById('settingsModal').style.display = 'flex';
+            document.getElementById('userNickname').value = userSettings.nickname;
+            document.getElementById('classReminder').checked = userSettings.notifications.class;
+            document.getElementById('activityReminder').checked = userSettings.notifications.activity;
+        }
+
+        // 关闭设置
+        function closeSettingsModal() {
+            document.getElementById('settingsModal').style.display = 'none';
+        }
+
+        // 保存设置
+        function saveSettings() {
+            const nickname = document.getElementById('userNickname').value.trim();
+            const classReminder = document.getElementById('classReminder').checked;
+            const activityReminder = document.getElementById('activityReminder').checked;
+            
+            if (nickname) {
+                userSettings.nickname = nickname;
+                localStorage.setItem('userNickname', nickname);
+                updateUserDisplay();
+            }
+            
+            userSettings.notifications.class = classReminder;
+            userSettings.notifications.activity = activityReminder;
+            
+            localStorage.setItem('userSettings', JSON.stringify(userSettings));
+            
+            closeSettingsModal();
+            addMessage('ai', '✅ 设置已保存成功！');
+        }
+
+        // 更新用户显示
+        function updateUserDisplay() {
+            document.getElementById('userName').textContent = userSettings.nickname;
+            document.getElementById('userAvatar').textContent = userSettings.nickname.charAt(0);
+        }
+
+        // 加载用户设置
+        function loadUserSettings() {
+            const saved = localStorage.getItem('userSettings');
+            if (saved) {
+                userSettings = { ...userSettings, ...JSON.parse(saved) };
+                updateUserDisplay();
+            }
+        }
+
+        // 提醒相关功能
+        function closeReminderModal() {
+            document.getElementById('reminderModal').style.display = 'none';
+        }
+
+        function saveReminder() {
+            const content = document.getElementById('reminderContent').value.trim();
+            const time = document.getElementById('reminderTime').value;
+            
+            if (!content || !time) {
+                addMessage('ai', '⚠️ 请填写完整的提醒内容和时间。');
+                return;
+            }
+            
+            // 保存提醒到本地存储
+            const reminders = JSON.parse(localStorage.getItem('reminders') || '[]');
+            reminders.push({
+                id: Date.now(),
+                content,
+                time,
+                created: new Date().toISOString()
+            });
+            localStorage.setItem('reminders', JSON.stringify(reminders));
+            
+            // 关闭模态框
+            closeReminderModal();
+            
+            // 清空表单
+            document.getElementById('reminderContent').value = '';
+            setDefaultDateTime();
+            
+            // 确认消息
+            const reminderTime = new Date(time);
+            const timeString = reminderTime.toLocaleString('zh-CN', {
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            
+            addMessage('ai', `✅ 提醒已设置成功！\n\n**提醒内容**：${content}\n**提醒时间**：${timeString}\n\n我会在指定时间提醒您，请注意查收通知。`);
+        }
+
+        // 设置默认提醒时间为当前时间+1小时
+        function setDefaultDateTime() {
+            const now = new Date();
+            now.setHours(now.getHours() + 1);
+            const dateTimeLocal = now.toISOString().slice(0, 16);
+            document.getElementById('reminderTime').value = dateTimeLocal;
+        }
+
+        // ========== AI生成的辅助函数部分 ==========
+        
+        // 生成今日菜单信息（AI生成）
+        function generateTodayMenu() {
+            const now = new Date();
+            const hour = now.getHours();
+            let mealType = hour < 11 ? '早餐' : hour < 14 ? '午餐' : hour < 17 ? '下午茶' : '晚餐';
+            
+            let menuText = `## 🍽️ 今日菜单\n\n**当前时间**：${mealType}\n\n`;
+            
+            if (mealType === '早餐') {
+                menuText += `### 第一食堂\n${campusData.todayMenu.first.filter(item => item.tag === '早餐').map(item => `• ${item.name} - ¥${item.price.toFixed(2)}`).join('\n')}\n\n`;
+            } else {
+                menuText += `### 第一食堂\n${campusData.todayMenu.first.filter(item => item.tag === '午餐').map(item => `• ${item.name} - ¥${item.price.toFixed(2)}`).join('\n')}\n\n`;
+                menuText += `### 第二食堂\n${campusData.todayMenu.second.map(item => `• ${item.name} - ¥${item.price.toFixed(2)}`).join('\n')}\n\n`;
+                menuText += `### 第三食堂\n${campusData.todayMenu.third.map(item => `• ${item.name} - ¥${item.price.toFixed(2)}`).join('\n')}\n\n`;
+            }
+            
+            menuText += `💡 **温馨提示**：食堂营业时间和具体菜品可能会有调整，建议以实际为准。`;
+            
+            return {
+                text: menuText,
+                extraData: { type: 'menu', data: campusData.todayMenu }
+            };
+        }
+        
+        // 生成详细校车时刻表（AI生成）
+        function generateDetailedSchedule() {
+            const now = new Date();
+            const currentTime = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+            
+            let scheduleText = '';
+            
+            campusData.shuttle.routes.forEach(route => {
+                const nextBus = route.schedule.find(time => time > currentTime) || route.schedule[0];
+                scheduleText += `### ${route.name}\n`;
+                scheduleText += `- **车程**：${route.duration}\n`;
+                scheduleText += `- **下一班**：${nextBus}\n`;
+                scheduleText += `- **主要班次**：${route.schedule.filter((_, index) => index % 4 === 0).slice(0, 6).join(', ')}\n\n`;
+            });
+            
+            scheduleText += `**当前时间**：${currentTime}\n\n`;
+            scheduleText += `📢 **提醒**：校车可能因天气、路况等因素延误，请提前候车！`;
+            
+            return scheduleText;
+        }
+        
+        // 生成作业信息（AI生成）
+        function generateHomeworkInfo() {
+            const homeworkList = Object.entries(campusData.homework);
+            
+            if (homeworkList.length === 0) {
+                return '✅ 太棒了！目前没有待提交的作业！';
+            }
+            
+            let text = `## 📝 作业提醒\n\n`;
+            const urgent = [];
+            const normal = [];
+            
+            homeworkList.forEach(([course, info]) => {
+                const hasUrgent = info.deadline.includes('本周') || info.deadline.includes('明天');
+                const item = `### ${course}\n⏰ **截止时间**：${info.deadline}\n📋 **作业内容**：${info.content}\n📊 **状态**：${info.status}\n\n`;
+                
+                if (hasUrgent) {
+                    urgent.push(item);
+                } else {
+                    normal.push(item);
+                }
+            });
+            
+            if (urgent.length > 0) {
+                text += `⚠️ **紧急提醒**\n\n${urgent.join('')}`;
+            }
+            
+            if (normal.length > 0) {
+                text += `📌 **其他作业**\n\n${normal.join('')}`;
+            }
+            
+            return text;
+        }
+        
+        // 生成教室信息（AI生成）
+        function generateClassroomInfo() {
+            // 查找计算机课的教室
+            const computerClass = campusData.courses.monday.find(c => c.name.includes('计算机'));
+            
+            if (!computerClass) {
+                return {
+                    text: '抱歉，暂未找到计算机课程的具体教室信息。',
+                    extraData: null
+                };
+            }
+            
+            const classroom = campusData.classrooms[computerClass.location];
+            
+            if (!classroom) {
+                return {
+                    text: `## 🏫 计算机课教室位置\n\n📍 **教室**：${computerClass.location}\n⏰ **上课时间**：${computerClass.time}\n👨‍🏫 **任课教师**：${computerClass.teacher}`,
+                    extraData: null
+                };
+            }
+            
+            let text = `## 🏫 计算机课教室信息\n\n`;
+            text += `📍 **教室位置**：${computerClass.location}\n`;
+            text += `🏢 **所在楼层**：${classroom.floor}楼 ${classroom.building}\n`;
+            text += `⏰ **上课时间**：${computerClass.time}\n`;
+            text += `👨‍🏫 **任课教师**：${computerClass.teacher}\n`;
+            text += `👥 **座位容量**：${classroom.capacity}人\n`;
+            text += `🎯 **教学设备**：${classroom.equipment.join('、')}\n\n`;
+            text += `🧭 **导航建议**：建议提前10分钟到达教室，${classroom.building}位于校园${classroom.floor > 3 ? '北部' : '南部'}区域。`;
+            
+            return {
+                text: text,
+                extraData: { type: 'location', data: { building: computerClass.location } }
+            };
+        }
+        
+        // ========== 原有工具函数 ==========
+        
+        // 工具函数
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function getCurrentTime() {
+            return new Date().toLocaleTimeString('zh-CN', {
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        // 本地存储功能
+        function saveChatHistory() {
+            try {
+                localStorage.setItem('chatHistory', JSON.stringify(messageHistory));
+            } catch (e) {
+                console.error('保存聊天记录失败:', e);
+            }
+        }
+
+        function loadChatHistory() {
+            try {
+                const saved = localStorage.getItem('chatHistory');
+                if (saved) {
+                    messageHistory = JSON.parse(saved);
+                }
+            } catch (e) {
+                console.error('加载聊天记录失败:', e);
+            }
+        }
+
+        function clearChatHistory() {
+            if (confirm('确定要清空所有聊天记录吗？')) {
+                messageHistory = [];
+                conversationContext = [];
+                localStorage.removeItem('chatHistory');
+                
+                // 保留欢迎消息，清空其他消息
+                const container = document.getElementById('messageContainer');
+                const welcomeMessage = container.firstElementChild;
+                container.innerHTML = '';
+                if (welcomeMessage) {
+                    container.appendChild(welcomeMessage);
+                }
+                
+                addMessage('ai', '聊天记录已清空。有什么可以帮助您的吗？');
+            }
+        }
+
+        // 响应式处理
+        window.addEventListener('resize', function() {
+            const container = document.getElementById('messageContainer');
+            container.scrollTop = container.scrollHeight;
+        });
+
+        // 页面卸载时保存数据
+        window.addEventListener('beforeunload', function() {
+            saveChatHistory();
+        });
+
+        // 登录相关变量
+        let currentLoginType = 'password';
+        let rememberDuration = 7;
+        let loginAttempts = 0;
+
+        // 检查是否已登录
+        function checkLoginStatus() {
+            const token = localStorage.getItem('authToken');
+            const guestMode = localStorage.getItem('guestMode');
+            
+            if (token || guestMode) {
+                showMainApp();
+                return true;
+            }
+            return false;
+        }
+
+        // 切换登录类型
+        function switchLoginType(type) {
+            currentLoginType = type;
+            
+            // 更新选项卡状态
+            const options = document.querySelectorAll('.login-option');
+            options.forEach(option => option.classList.remove('active'));
+            event.target.closest('.login-option').classList.add('active');
+            
+            // 切换表单显示
+            document.getElementById('passwordLogin').style.display = type === 'password' ? 'block' : 'none';
+            document.getElementById('qrLogin').style.display = type === 'qr' ? 'block' : 'none';
+            document.getElementById('guestLogin').style.display = type === 'guest' ? 'block' : 'none';
+        }
+
+        // 验证学号
+        function validateStudentId(input) {
+            const value = input.value;
+            const hint = document.getElementById('studentIdHint');
+            
+            if (value.length === 0) {
+                input.classList.remove('error', 'success');
+                hint.className = 'validation-hint info';
+                hint.innerHTML = '<i class="fas fa-info-circle"></i><span>请输入8位数字学号</span>';
+                return false;
+            }
+            
+            if (value.length !== 8) {
+                input.classList.add('error');
+                input.classList.remove('success');
+                hint.className = 'validation-hint error';
+                hint.innerHTML = '<i class="fas fa-exclamation-circle"></i><span>学号必须是8位数字</span>';
+                return false;
+            }
+            
+            if (!/^\d{8}$/.test(value)) {
+                input.classList.add('error');
+                input.classList.remove('success');
+                hint.className = 'validation-hint error';
+                hint.innerHTML = '<i class="fas fa-exclamation-circle"></i><span>学号只能包含数字</span>';
+                return false;
+            }
+            
+            input.classList.remove('error');
+            input.classList.add('success');
+            hint.className = 'validation-hint success';
+            hint.innerHTML = '<i class="fas fa-check-circle"></i><span>学号格式正确</span>';
+            return true;
+        }
+
+        // 验证密码
+        function validatePassword(input) {
+            const value = input.value;
+            const hint = document.getElementById('passwordHint');
+            const strengthBar = document.getElementById('passwordStrengthBar');
+            
+            if (value.length === 0) {
+                input.classList.remove('error', 'success');
+                hint.className = 'validation-hint info';
+                hint.innerHTML = '<i class="fas fa-info-circle"></i><span>密码长度至少6位</span>';
+                strengthBar.className = 'password-strength-bar';
+                return false;
+            }
+            
+            let strength = 0;
+            let strengthText = '';
+            let strengthClass = '';
+            
+            if (value.length >= 6) strength++;
+            if (value.length >= 10) strength++;
+            if (/[a-z]/.test(value) && /[A-Z]/.test(value)) strength++;
+            if (/\d/.test(value)) strength++;
+            if (/[!@#$%^&*(),.?":{}|<>]/.test(value)) strength++;
+            
+            if (strength <= 2) {
+                strengthText = '密码强度：弱';
+                strengthClass = 'weak';
+            } else if (strength <= 3) {
+                strengthText = '密码强度：中等';
+                strengthClass = 'medium';
+            } else {
+                strengthText = '密码强度：强';
+                strengthClass = 'strong';
+            }
+            
+            if (value.length < 6) {
+                input.classList.add('error');
+                input.classList.remove('success');
+                hint.className = 'validation-hint error';
+                hint.innerHTML = '<i class="fas fa-exclamation-circle"></i><span>密码长度至少6位</span>';
+                strengthBar.className = 'password-strength-bar';
+                return false;
+            }
+            
+            input.classList.remove('error');
+            input.classList.add('success');
+            hint.className = 'validation-hint success';
+            hint.innerHTML = `<i class="fas fa-check-circle"></i><span>${strengthText}</span>`;
+            strengthBar.className = `password-strength-bar ${strengthClass}`;
+            return true;
+        }
+
+        // 切换密码显示
+        function togglePassword() {
+            const passwordInput = document.getElementById('password');
+            const toggleIcon = document.getElementById('passwordToggle');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleIcon.className = 'fas fa-eye-slash';
+            } else {
+                passwordInput.type = 'password';
+                toggleIcon.className = 'fas fa-eye';
+            }
+        }
+
+        // 设置记住时长
+        function setRememberDuration(days) {
+            rememberDuration = days;
+            const buttons = document.querySelectorAll('.duration-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+
+        // 处理登录
+        async function handleLogin(event) {
+            event.preventDefault();
+            
+            const studentId = document.getElementById('studentId').value;
+            const password = document.getElementById('password').value;
+            const rememberMe = document.getElementById('rememberMe').checked;
+            const agreement = document.getElementById('agreement').checked;
+            
+            // 验证输入
+            if (!validateStudentId(document.getElementById('studentId')) ||
+                !validatePassword(document.getElementById('password'))) {
+                return;
+            }
+            
+            if (!agreement) {
+                showError('请先阅读并同意用户协议');
+                return;
+            }
+            
+            // 显示加载状态
+            const loginBtn = document.getElementById('loginBtn');
+            loginBtn.classList.add('loading');
+            
+            // 模拟登录请求
+            try {
+                await simulateLogin(studentId, password);
+                
+                // 登录成功
+                if (rememberMe) {
+                    const expiry = new Date();
+                    expiry.setDate(expiry.getDate() + rememberDuration);
+                    localStorage.setItem('loginExpiry', expiry.toISOString());
+                }
+                
+                localStorage.setItem('authToken', 'mock_token_' + Date.now());
+                localStorage.setItem('studentId', studentId);
+                
+                // 显示成功动画
+                showLoginSuccess();
+                
+                setTimeout(() => {
+                    showMainApp();
+                }, 1500);
+                
+            } catch (error) {
+                loginBtn.classList.remove('loading');
+                loginAttempts++;
+                
+                if (loginAttempts >= 3) {
+                    showError('登录失败次数过多，请稍后再试');
+                    setTimeout(() => {
+                        loginAttempts = 0;
+                    }, 30000);
+                } else {
+                    showError('学号或密码错误，请重试');
+                }
+            }
+        }
+
+        // 模拟登录请求
+        function simulateLogin(studentId, password) {
+            return new Promise((resolve, reject) => {
+                setTimeout(() => {
+                    // 模拟验证逻辑
+                    if (studentId === '20210001' && password === '123456') {
+                        resolve();
+                    } else if (studentId === '20210002' && password === 'password') {
+                        resolve();
+                    } else if (studentId === '20210003' && password === 'abc123') {
+                        resolve();
+                    } else {
+                        reject(new Error('Invalid credentials'));
+                    }
+                }, 1500);
+            });
+        }
+
+        // 显示登录成功动画
+        function showLoginSuccess() {
+            const loginBtn = document.getElementById('loginBtn');
+            loginBtn.innerHTML = '<i class="fas fa-check"></i> 登录成功';
+            loginBtn.style.background = 'linear-gradient(135deg, #2ecc71, #27ae60)';
+        }
+
+        // 显示错误信息
+        function showError(message) {
+            // 创建错误提示
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'fixed top-4 right-4 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 slide-in-right';
+            errorDiv.innerHTML = `
+                <div class="flex items-center">
+                    <i class="fas fa-exclamation-circle mr-2"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            document.body.appendChild(errorDiv);
+            
+            setTimeout(() => {
+                errorDiv.remove();
+            }, 3000);
+        }
+
+        // 忘记密码
+        function forgotPassword() {
+            const studentId = document.getElementById('studentId').value;
+            if (!studentId || !validateStudentId(document.getElementById('studentId'))) {
+                showError('请先输入正确的学号');
+                return;
+            }
+            
+            // 模拟密码重置
+            showSuccess('密码重置链接已发送到您的邮箱');
+        }
+
+        // 显示成功信息
+        function showSuccess(message) {
+            const successDiv = document.createElement('div');
+            successDiv.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 slide-in-right';
+            successDiv.innerHTML = `
+                <div class="flex items-center">
+                    <i class="fas fa-check-circle mr-2"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            document.body.appendChild(successDiv);
+            
+            setTimeout(() => {
+                successDiv.remove();
+            }, 3000);
+        }
+
+        // 游客体验
+        function guestExperience() {
+            localStorage.setItem('guestMode', 'true');
+            showMainApp();
+        }
+
+        // 显示用户协议
+        function showAgreement(type) {
+            event.preventDefault();
+            const title = type === 'privacy' ? '隐私政策' : '用户协议';
+            const content = type === 'privacy' ?
+                '我们重视您的隐私保护，所有数据都将得到妥善保管...' :
+                '使用本应用即表示您同意遵守相关服务条款...';
+            
+            alert(`${title}\n\n${content}`);
+        }
+
+        // 显示主应用
+        function showMainApp() {
+            const loginPage = document.getElementById('loginPage');
+            const mainApp = document.getElementById('mainApp');
+            
+            // 隐藏登录页面
+            loginPage.classList.add('hidden');
+            
+            // 显示主应用
+            setTimeout(() => {
+                loginPage.style.display = 'none';
+                mainApp.style.display = 'flex';
+                mainApp.classList.add('fade-transition');
+            }, 600);
+            
+            // 初始化主应用
+            if (typeof initializeApp === 'function') {
+                initializeApp();
+            }
+        }
+
+        // 监听记住我复选框
+        document.addEventListener('DOMContentLoaded', function() {
+            const rememberMeCheckbox = document.getElementById('rememberMe');
+            const rememberDurationDiv = document.getElementById('rememberDuration');
+            
+            if (rememberMeCheckbox) {
+                rememberMeCheckbox.addEventListener('change', function() {
+                    rememberDurationDiv.style.display = this.checked ? 'flex' : 'none';
+                });
+            }
+            
+            // 检查登录状态
+            if (!checkLoginStatus()) {
+                // 显示登录页面
+                document.getElementById('loginPage').style.display = 'grid';
+            }
+        });
+
+        // 检查登录过期
+        function checkLoginExpiry() {
+            const expiry = localStorage.getItem('loginExpiry');
+            if (expiry && new Date(expiry) < new Date()) {
+                localStorage.removeItem('authToken');
+                localStorage.removeItem('loginExpiry');
+                localStorage.removeItem('studentId');
+                return false;
+            }
+            return true;
+        }
+
+        // ========== 用户个人资料页面功能（AI生成部分）==========
+        
+        // 显示个人资料
+        function showProfile() {
+            const studentId = localStorage.getItem('studentId') || '20210001';
+            const user = campusData.users[studentId] || { name: '学生用户', major: '未设置', class: '未设置', phone: '未设置' };
+            
+            document.getElementById('profileAvatar').textContent = user.name.charAt(0);
+            document.getElementById('profileName').textContent = user.name;
+            document.getElementById('profileStudentId').textContent = studentId;
+            document.getElementById('profileMajor').textContent = user.major;
+            document.getElementById('profileClass').textContent = user.class;
+            document.getElementById('profilePhone').textContent = user.phone;
+            document.getElementById('editNickname').value = userSettings.nickname;
+            
+            // 计算登录天数（模拟）
+            const loginDate = localStorage.getItem('loginDate');
+            if (loginDate) {
+                const days = Math.floor((Date.now() - new Date(loginDate)) / (1000 * 60 * 60 * 24)) + 1;
+                document.getElementById('profileDays').textContent = days + '天';
+            } else {
+                document.getElementById('profileDays').textContent = '1天';
+            }
+            
+            document.getElementById('profileModal').style.display = 'flex';
+        }
+        
+        // 关闭个人资料模态框
+        function closeProfileModal() {
+            document.getElementById('profileModal').style.display = 'none';
+        }
+        
+        // 更新个人资料
+        function updateProfile() {
+            const newNickname = document.getElementById('editNickname').value.trim();
+            if (newNickname) {
+                userSettings.nickname = newNickname;
+                localStorage.setItem('nickname', newNickname);
+                updateUserDisplay();
+                
+                closeProfileModal();
+                addMessage('ai', `✅ 个人资料已更新！\n\n**昵称**：${newNickname}`);
+            } else {
+                showError('昵称不能为空');
+            }
+        }
+        
+        // ========== 退出登录功能（AI生成部分）==========
+        
+        // 退出登录
+        function logout() {
+            if (confirm('确定要退出登录吗？\n\n退出后将清除所有本地存储的数据。')) {
+                // 清除所有本地存储
+                localStorage.removeItem('authToken');
+                localStorage.removeItem('studentId');
+                localStorage.removeItem('loginExpiry');
+                localStorage.removeItem('guestMode');
+                localStorage.removeItem('loginDate');
+                
+                // 保留设置和聊天记录（可选）
+                // localStorage.removeItem('userSettings');
+                // localStorage.removeItem('chatHistory');
+                
+                // 隐藏主应用，显示登录页面
+                const mainApp = document.getElementById('mainApp');
+                const loginPage = document.getElementById('loginPage');
+                
+                mainApp.style.display = 'none';
+                loginPage.classList.remove('hidden');
+                loginPage.style.display = 'grid';
+                
+                // 重置表单
+                document.getElementById('studentId').value = '';
+                document.getElementById('password').value = '';
+                
+                showSuccess('已成功退出登录');
+            }
+        }
+        
+        // ========== 数据管理功能（AI生成部分）==========
+        
+        // 显示数据管理
+        function showDataManagement() {
+            // 更新聊天记录数量
+            document.getElementById('chatCount').textContent = messageHistory.length;
+            
+            // 渲染课程列表
+            renderCourseManagementList();
+            
+            // 渲染提醒列表
+            renderReminderList();
+            
+            // 计算存储空间
+            calculateStorage();
+            
+            document.getElementById('dataManagementModal').style.display = 'flex';
+        }
+        
+        // 关闭数据管理模态框
+        function closeDataManagementModal() {
+            document.getElementById('dataManagementModal').style.display = 'none';
+        }
+        
+        // 渲染课程管理列表
+        function renderCourseManagementList() {
+            const container = document.getElementById('courseManagementList');
+            const allCourses = Object.values(campusData.courses).flat();
+            
+            if (allCourses.length === 0) {
+                container.innerHTML = '<p class="text-sm text-gray-500 text-center">暂无课程</p>';
+                return;
+            }
+            
+            container.innerHTML = allCourses.slice(0, 5).map(course => `
+                <div class="flex items-center justify-between bg-white p-2 rounded-lg text-sm">
+                    <div class="flex-1">
+                        <p class="font-medium">${course.name}</p>
+                        <p class="text-gray-500 text-xs">${course.location} | ${course.time}</p>
+                    </div>
+                    <button onclick="deleteCourse('${course.name}')" class="text-red-500 hover:text-red-700 px-2">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            `).join('');
+        }
+        
+        // 显示添加课程表单
+        function showAddCourseForm() {
+            document.getElementById('addCourseForm').classList.remove('hidden');
+        }
+        
+        // 隐藏添加课程表单
+        function hideAddCourseForm() {
+            document.getElementById('addCourseForm').classList.add('hidden');
+            // 清空表单
+            document.getElementById('newCourseName').value = '';
+            document.getElementById('newCourseLocation').value = '';
+            document.getElementById('newCourseTime').value = '';
+            document.getElementById('newCourseTeacher').value = '';
+        }
+        
+        // 添加课程
+        function addCourse() {
+            const name = document.getElementById('newCourseName').value.trim();
+            const location = document.getElementById('newCourseLocation').value.trim();
+            const time = document.getElementById('newCourseTime').value.trim();
+            const teacher = document.getElementById('newCourseTeacher').value.trim();
+            
+            if (!name || !location || !time) {
+                showError('请填写完整的课程信息');
+                return;
+            }
+            
+            // 添加到周一课程（示例）
+            const newCourse = {
+                name,
+                location,
+                time,
+                teacher: teacher || '待定',
+                status: '即将开始'
+            };
+            
+            // 从localStorage获取自定义课程
+            const customCourses = JSON.parse(localStorage.getItem('customCourses') || '[]');
+            customCourses.push(newCourse);
+            localStorage.setItem('customCourses', JSON.stringify(customCourses));
+            
+            hideAddCourseForm();
+            renderCourseManagementList();
+            showSuccess('课程添加成功！');
+        }
+        
+        // 删除课程
+        function deleteCourse(courseName) {
+            if (confirm(`确定要删除课程"${courseName}"吗？`)) {
+                const customCourses = JSON.parse(localStorage.getItem('customCourses') || '[]');
+                const filtered = customCourses.filter(c => c.name !== courseName);
+                localStorage.setItem('customCourses', JSON.stringify(filtered));
+                
+                renderCourseManagementList();
+                showSuccess('课程删除成功！');
+            }
+        }
+        
+        // 渲染提醒列表
+        function renderReminderList() {
+            const container = document.getElementById('reminderList');
+            const reminders = JSON.parse(localStorage.getItem('reminders') || '[]');
+            
+            if (reminders.length === 0) {
+                container.innerHTML = '<p class="text-sm text-gray-500 text-center">暂无提醒</p>';
+                return;
+            }
+            
+            container.innerHTML = reminders.slice(0, 5).map(reminder => {
+                const reminderTime = new Date(reminder.time);
+                const timeString = reminderTime.toLocaleString('zh-CN', {
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+                
+                return `
+                    <div class="flex items-center justify-between bg-white p-2 rounded-lg text-sm">
+                        <div class="flex-1">
+                            <p class="font-medium">${reminder.content}</p>
+                            <p class="text-gray-500 text-xs">${timeString}</p>
+                        </div>
+                        <button onclick="deleteReminder(${reminder.id})" class="text-red-500 hover:text-red-700 px-2">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        // 删除提醒
+        function deleteReminder(id) {
+            const reminders = JSON.parse(localStorage.getItem('reminders') || '[]');
+            const filtered = reminders.filter(r => r.id !== id);
+            localStorage.setItem('reminders', JSON.stringify(filtered));
+            
+            renderReminderList();
+            showSuccess('提醒删除成功！');
+        }
+        
+        // 计算存储空间使用情况
+        function calculateStorage() {
+            let total = 0;
+            for (let key in localStorage) {
+                if (localStorage.hasOwnProperty(key)) {
+                    total += localStorage[key].length * 2; // 每个字符占2字节
+                }
+            }
+            
+            const usedMB = (total / 1024 / 1024).toFixed(2);
+            const percentage = Math.min(Math.round((total / (5 * 1024 * 1024)) * 100), 100);
+            
+            document.getElementById('storageUsed').textContent = `${usedMB}MB / ~5MB`;
+            document.getElementById('storageBar').style.width = percentage + '%';
+            
+            if (percentage > 80) {
+                document.getElementById('storageBar').className = 'bg-red-500 rounded-full h-2';
+            } else if (percentage > 50) {
+                document.getElementById('storageBar').className = 'bg-yellow-500 rounded-full h-2';
+            }
+        }
+        
+        // ========== 聊天记录导出功能（AI生成部分）==========
+        
+        // 导出聊天记录为TXT
+        function exportChatHistory() {
+            if (messageHistory.length === 0) {
+                showError('没有可导出的聊天记录');
+                return;
+            }
+            
+            let content = '=== 校园AI助手聊天记录 ===\n';
+            content += `导出时间：${new Date().toLocaleString('zh-CN')}\n`;
+            content += `共 ${messageHistory.length} 条记录\n\n`;
+            content += '='.repeat(50) + '\n\n';
+            
+            messageHistory.forEach((msg, index) => {
+                const time = new Date(msg.timestamp).toLocaleString('zh-CN');
+                const sender = msg.type === 'user' ? '【我】' : '【AI助手】';
+                content += `${time}\n${sender}\n${msg.content}\n\n`;
+            });
+            
+            // 创建下载
+            const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `聊天记录_${new Date().toLocaleDateString('zh-CN').replace(/\//g, '-')}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showSuccess('聊天记录导出成功！');
+            closeDataManagementModal();
+        }
+        
+        // 页面加载时检查
+        window.addEventListener('load', function() {
+            if (!checkLoginExpiry()) {
+                location.reload();
+            }
+        });
+    </script>
+</body>
+</html>
