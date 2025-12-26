@@ -191,6 +191,13 @@
         document.addEventListener('DOMContentLoaded', function() {
             console.log('DOM加载完成，开始初始化...');
             
+            // 清除旧的登录状态，防止自动登录导致闪退
+            localStorage.removeItem('isLoggedIn');
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('loginExpiry');
+            localStorage.removeItem('guestMode');
+            console.log('✅ 已清除旧的登录状态');
+            
             // 立即隐藏加载动画
             const appLoading = document.getElementById('appLoading');
             if (appLoading) {
@@ -203,7 +210,18 @@
             if (loginPage) {
                 loginPage.classList.remove('hidden');
                 loginPage.style.display = 'grid';
+                loginPage.style.visibility = 'visible';
+                loginPage.style.opacity = '1';
                 console.log('✅ 登录页面已显示');
+            }
+            
+            // 确保主应用完全隐藏
+            const mainApp = document.getElementById('mainApp');
+            if (mainApp) {
+                mainApp.classList.add('hidden');
+                mainApp.style.display = 'none';
+                mainApp.style.visibility = 'hidden';
+                mainApp.style.opacity = '0';
             }
             
             // 绑定事件监听器（只绑定一次）
@@ -215,8 +233,9 @@
                 console.log('⚠️ 事件已绑定，跳过重复绑定');
             }
             
-            // 检查登录状态
-            checkLoginStatus();
+            // 不再自动检查登录状态，避免闪退
+            // checkLoginStatus();
+            console.log('✅ 初始化完成，等待用户登录');
         });
 
         // 修复3：修复事件绑定函数，防止重复绑定
@@ -360,8 +379,10 @@
                 
                 // 跳转到主应用
                 setTimeout(() => {
-                    showMainApp();
-                }, 1000);
+                    console.log('准备跳转到主应用...');
+                    // 直接跳转到 campus-ai-assistant.html
+                    window.location.href = 'campus-ai-assistant.html';
+                }, 500);
                 
             }, 1500);
         }
@@ -386,110 +407,29 @@
             alert('欢迎进入游客模式！');
             
             // 切换到主应用
-            showMainApp();
+            console.log('准备跳转到主应用...');
+            window.location.href = 'campus-ai-assistant.html';
         }
 
-        // 修复6：增强页面切换逻辑
+        // 修复6：简化页面切换逻辑，直接跳转以确保可靠性
         function showMainApp() {
-            console.log('=== 开始切换到主应用 ===');
+            console.log('=== 开始跳转到主应用 ===');
+            console.log('跳转目标: campus-ai-assistant.html');
             
-            const loginPage = document.getElementById('loginPage');
-            const mainApp = document.getElementById('mainApp');
-            
-            console.log('登录页面元素:', loginPage);
-            console.log('主应用元素:', mainApp);
-            
-            if (!loginPage) {
-                console.error('❌ 登录页面元素未找到');
-                return;
+            // 直接跳转到主应用页面，避免复杂的DOM操作
+            try {
+                window.location.href = 'campus-ai-assistant.html';
+                console.log('✅ 跳转指令已执行');
+            } catch (error) {
+                console.error('❌ 跳转失败:', error);
+                alert('跳转失败，请手动访问 campus-ai-assistant.html');
             }
-            
-            // 添加过渡样式
-            loginPage.style.transition = 'all 0.5s ease';
-            if (mainApp) {
-                mainApp.style.transition = 'all 0.5s ease';
-            }
-            
-            // 先隐藏登录页面（淡出动画）
-            console.log('步骤1: 隐藏登录页面');
-            loginPage.style.opacity = '0';
-            loginPage.style.transform = 'translateY(-20px)';
-            
-            setTimeout(() => {
-                // 完全隐藏登录页
-                loginPage.classList.add('hidden');
-                loginPage.style.display = 'none';
-                console.log('✅ 登录页面已完全隐藏');
-                
-                // 检查主应用元素
-                if (mainApp) {
-                    console.log('步骤2: 显示主应用容器');
-                    
-                    // 显示主应用（淡入动画）
-                    mainApp.classList.remove('hidden');
-                    mainApp.style.display = 'flex';
-                    mainApp.style.visibility = 'visible';
-                    mainApp.style.opacity = '0';
-                    mainApp.style.transform = 'translateY(20px)';
-                    
-                    // 强制重绘
-                    void mainApp.offsetHeight;
-                    
-                    // 显示动画
-                    setTimeout(() => {
-                        mainApp.style.opacity = '1';
-                        mainApp.style.transform = 'translateY(0)';
-                        console.log('✅ 主应用显示动画完成');
-                        
-                        // 检查主应用内容
-                        if (mainApp.innerHTML.trim() === '') {
-                            console.log('主应用内容为空，跳转到assistant.html');
-                            loadMainAppContent();
-                        } else {
-                            console.log('✅ 主应用内容已存在');
-                        }
-                        
-                    }, 50);
-                    
-                } else {
-                    // 如果主应用容器不存在，直接跳转到assistant.html
-                    console.log('⚠️ 主应用容器不存在，跳转到assistant.html');
-                    loadMainAppContent();
-                }
-                
-            }, 500);
-            
-            console.log('✅ 页面切换流程已启动');
         }
 
-        // 修复7：加载主应用内容
+        // 修复7：加载主应用内容（已废弃，直接使用 showMainApp）
         function loadMainAppContent() {
-            console.log('=== 加载主应用内容 ===');
-            
-            // 显示加载提示
-            const loadingDiv = document.createElement('div');
-            loadingDiv.style.cssText = `
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                z-index: 10000;
-                color: white;
-                font-size: 1.2rem;
-            `;
-            loadingDiv.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>正在加载主应用...';
-            document.body.appendChild(loadingDiv);
-            
-            // 延迟跳转，让用户看到加载提示
-            setTimeout(() => {
-                console.log('跳转到campus-ai-assistant.html');
-                window.location.href = 'campus-ai-assistant.html';
-            }, 500);
+            console.log('⚠️ loadMainAppContent 已废弃，使用 showMainApp 代替');
+            showMainApp();
         }
 
         // 修复8：增强登录状态检查（防止重复切换）

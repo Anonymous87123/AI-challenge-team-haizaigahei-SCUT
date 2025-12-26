@@ -127,6 +127,12 @@ const ChatModule = {
             '计算机课的教室在哪',
             '怎么借书',
             '体育馆开放时间',
+            '游泳馆开放时间',
+            '健身房开放时间',
+            '网球场开放时间',
+            '羽毛球场开放时间',
+            '篮球场开放时间',
+            '所有场馆开放时间',
             '校医院电话多少',
             '哪里可以打印',
             '设置上课提醒',
@@ -420,12 +426,21 @@ const ChatModule = {
                 response = this.handleCourseQuery(context, userMessage);
                 break;
                 
+            // 场馆意图处理（直接返回场馆信息）
+            case 'gymnasium':
+            case 'swimming_pool':
+            case 'fitness_center':
+            case 'tennis_court':
+            case 'badminton_court':
+            case 'basketball_court':
+            case 'table_tennis':
+            case 'yoga_studio':
+                response = this.handleVenueQuery(context);
+                break;
+                
             case 'canteen':
             case 'canteen_menu':
                 response = this.handleCanteenQuery(context);
-                if (typeof faqData !== 'undefined' && faqData.campus_services?.today_menu) {
-                    extraData = { type: 'menu', data: faqData.campus_services.today_menu };
-                }
                 break;
                 
             case 'library':
@@ -464,7 +479,39 @@ const ChatModule = {
                 break;
                 
             case 'gym_hours':
-                response = this.handleGymQuery();
+                response = this.handleVenueQuery('gymnasium');
+                break;
+                
+            case 'swimming_pool_hours':
+                response = this.handleVenueQuery('swimming_pool');
+                break;
+                
+            case 'fitness_center_hours':
+                response = this.handleVenueQuery('fitness_center');
+                break;
+                
+            case 'tennis_court_hours':
+                response = this.handleVenueQuery('tennis_court');
+                break;
+                
+            case 'badminton_court_hours':
+                response = this.handleVenueQuery('badminton_court');
+                break;
+                
+            case 'basketball_court_hours':
+                response = this.handleVenueQuery('basketball_court');
+                break;
+                
+            case 'table_tennis_hours':
+                response = this.handleVenueQuery('table_tennis');
+                break;
+                
+            case 'yoga_studio_hours':
+                response = this.handleVenueQuery('yoga_studio');
+                break;
+                
+            case 'all_venues':
+                response = this.handleAllVenuesQuery();
                 break;
                 
             case 'hospital_phone':
@@ -518,33 +565,70 @@ const ChatModule = {
     recognizeIntent(message) {
         const lowerMessage = message.toLowerCase();
         
-        // 意图关键词映射
+        // 意图关键词映射 - 按优先级排序，具体关键词在前
+        // 优先级：场馆名称 > 开放时间关键词
         const intentKeywords = {
+            // 场馆相关（最具体，优先级最高）
+            swimming_pool: ['游泳馆', '游泳池', '游泳', 'swimming'],
+            fitness_center: ['健身房', '健身中心', 'fitness', '力量训练'],
+            tennis_court: ['网球场', '网球', 'tennis'],
+            badminton_court: ['羽毛球场', '羽毛球', 'badminton'],
+            basketball_court: ['篮球场', '篮球', 'basketball'],
+            table_tennis: ['乒乓球', 'table tennis', '乒乓'],
+            yoga_studio: ['瑜伽', '瑜伽室', 'yoga'],
+            gymnasium: ['体育馆', 'gym'],
+            // 其他校园服务
             course: ['课', '课程', '上课', '课程表', 'schedule', 'class'],
             canteen: ['食堂', '吃饭', '餐厅', '美食', '菜单', 'food', '今天有什么菜', '菜'],
-            library: ['图书馆', '借书', '学习', '自习', 'library', '开放时间', '开门'],
+            library: ['图书馆', '借书', '学习', '自习', 'library'],
             shuttle: ['校车', '巴士', '班车', 'shuttle', 'bus', '几点发车', '时刻表'],
             express: ['快递', '包裹', 'express', 'package', '快递站', '取件码'],
             activity: ['活动', '演出', '比赛', 'event', 'activity'],
+            homework: ['作业', '交', '高数', 'homework'],
+            classroom: ['教室', '计算机课', '计算机', 'classroom'],
+            hospital: ['校医院', '医生', '看病', '电话'],
+            print: ['打印', 'copy', '打印店', '哪里可以打印'],
+            // 通用关键词（优先级最低）
+            gym: ['健身', '运动', '体育'],
             reminder: ['提醒', '闹钟', 'reminder', 'alarm'],
             location: ['哪里', '位置', '怎么走', 'location', 'where'],
             time: ['几点', '时间', '什么时候', 'time', 'when'],
-            homework: ['作业', '交', '高数', 'homework'],
-            classroom: ['教室', '计算机课', '计算机', 'classroom'],
-            gym: ['体育馆', '健身', 'gym'],
-            hospital: ['校医院', '医生', '看病', '电话'],
-            print: ['打印', 'copy', '打印店', '哪里可以打印']
+            venue: ['场馆', '运动场地', '体育场地', '所有场馆', '全部场馆'],
+            // 开放时间相关 - 单独处理，不放在任何具体意图中
+            hours: ['开放时间', '开门', '几点开门', '什么时候开门']
         };
         
+        // 找出所有匹配的意图和最长关键词
+        const matchedIntents = [];
+        
         for (const [intent, keywords] of Object.entries(intentKeywords)) {
+            let maxKeywordLength = 0;
+            let matchedKeyword = '';
+            
             for (const keyword of keywords) {
-                if (lowerMessage.includes(keyword)) {
-                    return intent;
+                if (lowerMessage.includes(keyword) && keyword.length > maxKeywordLength) {
+                    maxKeywordLength = keyword.length;
+                    matchedKeyword = keyword;
                 }
+            }
+            
+            if (maxKeywordLength > 0) {
+                matchedIntents.push({
+                    intent,
+                    keywordLength: maxKeywordLength,
+                    keyword: matchedKeyword
+                });
             }
         }
         
-        return 'unknown';
+        // 如果没有匹配到任何意图
+        if (matchedIntents.length === 0) {
+            return 'unknown';
+        }
+        
+        // 返回最长关键词匹配的意图（更精确的匹配）
+        matchedIntents.sort((a, b) => b.keywordLength - a.keywordLength);
+        return matchedIntents[0].intent;
     },
 
     /**
@@ -555,6 +639,57 @@ const ChatModule = {
      */
     
     understandContext(message, intent) {
+        const lowerMessage = message.toLowerCase();
+        
+        // 检查是否包含"开放时间"、"开门"等关键词
+        const hasHoursKeyword = ['开放时间', '开门', '几点开门', '什么时候开门'].some(keyword =>
+            lowerMessage.includes(keyword)
+        );
+        
+        // 如果意图是场馆相关，且包含开放时间关键词，返回场馆开放时间上下文
+        if (hasHoursKeyword) {
+            const hoursContextMap = {
+                'library': 'library_hours',
+                'gymnasium': 'gym_hours',
+                'swimming_pool': 'swimming_pool_hours',
+                'fitness_center': 'fitness_center_hours',
+                'tennis_court': 'tennis_court_hours',
+                'badminton_court': 'badminton_court_hours',
+                'basketball_court': 'basketball_court_hours',
+                'table_tennis': 'table_tennis_hours',
+                'yoga_studio': 'yoga_studio_hours',
+                'venue': 'all_venues',
+                'gym': 'gym_hours'  // 映射旧的gym意图
+            };
+            
+            if (hoursContextMap[intent]) {
+                return hoursContextMap[intent];
+            }
+        }
+        
+        // 检查是否包含电话查询
+        if (lowerMessage.includes('电话') || lowerMessage.includes('联系方式')) {
+            const phoneContextMap = {
+                'hospital': 'hospital_phone'
+            };
+            if (phoneContextMap[intent]) {
+                return phoneContextMap[intent];
+            }
+        }
+        
+        // 检查是否包含位置查询
+        if (['哪里', '位置', '怎么走', 'where'].some(keyword => lowerMessage.includes(keyword))) {
+            const locationContextMap = {
+                'express': 'express_location',
+                'classroom': 'classroom',
+                'print': 'print_location'
+            };
+            if (locationContextMap[intent]) {
+                return locationContextMap[intent];
+            }
+        }
+        
+        // 上下文理解 - 基于对话历史
         const lastContext = this.state.conversationContext[this.state.conversationContext.length - 2];
         
         if (lastContext && lastContext.type === 'ai') {
@@ -569,24 +704,34 @@ const ChatModule = {
             }
         }
         
-        // 特定问题直接匹配
-        const quickMatches = {
+        // 特定问题精确匹配（最后手段）
+        const quickMatches = [
+            '高数作业什么时候交',
+            '今天有什么菜',
+            '今日菜单',
+            '校车几点发车',
+            '怎么借书',
+            '校医院电话多少',
+            '计算机课的教室在哪',
+            '有哪些运动场地',
+            '运动场地开放时间'
+        ];
+        
+        const contextMap = {
+            '高数作业什么时候交': 'homework',
             '今天有什么菜': 'canteen_menu',
             '今日菜单': 'canteen_menu',
-            '图书馆什么时候开门': 'library_hours',
-            '图书馆开放时间': 'library_hours',
             '校车几点发车': 'shuttle_schedule',
-            '快递站在哪里': 'express_location',
-            '高数作业什么时候交': 'homework',
             '怎么借书': 'borrowing_process',
-            '体育馆开放时间': 'gym_hours',
             '校医院电话多少': 'hospital_phone',
-            '哪里可以打印': 'print_location'
+            '计算机课的教室在哪': 'classroom',
+            '有哪些运动场地': 'all_venues',
+            '运动场地开放时间': 'all_venues'
         };
         
-        for (const [pattern, context] of Object.entries(quickMatches)) {
-            if (message.includes(pattern)) {
-                return context;
+        for (const pattern of quickMatches) {
+            if (message === pattern || message.includes(pattern)) {
+                return contextMap[pattern];
             }
         }
         
@@ -602,8 +747,7 @@ const ChatModule = {
     },
 
     handleCanteenQuery(context) {
-        // 实现食堂查询逻辑
-        return '校园食堂信息已为您查询';
+        return `## 🍽️ 今日食堂菜单\n\n### 第一食堂\n#### 🌅 早餐\n- 鲜肉包子 - ¥2.0\n- 豆浆 - ¥1.5\n- 油条 - ¥1.0\n\n#### ☀️ 午餐推荐\n- 红烧肉 - ¥12.0 ⭐推荐\n- 宫保鸡丁 - ¥10.0\n- 麻婆豆腐 - ¥8.0\n\n### 第二食堂\n#### ☀️ 午餐特色\n- 麻辣香锅 - ¥15.0 🌶️\n- 铁板烧 - ¥18.0\n- 日式拉面 - ¥16.0\n\n### 第三食堂\n#### ☀️ 精品套餐\n- 粤菜套餐 - ¥20.0\n- 川菜套餐 - ¥18.0\n- 东北水饺 - ¥15.0\n\n💡 **温馨提示**：菜品可能因季节调整，具体以食堂供应为准。建议错峰就餐，避开11:30-12:30高峰期。`;
     },
 
     handleLibraryQuery(context) {
@@ -638,7 +782,146 @@ const ChatModule = {
     },
 
     handleGymQuery() {
-        return `## 🏟️ 体育馆信息\n\n**开放时间**：周一至周五 06:00-22:00, 周末 08:00-21:00\n\n**设施**：室内篮球场、羽毛球馆、乒乓球室、健身房、瑜伽室、游泳池\n\n**联系电话**：021-87654321\n\n**使用规则**：需穿运动鞋，禁止携带食物入内`;
+        return this.handleVenueQuery('gymnasium');
+    },
+    
+    /**
+     * 处理场馆查询（通用方法）
+     * @param {string} venueId - 场馆ID
+     * @returns {string} 场馆信息
+     */
+    handleVenueQuery(venueId) {
+        let venueData = null;
+        
+        // 优先从faqData获取数据
+        if (typeof faqData !== 'undefined' && faqData.campus_services?.venues?.[venueId]) {
+            venueData = faqData.campus_services.venues[venueId];
+        }
+        
+        if (!venueData) {
+            return '抱歉，暂无该场馆的详细信息。';
+        }
+        
+        const venue = {
+            gymnasium: { icon: '🏟️', title: '体育馆' },
+            swimming_pool: { icon: '🏊', title: '游泳馆' },
+            fitness_center: { icon: '💪', title: '健身房' },
+            tennis_court: { icon: '🎾', title: '网球场' },
+            badminton_court: { icon: '🏸', title: '羽毛球场' },
+            basketball_court: { icon: '🏀', title: '篮球场' },
+            table_tennis: { icon: '🏓', title: '乒乓球室' },
+            yoga_studio: { icon: '🧘', title: '瑜伽室' }
+        };
+        
+        const info = venue[venueId] || { icon: '🏟️', title: venueData.name };
+        
+        let response = `## ${info.icon} ${info.title}\n\n`;
+        response += `📍 **位置**：${venueData.location}\n`;
+        response += `⏰ **开放时间**：${venueData.hours}\n`;
+        response += `📞 **联系电话**：${venueData.contact}\n\n`;
+        
+        if (venueData.facilities) {
+            response += `**设施**：\n${venueData.facilities.map(f => `• ${f}`).join('\n')}\n\n`;
+        }
+        
+        if (venueData.equipment) {
+            response += `**设备**：\n${venueData.equipment.map(e => `• ${e}`).join('\n')}\n\n`;
+        }
+        
+        if (venueData.pool_types) {
+            response += `**泳池类型**：\n${venueData.pool_types.map(p => `• ${p}`).join('\n')}\n\n`;
+        }
+        
+        if (venueData.court_count) {
+            response += `**场地数量**：${venueData.court_count}个\n\n`;
+        }
+        
+        if (venueData.class_types) {
+            response += `**课程类型**：\n${venueData.class_types.map(c => `• ${c}`).join('\n')}\n\n`;
+        }
+        
+        if (venueData.price) {
+            response += `💰 **收费标准**：${venueData.price}\n\n`;
+        }
+        
+        if (venueData.rules) {
+            response += `⚠️ **使用规则**：${venueData.rules}\n\n`;
+        }
+        
+        if (venueData.reservation) {
+            response += `📝 **预约信息**：${venueData.reservation}\n\n`;
+        }
+        
+        if (venueData.equipment_rental) {
+            response += `🎾 **器材租赁**：${venueData.equipment_rental}\n\n`;
+        }
+        
+        if (venueData.classes) {
+            response += `📚 **开设课程**：\n${venueData.classes.map(c => `• ${c}`).join('\n')}\n\n`;
+        }
+        
+        return response;
+    },
+    
+    /**
+     * 处理所有场馆查询
+     * @returns {string} 所有场馆信息
+     */
+    handleAllVenuesQuery() {
+        let venues = [];
+        
+        if (typeof faqData !== 'undefined' && faqData.campus_services?.venues) {
+            venues = Object.entries(faqData.campus_services.venues);
+        }
+        
+        if (venues.length === 0) {
+            return '抱歉，暂无场馆信息。';
+        }
+        
+        const venueIcons = {
+            gymnasium: '🏟️',
+            swimming_pool: '🏊',
+            fitness_center: '💪',
+            tennis_court: '🎾',
+            badminton_court: '🏸',
+            basketball_court: '🏀',
+            table_tennis: '🏓',
+            yoga_studio: '🧘'
+        };
+        
+        let response = `## 🏟️ 校园体育场馆一览\n\n`;
+        response += `我校共设有 **${venues.length}** 个体育场馆，为您提供多样化的运动选择：\n\n`;
+        
+        venues.forEach(([venueId, venue]) => {
+            const icon = venueIcons[venueId] || '🏟️';
+            response += `### ${icon} ${venue.name}\n`;
+            response += `📍 **位置**：${venue.location}\n`;
+            response += `⏰ **开放时间**：${venue.hours}\n`;
+            response += `📞 **联系电话**：${venue.contact}\n`;
+            
+            if (venue.court_count) {
+                response += `🎯 **场地数量**：${venue.court_count}个\n`;
+            }
+            
+            if (venue.price) {
+                response += `💰 **收费标准**：${venue.price}\n`;
+            }
+            
+            if (venue.reservation) {
+                response += `📝 **预约信息**：${venue.reservation}\n`;
+            }
+            
+            response += `\n`;
+        });
+        
+        response += `---\n\n`;
+        response += `💡 **温馨提示**：\n`;
+        response += `• 部分场馆需要提前预约，请拨打相应电话咨询\n`;
+        response += `• 使用场馆时请遵守相关规定，爱护设施\n`;
+        response += `• 如需了解具体场馆详情，可单独询问，如"游泳馆开放时间"\n`;
+        response += `• 运动前请做好热身，注意安全`;
+        
+        return response;
     },
 
     handleHospitalQuery() {

@@ -15,10 +15,10 @@
       ]
     },
     "library": {
-      "keywords": ["图书馆", "借书", "学习", "自习", "library", "开放时间", "开门"],
+      "keywords": ["图书馆", "借书", "学习", "自习", "library"],
       "responses": [
         "图书馆实时信息：",
-        "图书馆开放时间为"
+        "图书馆信息"
       ]
     },
     "shuttle": {
@@ -54,6 +54,41 @@
       "responses": [
         "体育馆开放时间为",
         "运动设施信息"
+      ]
+    },
+    "swimming_pool": {
+      "keywords": ["游泳馆", "游泳池", "游泳", "swimming"],
+      "responses": [
+        "游泳馆开放时间为",
+        "游泳池信息"
+      ]
+    },
+    "fitness_center": {
+      "keywords": ["健身房", "fitness", "健身中心"],
+      "responses": [
+        "健身房开放时间为",
+        "健身设施信息"
+      ]
+    },
+    "tennis_court": {
+      "keywords": ["网球场", "网球", "tennis"],
+      "responses": [
+        "网球场开放时间为",
+        "网球场地信息"
+      ]
+    },
+    "badminton_court": {
+      "keywords": ["羽毛球场", "羽毛球", "badminton"],
+      "responses": [
+        "羽毛球场开放时间为",
+        "羽毛球场地信息"
+      ]
+    },
+    "basketball_court": {
+      "keywords": ["篮球场", "篮球", "basketball"],
+      "responses": [
+        "篮球场开放时间为",
+        "篮球场地信息"
       ]
     },
     "hospital": {
@@ -143,11 +178,86 @@
         "equipment": ["投影仪", "空调", "音响", "多媒体"]
       }
     },
-    "gym": {
-      "hours": "周一至周五 06:00-22:00, 周末 08:00-21:00",
-      "facilities": ["室内篮球场", "羽毛球馆", "乒乓球室", "健身房", "瑜伽室", "游泳池"],
-      "contact": "021-87654321",
-      "rules": "需穿运动鞋，禁止携带食物入内"
+    "venues": {
+      "gymnasium": {
+        "name": "体育馆",
+        "location": "校园中心区域",
+        "hours": "周一至周五 06:00-22:00, 周末 08:00-21:00",
+        "contact": "021-87654321",
+        "facilities": ["室内篮球场", "羽毛球馆", "乒乓球室", "健身房", "瑜伽室", "游泳池"],
+        "rules": "需穿运动鞋，禁止携带食物入内，需提前预约"
+      },
+      "swimming_pool": {
+        "name": "游泳馆",
+        "location": "体育馆一楼",
+        "hours": "周一至周日 06:30-22:00 (每两小时换水一次)",
+        "contact": "021-87654322",
+        "pool_types": ["标准泳池 (50米)", "训练泳池 (25米)", "儿童泳池 (水深0.8米)"],
+        "rules": "必须佩戴泳帽，禁止跳水，淋浴后方可入池",
+        "price": "学生: 5元/次, 教职工: 10元/次",
+        "classes": ["游泳培训班", "水上瑜伽", "儿童游泳课"]
+      },
+      "fitness_center": {
+        "name": "健身房",
+        "location": "体育馆二楼",
+        "hours": "周一至周五 07:00-23:00, 周末 08:00-22:00",
+        "contact": "021-87654323",
+        "equipment": ["跑步机", "椭圆机", "动感单车", "力量训练区", "自由重量区", "瑜伽垫区"],
+        "personal_training": "私人教练预约 (需额外收费)",
+        "rules": "使用器械后需及时归位，禁止赤膊训练",
+        "price": "学生: 3元/次, 月卡: 50元"
+      },
+      "tennis_court": {
+        "name": "网球场",
+        "location": "体育馆南侧",
+        "hours": "周一至周日 07:00-21:30",
+        "contact": "021-87654324",
+        "court_count": 6,
+        "surface": "硬地",
+        "reservation": "需提前1天预约，每人每天最多预约2小时",
+        "equipment_rental": "球拍租赁: 5元/次, 网球购买: 3元/个",
+        "price": "学生: 8元/小时, 非学生: 15元/小时"
+      },
+      "badminton_court": {
+        "name": "羽毛球场",
+        "location": "体育馆东侧",
+        "hours": "周一至周日 08:00-22:00",
+        "contact": "021-87654325",
+        "court_count": 12,
+        "surface": "塑胶",
+        "reservation": "现场预约或微信预约",
+        "equipment_rental": "球拍租赁: 5元/次, 羽毛球购买: 15元/筒",
+        "price": "学生: 6元/小时, 非学生: 12元/小时"
+      },
+      "basketball_court": {
+        "name": "篮球场",
+        "location": "体育馆北侧",
+        "hours": "周一至周五 06:00-22:00, 周末 07:00-21:00",
+        "contact": "021-87654326",
+        "court_count": 8,
+        "type": "室内和室外",
+        "reservation": "室外免费，室内需预约",
+        "price": "室内: 学生: 5元/小时, 非学生: 10元/小时"
+      },
+      "table_tennis": {
+        "name": "乒乓球室",
+        "location": "体育馆三楼",
+        "hours": "周一至周日 09:00-22:00",
+        "contact": "021-87654327",
+        "table_count": 20,
+        "equipment_rental": "球拍租赁: 3元/次, 球购买: 1元/个",
+        "price": "学生: 3元/小时, 非学生: 6元/小时"
+      },
+      "yoga_studio": {
+        "name": "瑜伽室",
+        "location": "体育馆四楼",
+        "hours": "周一至周日 08:00-21:00",
+        "contact": "021-87654328",
+        "class_types": ["哈他瑜伽", "流瑜伽", "阴瑜伽", "普拉提", "冥想课程"],
+        "class_schedule": "每日6节课，需提前预约",
+        "capacity": "每班最多20人",
+        "price": "单次课: 15元, 月卡: 200元"
+      }
     },
     "hospital": {
       "name": "校医院",

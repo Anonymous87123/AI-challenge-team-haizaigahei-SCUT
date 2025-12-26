@@ -1248,6 +1248,29 @@
                 </button>
             </div>
 
+            <!-- 社交功能快捷入口（AI生成部分）-->
+            <div class="p-4 border-t border-gray-200 border-opacity-20">
+                <h4 class="text-sm font-semibold text-gray-300 mb-3 sidebar-content">社交中心</h4>
+                
+                <button id="discoverFriendsBtn" onclick="handleOpenSocialDiscoverModal()" class="quick-action-btn w-full flex items-center space-x-3">
+                    <i class="fas fa-users text-pink-500"></i>
+                    <span class="sidebar-content">发现朋友</span>
+                    <span class="ml-auto px-2 py-0.5 bg-pink-500 text-white text-xs rounded-full">New</span>
+                </button>
+                
+                <button onclick="showCampusWall()" class="quick-action-btn w-full flex items-center space-x-3 mt-2">
+                    <i class="fas fa-newspaper text-cyan-500"></i>
+                    <span class="sidebar-content">校园墙</span>
+                    <span class="ml-auto px-2 py-0.5 bg-cyan-500 text-white text-xs rounded-full">New</span>
+                </button>
+                
+                <button onclick="showNotifications()" class="quick-action-btn w-full flex items-center space-x-3 mt-2 relative">
+                    <i class="fas fa-bell text-orange-500"></i>
+                    <span class="sidebar-content">通知中心</span>
+                    <span id="notificationBadge" class="absolute right-2 top-1/2 -translate-y-1/2 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center hidden">0</span>
+                </button>
+            </div>
+
             <!-- 用户信息区域扩展 -->
             <div class="p-4 border-t border-gray-200 border-opacity-20">
                 <button onclick="showProfile()" class="quick-action-btn w-full flex items-center space-x-3">
@@ -1656,6 +1679,317 @@
         </div>
     </div>
 
+    <!-- 社交发现模态框（AI生成部分）-->
+    <div id="socialDiscoverModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="glass-card rounded-2xl p-6 max-w-4xl w-full mx-4 slide-in-up max-h-[90vh] overflow-hidden flex flex-col">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold text-gray-900 flex items-center">
+                    <i class="fas fa-users text-blue-500 mr-2"></i> 发现朋友
+                </h3>
+                <div class="flex items-center space-x-3">
+                    <button onclick="showMatchSettings()" class="text-sm text-blue-500 hover:text-blue-700 flex items-center">
+                        <i class="fas fa-sliders-h mr-1"></i> 匹配设置
+                    </button>
+                    <button onclick="closeSocialDiscoverModal()" class="text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- 筛选栏 -->
+            <div class="flex flex-wrap gap-2 mb-4 p-3 bg-gray-50 rounded-lg">
+                <button onclick="filterUsersByInterest('all')" class="filter-btn active px-3 py-1 text-sm rounded-full bg-blue-500 text-white">全部</button>
+                <span class="text-gray-400 text-sm self-center">兴趣:</span>
+                <!-- 动态生成兴趣筛选按钮 -->
+                <div id="interestFilterButtons" class="contents"></div>
+            </div>
+            
+            <!-- 用户列表 -->
+            <div id="matchedUsersList" class="flex-1 overflow-y-auto space-y-3">
+                <div class="text-center py-8 text-gray-500">
+                    <i class="fas fa-spinner fa-spin text-2xl mb-2"></i>
+                    <p>正在寻找志同道合的朋友...</p>
+                </div>
+            </div>
+            
+            <!-- 操作栏 -->
+            <div class="mt-4 pt-4 border-t flex justify-between items-center">
+                <span class="text-sm text-gray-500" id="matchCount">找到 0 位朋友</span>
+                <button onclick="refreshMatches()" class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors flex items-center">
+                    <i class="fas fa-sync-alt mr-2"></i> 刷新匹配
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 用户详情模态框（AI生成部分）-->
+    <div id="userDetailModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="glass-card rounded-2xl p-6 max-w-lg w-full mx-4 slide-in-up max-h-[85vh] overflow-y-auto">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold text-gray-900">用户详情</h3>
+                <button onclick="closeUserDetailModal()" class="text-gray-400 hover:text-gray-600">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div id="userDetailContent">
+                <!-- 动态加载用户详情 -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 匹配设置模态框（AI生成部分）-->
+    <div id="matchSettingsModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="glass-card rounded-2xl p-6 max-w-md w-full mx-4 slide-in-up">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold text-gray-900 flex items-center">
+                    <i class="fas fa-sliders-h text-blue-500 mr-2"></i> 匹配设置
+                </h3>
+                <button onclick="closeMatchSettingsModal()" class="text-gray-400 hover:text-gray-600">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="space-y-4">
+                <!-- 性别偏好 -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">性别偏好</label>
+                    <div class="flex space-x-2">
+                        <button onclick="setMatchTargetGender('all')" class="gender-btn flex-1 py-2 rounded-lg border-2 border-blue-500 bg-blue-500 text-white">不限</button>
+                        <button onclick="setMatchTargetGender('男')" class="gender-btn flex-1 py-2 rounded-lg border-2 border-gray-300 text-gray-700 hover:border-blue-500">男</button>
+                        <button onclick="setMatchTargetGender('女')" class="gender-btn flex-1 py-2 rounded-lg border-2 border-gray-300 text-gray-700 hover:border-blue-500">女</button>
+                    </div>
+                </div>
+                
+                <!-- 年级偏好 -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">年级偏好</label>
+                    <select id="matchGrade" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="all">不限</option>
+                    </select>
+                </div>
+                
+                <!-- 最低匹配度 -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        最低匹配度: <span id="minMatchScoreValue" class="text-blue-500 font-semibold">60%</span>
+                    </label>
+                    <input type="range" id="minMatchScore" min="30" max="90" value="60"
+                           class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                           oninput="document.getElementById('minMatchScoreValue').textContent = this.value + '%'">
+                </div>
+                
+                <!-- 兴趣标签选择 -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">偏好兴趣</label>
+                    <div id="interestTagsSelector" class="flex flex-wrap gap-2">
+                        <!-- 动态生成兴趣标签 -->
+                    </div>
+                </div>
+                
+                <!-- 年级选择（动态生成） -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">年级偏好</label>
+                    <div class="flex space-x-2">
+                        <button onclick="setTargetGrade('all')" class="grade-btn active flex-1 py-2 rounded-lg border-2 border-blue-500 bg-blue-500 text-white">不限</button>
+                        <button onclick="setTargetGrade('same')" class="grade-btn flex-1 py-2 rounded-lg border-2 border-gray-300 text-gray-700">同年级</button>
+                    </div>
+                </div>
+                
+                <div class="flex space-x-3 pt-4 border-t">
+                    <button onclick="saveMatchSettings()" class="flex-1 bg-blue-500 hover:bg-blue-600 text-white py-2 rounded-lg transition-colors">
+                        保存设置
+                    </button>
+                    <button onclick="resetMatchSettings()" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-700 py-2 rounded-lg transition-colors">
+                        重置
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 校园墙模态框（AI生成部分）-->
+    <div id="campusWallModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-[9999]">
+        <div class="glass-card rounded-2xl p-6 max-w-5xl w-full mx-4 slide-in-up max-h-[90vh] overflow-hidden flex flex-col">
+            <div class="flex items-center justify-between mb-4 flex-shrink-0">
+                <h3 class="text-lg font-semibold text-gray-900 flex items-center">
+                    <i class="fas fa-newspaper text-cyan-500 mr-2"></i> 校园墙
+                </h3>
+                <div class="flex items-center space-x-3">
+                    <button onclick="showCreatePostModal()" class="px-3 py-1.5 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-sm transition-colors flex items-center">
+                        <i class="fas fa-plus mr-1"></i> 发布
+                    </button>
+                    <button onclick="closeCampusWallModal()" class="text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- 类型筛选栏 -->
+            <div class="flex space-x-2 mb-4 overflow-x-auto pb-2 flex-shrink-0">
+                <button onclick="filterPostsByType('all')" class="post-filter-btn px-3 py-1.5 bg-blue-500 text-white rounded-full text-sm whitespace-nowrap transition-colors" data-type="all">全部</button>
+                <button onclick="filterPostsByType('lost')" class="post-filter-btn px-3 py-1.5 bg-gray-100 text-gray-700 rounded-full text-sm whitespace-nowrap hover:bg-gray-200 transition-colors" data-type="lost">🔍 寻物</button>
+                <button onclick="filterPostsByType('found')" class="post-filter-btn px-3 py-1.5 bg-gray-100 text-gray-700 rounded-full text-sm whitespace-nowrap hover:bg-gray-200 transition-colors" data-type="found">📦 招领</button>
+                <button onclick="filterPostsByType('team')" class="post-filter-btn px-3 py-1.5 bg-gray-100 text-gray-700 rounded-full text-sm whitespace-nowrap hover:bg-gray-200 transition-colors" data-type="team">👥 组队</button>
+                <button onclick="filterPostsByType('help')" class="post-filter-btn px-3 py-1.5 bg-gray-100 text-gray-700 rounded-full text-sm whitespace-nowrap hover:bg-gray-200 transition-colors" data-type="help">🤝 互助</button>
+                <button onclick="filterPostsByType('trade')" class="post-filter-btn px-3 py-1.5 bg-gray-100 text-gray-700 rounded-full text-sm whitespace-nowrap hover:bg-gray-200 transition-colors" data-type="trade">💰 交易</button>
+                <button onclick="filterPostsByType('news')" class="post-filter-btn px-3 py-1.5 bg-gray-100 text-gray-700 rounded-full text-sm whitespace-nowrap hover:bg-gray-200 transition-colors" data-type="news">📢 动态</button>
+                <button onclick="filterPostsByType('pet')" class="post-filter-btn px-3 py-1.5 bg-gray-100 text-gray-700 rounded-full text-sm whitespace-nowrap hover:bg-gray-200 transition-colors" data-type="pet">🐱 萌宠</button>
+            </div>
+            
+            <!-- 帖子列表 -->
+            <div id="campusWallPosts" class="flex-1 overflow-y-auto space-y-4">
+                <div class="text-center py-8 text-gray-500">
+                    <i class="fas fa-spinner fa-spin text-2xl mb-2"></i>
+                    <p>加载中...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 发布帖子模态框（AI生成部分）-->
+    <div id="createPostModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="glass-card rounded-2xl p-6 max-w-lg w-full mx-4 slide-in-up">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold text-gray-900 flex items-center">
+                    <i class="fas fa-edit text-blue-500 mr-2"></i> 发布帖子
+                </h3>
+                <button onclick="closeCreatePostModal()" class="text-gray-400 hover:text-gray-600">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="space-y-4">
+                <!-- 帖子类型选择 -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">帖子类型</label>
+                    <div class="grid grid-cols-4 gap-2" id="postTypeSelector">
+                        <button type="button" onclick="selectPostType('lost')" class="post-type-btn p-2 rounded-lg border-2 border-gray-200 hover:border-blue-500 transition-colors text-center" data-type="lost">
+                            <span class="text-xl">🔍</span>
+                            <p class="text-xs mt-1">寻物</p>
+                        </button>
+                        <button type="button" onclick="selectPostType('found')" class="post-type-btn p-2 rounded-lg border-2 border-gray-200 hover:border-blue-500 transition-colors text-center" data-type="found">
+                            <span class="text-xl">📦</span>
+                            <p class="text-xs mt-1">招领</p>
+                        </button>
+                        <button type="button" onclick="selectPostType('team')" class="post-type-btn p-2 rounded-lg border-2 border-gray-200 hover:border-blue-500 transition-colors text-center" data-type="team">
+                            <span class="text-xl">👥</span>
+                            <p class="text-xs mt-1">组队</p>
+                        </button>
+                        <button type="button" onclick="selectPostType('help')" class="post-type-btn p-2 rounded-lg border-2 border-gray-200 hover:border-blue-500 transition-colors text-center" data-type="help">
+                            <span class="text-xl">🤝</span>
+                            <p class="text-xs mt-1">互助</p>
+                        </button>
+                        <button type="button" onclick="selectPostType('trade')" class="post-type-btn p-2 rounded-lg border-2 border-gray-200 hover:border-blue-500 transition-colors text-center" data-type="trade">
+                            <span class="text-xl">💰</span>
+                            <p class="text-xs mt-1">交易</p>
+                        </button>
+                        <button type="button" onclick="selectPostType('news')" class="post-type-btn p-2 rounded-lg border-2 border-gray-200 hover:border-blue-500 transition-colors text-center" data-type="news">
+                            <span class="text-xl">📢</span>
+                            <p class="text-xs mt-1">动态</p>
+                        </button>
+                        <button type="button" onclick="selectPostType('pet')" class="post-type-btn p-2 rounded-lg border-2 border-gray-200 hover:border-blue-500 transition-colors text-center" data-type="pet">
+                            <span class="text-xl">🐱</span>
+                            <p class="text-xs mt-1">萌宠</p>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- 标题 -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">标题</label>
+                    <input type="text" id="postTitle" placeholder="请输入帖子标题" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                
+                <!-- 内容 -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">内容</label>
+                    <textarea id="postContent" rows="4" placeholder="请详细描述你的内容..." class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"></textarea>
+                </div>
+                
+                <!-- 价格（仅交易类型显示） -->
+                <div id="priceField" class="hidden">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">价格</label>
+                    <input type="text" id="postPrice" placeholder="例如：100元 或 面议" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                
+                <!-- 位置 -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">位置</label>
+                    <select id="postLocation" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="">选择位置</option>
+                        <option value="图书馆">图书馆</option>
+                        <option value="食堂">食堂</option>
+                        <option value="体育馆">体育馆</option>
+                        <option value="教学楼">教学楼</option>
+                        <option value="宿舍">宿舍</option>
+                        <option value="操场">操场</option>
+                        <option value="校园内">校园内</option>
+                    </select>
+                </div>
+                
+                <input type="hidden" id="selectedPostType" value="">
+                
+                <div class="flex space-x-3 pt-4 border-t">
+                    <button onclick="submitPost()" class="flex-1 bg-blue-500 hover:bg-blue-600 text-white py-2 rounded-lg transition-colors">
+                        发布
+                    </button>
+                    <button onclick="closeCreatePostModal()" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-700 py-2 rounded-lg transition-colors">
+                        取消
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 帖子详情模态框（AI生成部分）-->
+    <div id="postDetailModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="glass-card rounded-2xl p-6 max-w-2xl w-full mx-4 slide-in-up max-h-[85vh] overflow-y-auto">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold text-gray-900">帖子详情</h3>
+                <button onclick="closePostDetailModal()" class="text-gray-400 hover:text-gray-600">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            
+            <div id="postDetailContent" class="space-y-4">
+                <!-- 动态加载帖子详情 -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 通知中心模态框（AI生成部分）-->
+    <div id="notificationsModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="glass-card rounded-2xl p-6 max-w-md w-full mx-4 slide-in-up max-h-[80vh] overflow-hidden flex flex-col">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold text-gray-900 flex items-center">
+                    <i class="fas fa-bell text-pink-500 mr-2"></i> 通知中心
+                    <span id="notificationTitleBadge" class="ml-2 px-2 py-0.5 bg-red-500 text-white rounded-full text-xs hidden">0</span>
+                </h3>
+                <div class="flex items-center space-x-3">
+                    <button onclick="markAllNotificationsAsRead()" class="text-sm text-blue-500 hover:text-blue-700" title="全部已读">
+                        <i class="fas fa-check-double mr-1"></i>全部已读
+                    </button>
+                    <button onclick="closeNotificationsModal()" class="text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="border-t mb-4 text-xs text-gray-500">
+                <span id="unreadCountInModal">0</span> 条未读通知
+            </div>
+            
+            <!-- 通知列表 -->
+            <div id="notificationsList" class="flex-1 overflow-y-auto">
+                <div class="text-center py-8 text-gray-500">
+                    <i class="fas fa-spinner fa-spin text-2xl mb-2"></i>
+                    <p>加载中...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         // 全局变量
         let messageHistory = [];
@@ -1847,6 +2181,96 @@
                 '确认借阅信息并完成',
                 '按期归还，逾期需缴纳罚款'
             ],
+            // 场馆信息 - 新增
+            venues: {
+                gymnasium: {
+                    name: '体育馆',
+                    icon: '🏟️',
+                    location: '校园中心区域',
+                    hours: '周一至周五 06:00-22:00, 周末 08:00-21:00',
+                    contact: '021-87654321',
+                    facilities: ['室内篮球场', '羽毛球馆', '乒乓球室', '健身房', '瑜伽室', '游泳池'],
+                    rules: '需穿运动鞋，禁止携带食物入内，需提前预约'
+                },
+                swimming_pool: {
+                    name: '游泳馆',
+                    icon: '🏊',
+                    location: '体育馆一楼',
+                    hours: '周一至周日 06:30-22:00 (每两小时换水一次)',
+                    contact: '021-87654322',
+                    pool_types: ['标准泳池 (50米)', '训练泳池 (25米)', '儿童泳池 (水深0.8米)'],
+                    rules: '必须佩戴泳帽，禁止跳水，淋浴后方可入池',
+                    price: '学生: 5元/次, 教职工: 10元/次',
+                    classes: ['游泳培训班', '水上瑜伽', '儿童游泳课']
+                },
+                fitness_center: {
+                    name: '健身房',
+                    icon: '💪',
+                    location: '体育馆二楼',
+                    hours: '周一至周五 07:00-23:00, 周末 08:00-22:00',
+                    contact: '021-87654323',
+                    equipment: ['跑步机', '椭圆机', '动感单车', '力量训练区', '自由重量区', '瑜伽垫区'],
+                    personal_training: '私人教练预约 (需额外收费)',
+                    rules: '使用器械后需及时归位，禁止赤膊训练',
+                    price: '学生: 3元/次, 月卡: 50元'
+                },
+                tennis_court: {
+                    name: '网球场',
+                    icon: '🎾',
+                    location: '体育馆南侧',
+                    hours: '周一至周日 07:00-21:30',
+                    contact: '021-87654324',
+                    court_count: 6,
+                    surface: '硬地',
+                    reservation: '需提前1天预约，每人每天最多预约2小时',
+                    equipment_rental: '球拍租赁: 5元/次, 网球购买: 3元/个',
+                    price: '学生: 8元/小时, 非学生: 15元/小时'
+                },
+                badminton_court: {
+                    name: '羽毛球场',
+                    icon: '🏸',
+                    location: '体育馆东侧',
+                    hours: '周一至周日 08:00-22:00',
+                    contact: '021-87654325',
+                    court_count: 12,
+                    surface: '塑胶',
+                    reservation: '现场预约或微信预约',
+                    equipment_rental: '球拍租赁: 5元/次, 羽毛球购买: 15元/筒',
+                    price: '学生: 6元/小时, 非学生: 12元/小时'
+                },
+                basketball_court: {
+                    name: '篮球场',
+                    icon: '🏀',
+                    location: '体育馆北侧',
+                    hours: '周一至周五 06:00-22:00, 周末 07:00-21:00',
+                    contact: '021-87654326',
+                    court_count: 8,
+                    type: '室内和室外',
+                    reservation: '室外免费，室内需预约',
+                    price: '室内: 学生: 5元/小时, 非学生: 10元/小时'
+                },
+                table_tennis: {
+                    name: '乒乓球室',
+                    icon: '🏓',
+                    location: '体育馆三楼',
+                    hours: '周一至周日 09:00-22:00',
+                    contact: '021-87654327',
+                    table_count: 20,
+                    equipment_rental: '球拍租赁: 3元/次, 球购买: 1元/个',
+                    price: '学生: 3元/小时, 非学生: 6元/小时'
+                },
+                yoga_studio: {
+                    name: '瑜伽室',
+                    icon: '🧘',
+                    location: '体育馆四楼',
+                    hours: '周一至周日 08:00-21:00',
+                    contact: '021-87654328',
+                    class_types: ['哈他瑜伽', '流瑜伽', '阴瑜伽', '普拉提', '冥想课程'],
+                    class_schedule: '每日6节课，需提前预约',
+                    capacity: '每班最多20人',
+                    price: '单次课: 15元, 月卡: 200元'
+                }
+            },
             // 体育馆信息
             gym: {
                 hours: '周一至周五 06:00-22:00, 周末 08:00-21:00',
@@ -1867,25 +2291,213 @@
                 { name: '图书馆打印室', location: '图书馆一楼西侧', hours: '08:00-22:00', price: 'A4: 0.3元/页, A3: 0.5元/页' },
                 { name: '学生服务中心', location: '行政楼一楼', hours: '09:00-18:00', price: 'A4: 0.2元/页, A3: 0.4元/页' },
                 { name: '教学楼自助打印', location: '各教学楼走廊', hours: '24小时', price: 'A4: 0.25元/页' }
-            ]
+            ],
+            // ========== 社交匹配系统数据（AI生成部分）=========
+            simulatingUsers: {}, // 所有模拟用户数据
+            // 社交匹配相关数据模型
+            social: {
+                // 用户画像数据结构
+                userProfiles: {},
+                // 好友列表
+                friends: [],
+                // 好友请求
+                friendRequests: [],
+                // 匹配偏好设置
+                matchPreferences: {
+                    targetGender: 'all', // all, male, female
+                    minMatchScore: 60, // 最低匹配度
+                    preferredInterests: [],
+                    targetGrade: 'all', // all, same, higher, lower
+                    targetMajor: 'all' // all, related
+                },
+                // 用户行为数据
+                behaviorData: {
+                    libraryVisits: 0,
+                    gymVisits: 0,
+                    cafeteriaVisits: 0,
+                    studyHours: 0,
+                    socialScore: 50
+                }
+            },
+            
+            // ========== 校园墙社区数据（AI生成部分）=========
+            campusWall: {
+                // 所有帖子
+                posts: [],
+                // 我的发布
+                myPosts: [],
+                // 收藏的帖子
+                savedPosts: [],
+                // 评论数据
+                comments: {},
+                // 点赞记录
+                likes: []
+            },
+            
+            // ========== 通知系统数据（AI生成部分）=========
+            notifications: {
+                // 所有通知
+                all: [],
+                // 未读通知数
+                unreadCount: 0
+            }
+        };
+
+        // ========== 社交匹配系统常量定义（AI生成部分）==========
+        
+        // 兴趣标签定义（扩展版，共40个类别）
+        const INTEREST_TAGS = [
+            // 学习类
+            '编程开发', '数据分析', '算法竞赛', '人工智能', '机器学习', '网络安全',
+            // 运动类
+            '篮球', '足球', '羽毛球', '乒乓球', '游泳', '跑步', '健身', '骑行',
+            // 艺术类
+            '音乐', '吉他', '钢琴', '摄影', '绘画', '书法', '舞蹈',
+            // 娱乐类
+            '电影', '动漫', '游戏', '阅读', '写作', '旅行', '美食', '烹饪',
+            // 学术类
+            '考研', '考证', '英语', '日语', '数学竞赛', '辩论', '科研', '学术',
+            // 社交类
+            '志愿者', '社团活动', '学生会', '创业', '投资理财', '营销', '设计'
+        ];
+        
+        // 专业列表（扩展版，共30个）
+        const MAJORS = [
+            // 理工科
+            '计算机科学与技术', '软件工程', '人工智能', '数据科学与大数据技术', '网络信息安全',
+            '数学与应用数学', '物理学', '化学', '生物学', '环境科学',
+            '机械工程', '电气工程及其自动化', '电子信息工程', '通信工程', '自动化',
+            // 文史哲
+            '中国语言文学', '外国语言文学', '历史学', '哲学', '新闻传播学',
+            // 经管类
+            '经济学', '金融学', '会计学', '工商管理学', '市场营销',
+            // 艺术类
+            '美术学', '音乐学', '设计学', '建筑学', '城乡规划'
+        ];
+        
+        // 年级列表
+        const GRADES = ['大一', '大二', '大三', '大四', '研究生'];
+        
+        // 性别
+        const GENDERS = ['男', '女'];
+        
+        // 性格类型（扩展版）
+        const PERSONALITIES = [
+            '外向', '内向', '理性', '感性', '稳重', '开朗', '严谨', '活泼',
+            '果断', '细心', '幽默', '务实', '热情', '沉稳', '创新', '专注'
+        ];
+        
+        // 兴趣分类（用于更好的匹配展示）
+        const INTEREST_CATEGORIES = {
+            '学习类': ['编程开发', '数据分析', '算法竞赛', '人工智能', '机器学习', '网络安全', '考研', '考证', '英语', '日语', '数学竞赛', '辩论', '科研', '学术'],
+            '运动类': ['篮球', '足球', '羽毛球', '乒乓球', '游泳', '跑步', '健身', '骑行'],
+            '艺术类': ['音乐', '吉他', '钢琴', '摄影', '绘画', '书法', '舞蹈'],
+            '娱乐类': ['电影', '动漫', '游戏', '阅读', '写作', '旅行', '美食', '烹饪'],
+            '社交类': ['志愿者', '社团活动', '学生会', '创业', '投资理财', '营销', '设计']
+        };
+        
+        // ========== 校园墙帖子类型定义（AI生成部分）==========
+        
+        const POST_TYPES = {
+            LOST: {
+                id: 'lost',
+                name: '寻物启事',
+                icon: '🔍',
+                color: '#e74c3c'
+            },
+            FOUND: {
+                id: 'found',
+                name: '失物招领',
+                icon: '📦',
+                color: '#3498db'
+            },
+            TEAM: {
+                id: 'team',
+                name: '活动组队',
+                icon: '👥',
+                color: '#9b59b6'
+            },
+            HELP: {
+                id: 'help',
+                name: '校园互助',
+                icon: '🤝',
+                color: '#2ecc71'
+            },
+            TRADE: {
+                id: 'trade',
+                name: '闲置交易',
+                icon: '💰',
+                color: '#f39c12'
+            },
+            NEWS: {
+                id: 'news',
+                name: '校园动态',
+                icon: '📢',
+                color: '#34495e'
+            },
+            PET: {
+                id: 'pet',
+                name: '萌宠相关',
+                icon: '🐱',
+                color: '#e91e63'
+            }
+        };
+        
+        // 帖子状态
+        const POST_STATUS = {
+            ACTIVE: 'active',
+            SOLVED: 'solved',
+            EXPIRED: 'expired',
+            CLOSED: 'closed'
+        };
+        
+        // 帖子排序方式
+        const SORT_OPTIONS = {
+            LATEST: 'latest',
+            HOTTEST: 'hottest',
+            NEAREST: 'nearest'
+        };
+        
+        // 通知类型
+        const NOTIFICATION_TYPES = {
+            FRIEND_REQUEST: 'friend_request',
+            COMMENT: 'comment',
+            REPLY: 'post_reply',
+            LIKE: 'like',
+            MENTION: 'mention',
+            SYSTEM: 'system'
         };
 
         // 意图识别关键词映射 - 扩展版（AI生成部分）
+        // 按优先级排序，具体关键词在前
         const intentKeywords = {
+            // 场馆相关（最具体，优先级最高）
+            swimming_pool: ['游泳馆', '游泳池', '游泳', 'swimming'],
+            fitness_center: ['健身房', '健身中心', 'fitness', '力量训练'],
+            tennis_court: ['网球场', '网球', 'tennis'],
+            badminton_court: ['羽毛球场', '羽毛球', 'badminton'],
+            basketball_court: ['篮球场', '篮球', 'basketball'],
+            table_tennis: ['乒乓球', 'table tennis', '乒乓'],
+            yoga_studio: ['瑜伽', '瑜伽室', 'yoga'],
+            gymnasium: ['体育馆', 'gymnasium'],
+            // 其他校园服务
             course: ['课', '课程', '上课', '课程表', 'schedule', 'class'],
             canteen: ['食堂', '吃饭', '餐厅', '美食', '菜单', 'food', '今天有什么菜', '菜'],
-            library: ['图书馆', '借书', '学习', '自习', 'library', '开放时间', '开门'],
+            library: ['图书馆', '借书', '学习', '自习', 'library'],
             shuttle: ['校车', '巴士', '班车', 'shuttle', 'bus', '几点发车', '时刻表'],
             express: ['快递', '包裹', 'express', 'package', '快递站', '取件码'],
             activity: ['活动', '演出', '比赛', 'event', 'activity'],
+            homework: ['作业', '交', '高数', 'homework'],
+            classroom: ['教室', '计算机课', '计算机', 'classroom'],
+            hospital: ['校医院', '医生', '看病', '电话'],
+            print: ['打印', 'copy', '打印店', '哪里可以打印'],
+            // 通用关键词（优先级最低）
+            gym: ['健身', '运动', '体育'],
             reminder: ['提醒', '闹钟', 'reminder', 'alarm'],
             location: ['哪里', '位置', '怎么走', 'location', 'where'],
             time: ['几点', '时间', '什么时候', 'time', 'when'],
-            homework: ['作业', '交', '高数', 'homework'],
-            classroom: ['教室', '计算机课', '计算机', 'classroom'],
-            gym: ['体育馆', '健身', 'gym', '开放时间'],
-            hospital: ['校医院', '医生', '看病', '电话'],
-            print: ['打印', 'copy', '打印店', '哪里可以打印']
+            venue: ['场馆', '运动场地', '体育场地', '所有场馆', '全部场馆'],
+            hours: ['开放时间', '开门', '几点开门', '什么时候开门']
         };
 
         // ========== 应用初始化 ==========
@@ -1899,6 +2511,12 @@
             updateCountdown();
             setInterval(updateCountdown, 60000); // 每分钟更新倒计时
             setupResponsiveHandlers();
+            
+            // 初始化社交模块数据（AI生成部分）
+            initializeSocialModule();
+            
+            // 初始化通知角标（AI生成部分）
+            updateNotificationBadge();
             
             // 检查登录状态
             if (checkLoginStatus()) {
@@ -1926,6 +2544,17 @@
                 userSettings.nickname = nickname;
                 updateUserDisplay();
             }
+            
+            // 确保发现朋友按钮可用（AI生成部分）
+            setTimeout(() => {
+                const discoverBtn = document.getElementById('discoverFriendsBtn');
+                if (discoverBtn) {
+                    console.log('[初始化] 发现朋友按钮已找到，绑定事件');
+                    discoverBtn.addEventListener('click', handleOpenSocialDiscoverModal);
+                } else {
+                    console.warn('[初始化] 未找到发现朋友按钮');
+                }
+            }, 500);
         }
 
         // 设置响应式处理
@@ -2180,6 +2809,8 @@
                     return generateScheduleHTML(extraData.data);
                 case 'canteen':
                     return generateCanteenHTML(extraData.data);
+                case 'menu':
+                    return generateTodayMenuHTML(extraData.data);
                 case 'library':
                     return generateLibraryHTML(extraData.data);
                 case 'shuttle':
@@ -2385,6 +3016,94 @@
             `;
         }
 
+        // 生成今日菜单HTML
+        function generateTodayMenuHTML(todayMenu) {
+            const now = new Date();
+            const hour = now.getHours();
+            let mealType = hour < 11 ? '早餐' : hour < 14 ? '午餐' : hour < 17 ? '下午茶' : '晚餐';
+            
+            let breakfastMenu = '';
+            let lunchMenu = '';
+            
+            // 提取早餐和午餐菜品
+            if (todayMenu.first) {
+                breakfastMenu = todayMenu.first.filter(item => item.tag === '早餐')
+                    .map(item => `
+                        <div class="flex justify-between items-center mb-1">
+                            <span>${item.name}</span>
+                            <span class="text-green-300 font-semibold">¥${item.price.toFixed(2)}</span>
+                        </div>
+                    `).join('');
+            }
+            
+            if (todayMenu.first) {
+                lunchMenu = todayMenu.first.filter(item => item.tag === '午餐')
+                    .map(item => `
+                        <div class="flex justify-between items-center mb-1">
+                            <span>${item.name}</span>
+                            <span class="text-green-300 font-semibold">¥${item.price.toFixed(2)}</span>
+                        </div>
+                    `).join('');
+            }
+            
+            const secondMenu = todayMenu.second ? todayMenu.second.map(item => `
+                <div class="flex justify-between items-center mb-1">
+                    <span>${item.name}</span>
+                    <span class="text-green-300 font-semibold">¥${item.price.toFixed(2)}</span>
+                </div>
+            `).join('') : '';
+            
+            const thirdMenu = todayMenu.third ? todayMenu.third.map(item => `
+                <div class="flex justify-between items-center mb-1">
+                    <span>${item.name}</span>
+                    <span class="text-green-300 font-semibold">¥${item.price.toFixed(2)}</span>
+                </div>
+            `).join('') : '';
+            
+            return `
+                <div class="space-y-4">
+                    <h4 class="font-bold text-lg">🍽️ 今日菜单 - ${mealType}</h4>
+                    
+                    ${mealType === '早餐' ? `
+                        <div class="info-card">
+                            <h5 class="font-bold text-lg mb-3">第一食堂（早餐）</h5>
+                            <div class="space-y-1">
+                                ${breakfastMenu}
+                            </div>
+                        </div>
+                    ` : `
+                        <div class="info-card">
+                            <h5 class="font-bold text-lg mb-3">第一食堂（午餐）</h5>
+                            <div class="space-y-1">
+                                ${lunchMenu}
+                            </div>
+                        </div>
+                        
+                        <div class="info-card">
+                            <h5 class="font-bold text-lg mb-3">第二食堂</h5>
+                            <div class="space-y-1">
+                                ${secondMenu}
+                            </div>
+                        </div>
+                        
+                        <div class="info-card">
+                            <h5 class="font-bold text-lg mb-3">第三食堂</h5>
+                            <div class="space-y-1">
+                                ${thirdMenu}
+                            </div>
+                        </div>
+                    `}
+                    
+                    <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
+                        <p class="text-sm text-yellow-800">
+                            <i class="fas fa-lightbulb mr-2"></i>
+                            <strong>温馨提示</strong>：食堂营业时间和具体菜品可能会有调整，建议以实际为准。
+                        </p>
+                    </div>
+                </div>
+            `;
+        }
+
         /**
          * 意图识别函数 - 基于关键词匹配识别用户意图
          * 功能扩展：支持多种校园服务问题的识别
@@ -2406,22 +3125,95 @@
          */
         function recognizeIntent(message) {
             const lowerMessage = message.toLowerCase();
+             
+            // 找出所有匹配的意图和最长关键词
+            const matchedIntents = [];
             
             for (const [intent, keywords] of Object.entries(intentKeywords)) {
+                let maxKeywordLength = 0;
+                let matchedKeyword = '';
+                
                 for (const keyword of keywords) {
-                    if (lowerMessage.includes(keyword)) {
-                        return intent;
+                    if (lowerMessage.includes(keyword) && keyword.length > maxKeywordLength) {
+                        maxKeywordLength = keyword.length;
+                        matchedKeyword = keyword;
                     }
                 }
+                
+                if (maxKeywordLength > 0) {
+                    matchedIntents.push({
+                        intent,
+                        keywordLength: maxKeywordLength,
+                        keyword: matchedKeyword
+                    });
+                }
             }
-            
-            return 'unknown';
+             
+            // 如果没有匹配到任何意图
+            if (matchedIntents.length === 0) {
+                return 'unknown';
+            }
+             
+            // 返回最长关键词匹配的意图（更精确的匹配）
+            matchedIntents.sort((a, b) => b.keywordLength - a.keywordLength);
+            return matchedIntents[0].intent;
         }
 
         // 上下文理解 - 扩展版（AI生成部分）
         function understandContext(message, intent) {
+            const lowerMessage = message.toLowerCase();
             const lastContext = conversationContext[conversationContext.length - 2];
             
+            // 检查是否包含"开放时间"、"开门"等关键词
+            const hasHoursKeyword = ['开放时间', '开门', '几点开门', '什么时候开门'].some(keyword =>
+                lowerMessage.includes(keyword)
+            );
+            
+            // 如果意图是场馆相关，且包含开放时间关键词，返回场馆开放时间上下文
+            if (hasHoursKeyword) {
+                const hoursContextMap = {
+                    'library': 'library_hours',
+                    'gymnasium': 'gym_hours',
+                    'swimming_pool': 'swimming_pool_hours',
+                    'fitness_center': 'fitness_center_hours',
+                    'tennis_court': 'tennis_court_hours',
+                    'badminton_court': 'badminton_court_hours',
+                    'basketball_court': 'basketball_court_hours',
+                    'table_tennis': 'table_tennis_hours',
+                    'yoga_studio': 'yoga_studio_hours',
+                    'venue': 'all_venues',
+                    'gym': 'gym_hours',
+                    'hours': 'all_venues'
+                };
+                
+                if (hoursContextMap[intent]) {
+                    return hoursContextMap[intent];
+                }
+            }
+            
+            // 检查是否包含电话查询
+            if (lowerMessage.includes('电话') || lowerMessage.includes('联系方式')) {
+                const phoneContextMap = {
+                    'hospital': 'hospital_phone'
+                };
+                if (phoneContextMap[intent]) {
+                    return phoneContextMap[intent];
+                }
+            }
+            
+            // 检查是否包含位置查询
+            if (['哪里', '位置', '怎么走', 'where'].some(keyword => lowerMessage.includes(keyword))) {
+                const locationContextMap = {
+                    'express': 'express_location',
+                    'classroom': 'classroom',
+                    'print': 'print_location'
+                };
+                if (locationContextMap[intent]) {
+                    return locationContextMap[intent];
+                }
+            }
+            
+            // 上下文理解 - 基于对话历史
             if (lastContext && lastContext.type === 'ai') {
                 // 检查是否是追问
                 if (intent === 'time' && (lastContext.content.includes('图书馆') || lastContext.content.includes('library'))) {
@@ -2442,32 +3234,27 @@
             if (message.includes('今天有什么菜') || message.includes('今日菜单')) {
                 return 'canteen_menu';
             }
-            if (message.includes('图书馆什么时候开门') || message.includes('图书馆开放时间')) {
-                return 'library_hours';
-            }
             if (message.includes('校车几点发车') || message.includes('校车时刻表')) {
                 return 'shuttle_schedule';
-            }
-            if (message.includes('快递站在哪里') || message.includes('快递点位置') || message.includes('取件码')) {
-                return 'express_location';
             }
             if (message.includes('高数作业') || message.includes('作业什么时候交')) {
                 return 'homework';
             }
-            if (message.includes('计算机课') && (message.includes('教室') || message.includes('位置'))) {
-                return 'classroom';
-            }
             if (message.includes('怎么借书') || message.includes('借书流程')) {
                 return 'borrowing_process';
-            }
-            if (message.includes('体育馆开放时间') || message.includes('体育馆时间')) {
-                return 'gym_hours';
             }
             if (message.includes('校医院电话') || message.includes('医院号码')) {
                 return 'hospital_phone';
             }
-            if (message.includes('哪里可以打印') || message.includes('打印点')) {
-                return 'print_location';
+            if (message.includes('所有场馆开放时间') || message.includes('运动场地开放时间')) {
+                return 'all_venues';
+            }
+            
+            // 如果意图本身是场馆类型，直接返回场馆信息
+            const venueIntents = ['gymnasium', 'swimming_pool', 'fitness_center', 'tennis_court',
+                                 'badminton_court', 'basketball_court', 'table_tennis', 'yoga_studio'];
+            if (venueIntents.includes(intent)) {
+                return intent;
             }
             
             return intent;
@@ -2588,9 +3375,67 @@
                     response = `## 📖 借书流程\n\n${campusData.borrowingProcess.map((step, index) => `${index + 1}. ${step}`).join('\n\n')}\n\n**注意事项**：\n• 请爱护书籍，不得涂画\n• 按期归还，逾期每天罚款0.5元\n• 书籍遗失需照价赔偿`;
                     break;
                 
-                // 🏟️ 体育馆开放时间（AI生成部分）
+                // 🏟️ 场馆查询处理（扩展版）
+                case 'gymnasium':
                 case 'gym_hours':
-                    response = `## 🏟️ 体育馆信息\n\n**开放时间**：${campusData.gym.hours}\n\n**设施**：${campusData.gym.facilities.join('、')}\n\n**联系电话**：${campusData.gym.contact}\n\n**使用规则**：${campusData.gym.rules}`;
+                    if (campusData.venues && campusData.venues.gymnasium) {
+                        response = generateVenueInfo(campusData.venues.gymnasium);
+                    } else {
+                        response = `## 🏟️ 体育馆信息\n\n**开放时间**：${campusData.gym.hours}\n\n**设施**：${campusData.gym.facilities.join('、')}\n\n**联系电话**：${campusData.gym.contact}\n\n**使用规则**：${campusData.gym.rules}`;
+                    }
+                    break;
+                
+                case 'swimming_pool':
+                case 'swimming_pool_hours':
+                    if (campusData.venues && campusData.venues.swimming_pool) {
+                        response = generateVenueInfo(campusData.venues.swimming_pool);
+                    }
+                    break;
+                
+                case 'fitness_center':
+                case 'fitness_center_hours':
+                    if (campusData.venues && campusData.venues.fitness_center) {
+                        response = generateVenueInfo(campusData.venues.fitness_center);
+                    }
+                    break;
+                
+                case 'tennis_court':
+                case 'tennis_court_hours':
+                    if (campusData.venues && campusData.venues.tennis_court) {
+                        response = generateVenueInfo(campusData.venues.tennis_court);
+                    }
+                    break;
+                
+                case 'badminton_court':
+                case 'badminton_court_hours':
+                    if (campusData.venues && campusData.venues.badminton_court) {
+                        response = generateVenueInfo(campusData.venues.badminton_court);
+                    }
+                    break;
+                
+                case 'basketball_court':
+                case 'basketball_court_hours':
+                    if (campusData.venues && campusData.venues.basketball_court) {
+                        response = generateVenueInfo(campusData.venues.basketball_court);
+                    }
+                    break;
+                
+                case 'table_tennis':
+                case 'table_tennis_hours':
+                    if (campusData.venues && campusData.venues.table_tennis) {
+                        response = generateVenueInfo(campusData.venues.table_tennis);
+                    }
+                    break;
+                
+                case 'yoga_studio':
+                case 'yoga_studio_hours':
+                    if (campusData.venues && campusData.venues.yoga_studio) {
+                        response = generateVenueInfo(campusData.venues.yoga_studio);
+                    }
+                    break;
+                
+                case 'all_venues':
+                    response = generateAllVenuesInfo();
                     break;
                 
                 // 🏥 校医院信息（AI生成部分）
@@ -2942,6 +3787,2152 @@
         }
 
         // ========== AI生成的辅助函数部分 ==========
+        
+        // 生成场馆信息（扩展版）
+        function generateVenueInfo(venue) {
+            let response = `## ${venue.icon || '🏟️'} ${venue.name}\n\n`;
+            response += `📍 **位置**：${venue.location}\n`;
+            response += `⏰ **开放时间**：${venue.hours}\n`;
+            response += `📞 **联系电话**：${venue.contact}\n\n`;
+            
+            if (venue.facilities) {
+                response += `**设施**：\n${venue.facilities.map(f => `• ${f}`).join('\n')}\n\n`;
+            }
+            
+            if (venue.equipment) {
+                response += `**设备**：\n${venue.equipment.map(e => `• ${e}`).join('\n')}\n\n`;
+            }
+            
+            if (venue.pool_types) {
+                response += `**泳池类型**：\n${venue.pool_types.map(p => `• ${p}`).join('\n')}\n\n`;
+            }
+            
+            if (venue.court_count) {
+                response += `**场地数量**：${venue.court_count}个\n\n`;
+            }
+            
+            if (venue.table_count) {
+                response += `**球台数量**：${venue.table_count}张\n\n`;
+            }
+            
+            if (venue.class_types) {
+                response += `**课程类型**：\n${venue.class_types.map(c => `• ${c}`).join('\n')}\n\n`;
+            }
+            
+            if (venue.price) {
+                response += `💰 **收费标准**：${venue.price}\n\n`;
+            }
+            
+            if (venue.rules) {
+                response += `⚠️ **使用规则**：${venue.rules}\n\n`;
+            }
+            
+            if (venue.reservation) {
+                response += `📝 **预约信息**：${venue.reservation}\n\n`;
+            }
+            
+            if (venue.equipment_rental) {
+                response += `🎾 **器材租赁**：${venue.equipment_rental}\n\n`;
+            }
+            
+            if (venue.classes) {
+                response += `📚 **开设课程**：\n${venue.classes.map(c => `• ${c}`).join('\n')}\n\n`;
+            }
+            
+            if (venue.personal_training) {
+                response += `**私人教练**：${venue.personal_training}\n\n`;
+            }
+            
+            if (venue.type) {
+                response += `**类型**：${venue.type}\n\n`;
+            }
+            
+            return response;
+        }
+        
+        // 生成所有场馆信息
+        function generateAllVenuesInfo() {
+            if (!campusData.venues) {
+                return '抱歉，暂无场馆信息。';
+            }
+            
+            const venues = Object.entries(campusData.venues);
+            
+            let response = `## 🏟️ 校园体育场馆一览\n\n`;
+            response += `我校共设有 **${venues.length}** 个体育场馆，为您提供多样化的运动选择：\n\n`;
+            
+            venues.forEach(([venueId, venue]) => {
+                const icon = venue.icon || '🏟️';
+                response += `### ${icon} ${venue.name}\n`;
+                response += `📍 **位置**：${venue.location}\n`;
+                response += `⏰ **开放时间**：${venue.hours}\n`;
+                response += `📞 **联系电话**：${venue.contact}\n`;
+                
+                if (venue.court_count) {
+                    response += `🎯 **场地数量**：${venue.court_count}个\n`;
+                }
+                
+                if (venue.table_count) {
+                    response += `🎯 **球台数量**：${venue.table_count}张\n`;
+                }
+                
+                if (venue.price) {
+                    response += `💰 **收费标准**：${venue.price}\n`;
+                }
+                
+                if (venue.reservation) {
+                    response += `📝 **预约信息**：${venue.reservation}\n`;
+                }
+                
+                response += `\n`;
+            });
+            
+            response += `---\n\n`;
+            response += `💡 **温馨提示**：\n`;
+            response += `• 部分场馆需要提前预约，请拨打相应电话咨询\n`;
+            response += `• 使用场馆时请遵守相关规定，爱护设施\n`;
+            response += `• 如需了解具体场馆详情，可单独询问，如"游泳馆开放时间"\n`;
+            response += `• 运动前请做好热身，注意安全`;
+            
+            return response;
+        }
+
+        // ========== 社交匹配系统 - 核心算法（AI生成部分）==========
+        
+        /**
+         * Jaccard相似度计算 - 用于兴趣标签匹配
+         */
+        function calculateJaccardSimilarity(tagsA, tagsB) {
+            if (!tagsA || !tagsB) return 0;
+            const setA = new Set(tagsA);
+            const setB = new Set(tagsB);
+            const intersection = new Set([...setA].filter(x => setB.has(x)));
+            const union = new Set([...setA, ...setB]);
+            return union.size > 0 ? intersection.size / union.size : 0;
+        }
+        
+        /**
+         * 余弦相似度计算 - 用于行为数据匹配
+         */
+        function calculateCosineSimilarity(dataA, dataB) {
+            if (!dataA || !dataB) return 0;
+            
+            const norms = {
+                libraryVisits: 20,
+                gymVisits: 10,
+                studyHours: 40,
+                socialScore: 100
+            };
+            
+            // 归一化数据
+            const normalizedA = {
+                library: dataA.libraryVisits / norms.libraryVisits,
+                gym: dataA.gymVisits / norms.gymVisits,
+                study: dataA.studyHours / norms.studyHours,
+                social: dataA.socialScore / norms.socialScore
+            };
+            
+            const normalizedB = {
+                library: dataB.libraryVisits / norms.libraryVisits,
+                gym: dataB.gymVisits / norms.gymVisits,
+                study: dataB.studyHours / norms.studyHours,
+                social: dataB.socialScore / norms.socialScore
+            };
+            
+            // 计算点积
+            const dotProduct =
+                normalizedA.library * normalizedB.library +
+                normalizedA.gym * normalizedB.gym +
+                normalizedA.study * normalizedB.study +
+                normalizedA.social * normalizedB.social;
+            
+            // 计算模
+            const magnitudeA = Math.sqrt(
+                normalizedA.library ** 2 +
+                normalizedA.gym ** 2 +
+                normalizedA.study ** 2 +
+                normalizedA.social ** 2
+            );
+            
+            const magnitudeB = Math.sqrt(
+                normalizedB.library ** 2 +
+                normalizedB.gym ** 2 +
+                normalizedB.study ** 2 +
+                normalizedB.social ** 2
+            );
+            
+            if (magnitudeA === 0 || magnitudeB === 0) return 0;
+            
+            return dotProduct / (magnitudeA * magnitudeB);
+        }
+        
+        /**
+         * 计算互补性匹配
+         */
+        function calculateComplementarity(personalityA, personalityB) {
+            if (!personalityA || !personalityB) return 0.5;
+            
+            // 相反的性格类型有更高的互补性
+            const complementaryPairs = {
+                '外向': '内向',
+                '理性': '感性',
+                '稳重': '活泼',
+                '开朗': '严谨'
+            };
+            
+            let complementScore = 0;
+            if (complementaryPairs[personalityA] === personalityB) {
+                complementScore = 1.0;
+            } else if (complementaryPairs[personalityB] === personalityA) {
+                complementScore = 1.0;
+            } else if (personalityA === personalityB) {
+                complementScore = 0.3;
+            } else {
+                complementScore = 0.6;
+            }
+            
+            return complementScore;
+        }
+        
+        /**
+         * 计算地点重叠度
+         */
+        function calculateLocationOverlap(locationsA, locationsB) {
+            if (!locationsA || !locationsB) return 0.2;
+            
+            const setA = new Set(locationsA);
+            const setB = new Set(locationsB);
+            const intersection = new Set([...setA].filter(x => setB.has(x)));
+            
+            // 重叠1-2个地点得较高分数
+            if (intersection.size >= 2) return 1.0;
+            if (intersection.size === 1) return 0.7;
+            return 0.2;
+        }
+        
+        /**
+         * 计算综合匹配分数（匹配算法核心）
+         * @param {Object} userA - 用户A的数据
+         * @param {Object} userB - 用户B的数据
+         * @returns {Object} { score: 匹配分数, details: 各维度得分 }
+         */
+        function calculateMatchScore(userA, userB) {
+            // 兴趣相似度（40%权重）
+            const interestScore = calculateJaccardSimilarity(
+                userA.interests,
+                userB.interests
+            );
+            
+            // 行为相似度（30%权重）
+            const behaviorScore = calculateCosineSimilarity(
+                userA.behaviorData || {},
+                userB.behaviorData || {}
+            );
+            
+            // 互补性匹配（20%权重）
+            const complementScore = calculateComplementarity(
+                userA.personality,
+                userB.personality
+            );
+            
+            // 时空重叠度（10%权重）
+            const locationScore = calculateLocationOverlap(
+                userA.favoriteLocations,
+                userB.favoriteLocations
+            );
+            
+            // 加权计算总分
+            const totalScore =
+                interestScore * 0.4 +
+                behaviorScore * 0.3 +
+                complementScore * 0.2 +
+                locationScore * 0.1;
+            
+            return {
+                score: Math.round(totalScore * 100),
+                details: {
+                    interest: Math.round(interestScore * 100),
+                    behavior: Math.round(behaviorScore * 100),
+                    complement: Math.round(complementScore * 100),
+                    location: Math.round(locationScore * 100)
+                }
+            };
+        }
+        
+        /**
+         * 获取共同兴趣标签
+         */
+        function getCommonInterests(interestsA, interestsB) {
+            if (!interestsA || !interestsB) return [];
+            const setA = new Set(interestsA);
+            return interestsB.filter(interest => setA.has(interest));
+        }
+        
+        /**
+         * 生成随机用户(模拟数据)
+         */
+        function generateRandomUser(userId) {
+            // 获取随机索引
+            const personalityIndex = Math.floor(Math.random() * PERSONALITIES.length);
+            const majorIndex = Math.floor(Math.random() * MAJORS.length);
+            
+            return generateRandomUserWithAssignments(userId, personalityIndex, majorIndex);
+        }
+        
+        /**
+         * 生成带有指定属性的随机用户（AI优化部分：确保多样化分布）
+         */
+        function generateRandomUserWithAssignments(userId, personalityIndex, majorIndex) {
+            const gender = GENDERS[Math.floor(Math.random() * GENDERS.length)];
+            const namePrefixes = ['张', '李', '王', '刘', '陈', '杨', '赵', '黄', '周', '吴'];
+            const nameSuffixes = ['伟', '芳', '娜', '敏', '静', '强', '磊', '洋', '艳', '杰', '勇', '军', '平'];
+            const name = namePrefixes[Math.floor(Math.random() * namePrefixes.length)] +
+                        nameSuffixes[Math.floor(Math.random() * nameSuffixes.length)];
+            
+            // 随机选择3-5个兴趣标签
+            const numInterests = Math.floor(Math.random() * 3) + 3;
+            const shuffledInterests = [...INTEREST_TAGS].sort(() => 0.5 - Math.random());
+            const interests = shuffledInterests.slice(0, numInterests);
+            
+            // 随机选择常去地点
+            const allLocations = ['图书馆', '健身房', '体育馆', '食堂', '教学楼', '实验室', '自习室', '操场'];
+            const numLocations = Math.floor(Math.random() * 3) + 2;
+            const favoriteLocations = allLocations.sort(() => 0.5 - Math.random()).slice(0, numLocations);
+            
+            // 根据性格类型生成不同的行为数据（AI优化部分：性格与行为关联）
+            let behaviorData;
+            const personalityType = PERSONALITIES[personalityIndex];
+            
+            if (['外向', '开朗', '活泼', '热情'].includes(personalityType)) {
+                // 社交型用户：社交分数高，图书馆中等，健身房较高
+                behaviorData = {
+                    libraryVisits: Math.floor(Math.random() * 15) + 5,
+                    gymVisits: Math.floor(Math.random() * 10) + 5,
+                    studyHours: Math.floor(Math.random() * 25) + 10,
+                    socialScore: Math.floor(Math.random() * 30) + 60  // 60-90
+                };
+            } else if (['内向', '稳重', '沉稳', '严谨', '专注', '细心'].includes(personalityType)) {
+                // 专注型用户：图书馆高，社交分数低
+                behaviorData = {
+                    libraryVisits: Math.floor(Math.random() * 15) + 15,
+                    gymVisits: Math.floor(Math.random() * 5),
+                    studyHours: Math.floor(Math.random() * 30) + 25,
+                    socialScore: Math.floor(Math.random() * 30) + 20  // 20-50
+                };
+            } else {
+                // 平衡型用户（理性、感性、幽默、务实、创新、果断）
+                behaviorData = {
+                    libraryVisits: Math.floor(Math.random() * 20) + 5,
+                    gymVisits: Math.floor(Math.random() * 10) + 2,
+                    studyHours: Math.floor(Math.random() * 30) + 10,
+                    socialScore: Math.floor(Math.random() * 40) + 35  // 35-75
+                };
+            }
+            
+            // 使用预分配的属性
+            const personality = PERSONALITIES[personalityIndex];
+            const major = MAJORS[majorIndex];
+            const grade = GRADES[Math.floor(Math.random() * GRADES.length)];
+            
+            // 根据兴趣类别选择兴趣（AI优化部分：每个兴趣类别都有用户）
+            const interestCategoryKeys = Object.keys(INTEREST_CATEGORIES);
+            const selectedCategories = interestCategoryKeys
+                .sort(() => 0.5 - Math.random())
+                .slice(0, Math.floor(Math.random() * 2) + 2); // 选择2-3个类别
+            
+            let selectedInterests = [];
+            selectedCategories.forEach(category => {
+                const categoryInterests = INTEREST_CATEGORIES[category];
+                const numFromCategory = Math.floor(Math.random() * 2) + 1; // 每个类别选1-2个
+                const shuffled = [...categoryInterests].sort(() => 0.5 - Math.random());
+                selectedInterests = [...selectedInterests, ...shuffled.slice(0, numFromCategory)];
+            });
+            
+            // 确保至少有3个兴趣，最多5个
+            selectedInterests = selectedInterests.slice(0, Math.floor(Math.random() * 3) + 3);
+            
+            return {
+                id: userId,
+                name: name,
+                avatar: name.charAt(0),
+                gender: gender,
+                major: major,
+                grade: grade,
+                personality: personality,
+                bio: generateBio(name, personality, selectedInterests[0] || '学习'),
+                interests: selectedInterests,
+                favoriteLocations: favoriteLocations,
+                behaviorData: behaviorData,
+                skills: generateSkills(),
+                createdAt: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000).toISOString(),
+                lastActive: new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000).toISOString()
+            };
+        }
+        
+        /**
+         * 生成用户简介
+         */
+        function generateBio(name, personality, mainInterest) {
+            const bios = [
+                `${name}是一个${personality}的人，热爱${mainInterest}。`,
+                `喜欢交朋友，共同探索${mainInterest}的乐趣！`,
+                `${personality}的${name}，希望能找到志同道合的伙伴。`,
+                `热衷于${mainInterest}，期待与有趣的你相遇！`,
+                `我是${name}，${personality}性格，喜欢${mainInterest}和运动。`
+            ];
+            return bios[Math.floor(Math.random() * bios.length)];
+        }
+        
+        /**
+         * 生成技能标签
+         */
+        function generateSkills() {
+            const allSkills = ['编程', '设计', '摄影', '写作', '演讲', '组织', '策划', '外语', '乐器', '运动'];
+            const numSkills = Math.floor(Math.random() * 3) + 1;
+            return allSkills.sort(() => 0.5 - Math.random()).slice(0, numSkills);
+        }
+        
+        /**
+         * 批量生成模拟用户数据（AI优化生成：确保各属性均衡分布）
+         */
+        function generateSimulatingUsers(count = 100) {
+            const users = {};
+            
+            // 创建属性分配数组，确保均衡分布（AI生成部分）
+            const personalityDistribution = [];
+            const majorDistribution = [];
+            const gradeDistribution = [];
+            const genderDistribution = [];
+            
+            // 确保每个性格至少有一定的用户数
+            for (let p = 0; p < PERSONALITIES.length; p++) {
+                const countForPersonality = Math.floor(count / PERSONALITIES.length) + (Math.random() < 0.5 ? 1 : 0);
+                for (let i = 0; i < countForPersonality && personalityDistribution.length < count; i++) {
+                    personalityDistribution.push(p);
+                }
+            }
+            
+            // 确保每个专业都有用户
+            for (let m = 0; m < MAJORS.length; m++) {
+                const countForMajor = Math.floor(count / MAJORS.length) + (Math.random() < 0.5 ? 1 : 0);
+                for (let i = 0; i < countForMajor && majorDistribution.length < count; i++) {
+                    majorDistribution.push(m);
+                }
+            }
+            
+            // 填充到目标数量
+            while (personalityDistribution.length < count) {
+                personalityDistribution.push(Math.floor(Math.random() * PERSONALITIES.length));
+            }
+            while (majorDistribution.length < count) {
+                majorDistribution.push(Math.floor(Math.random() * MAJORS.length));
+            }
+            
+            // 打乱数组
+            for (let i = personalityDistribution.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [personalityDistribution[i], personalityDistribution[j]] = [personalityDistribution[j], personalityDistribution[i]];
+                [majorDistribution[i], majorDistribution[j]] = [majorDistribution[j], majorDistribution[i]];
+            }
+            
+            // 生成用户（AI优化部分：确保多样化）
+            for (let i = 0; i < count; i++) {
+                const userId = 'user_' + (1000 + i).toString();
+                
+                // 使用预分配的属性确保多样性
+                const assignedPersonality = personalityDistribution[i];
+                const assignedMajor = majorDistribution[i];
+                
+                users[userId] = generateRandomUserWithAssignments(
+                    userId,
+                    assignedPersonality,
+                    assignedMajor
+                );
+            }
+            campusData.simulatingUsers = users;
+            localStorage.setItem('simulatingUsers', JSON.stringify(users));
+            console.log(`已生成 ${count} 个模拟用户数据`);
+            return users;
+        }
+        
+        /**
+         * 获取匹配用户列表（按匹配度排序）
+         */
+        function getMatchedUsers(currentUser, preferences = null) {
+            const simulatingUsers = campusData.simulatingUsers || {};
+            const matchedUsers = [];
+            
+            const currentUserId = localStorage.getItem('studentId') || 'user_1000';
+            
+            for (const [userId, user] of Object.entries(simulatingUsers)) {
+                // 跳过自己和已添加的好友
+                if (userId === currentUserId || campusData.social.friends.includes(userId)) {
+                    continue;
+                }
+                
+                // 根据偏好过滤
+                if (preferences) {
+                    if (preferences.targetGender !== 'all' && user.gender !== preferences.targetGender) {
+                        continue;
+                    }
+                    if (preferences.targetGrade !== 'all' && user.grade !== preferences.targetGrade) {
+                        continue;
+                    }
+                }
+                
+                const matchResult = calculateMatchScore(currentUser, user);
+                
+                if (matchResult.score >= (preferences?.minMatchScore || 60)) {
+                    matchedUsers.push({
+                        ...user,
+                        matchScore: matchResult.score,
+                        matchDetails: matchResult.details,
+                        commonInterests: getCommonInterests(currentUser.interests || [], user.interests)
+                    });
+                }
+            }
+            
+            // 按匹配度降序排序
+            return matchedUsers.sort((a, b) => b.matchScore - a.matchScore);
+        }
+        
+        // ========== 社交匹配界面控制函数（AI生成部分）==========
+        
+        /**
+         * 打开社交发现模态框
+         */
+        /**
+         * 打开社交发现模态框（带调试信息的包装函数，AI生成部分）
+         */
+        function handleOpenSocialDiscoverModal() {
+            console.log('[社交模块] 点击发现朋友按钮');
+            try {
+                openSocialDiscoverModal();
+            } catch (error) {
+                console.error('[社交模块] 打开失败:', error);
+                showError('打开发现朋友功能失败: ' + error.message);
+            }
+        }
+        
+        /**
+         * 打开社交发现模态框
+         */
+        function openSocialDiscoverModal() {
+            console.log('[社交模块] 开始初始化发现朋友模态框');
+            
+            // 确保模拟用户数据存在
+            if (!campusData.simulatingUsers || Object.keys(campusData.simulatingUsers).length === 0) {
+                console.log('[社交模块] 生成模拟用户数据');
+                generateSimulatingUsers(100);
+                console.log('[社交模块] 生成完成，用户数量:', Object.keys(campusData.simulatingUsers).length);
+            } else {
+                console.log('[社交模块] 模拟用户已存在，数量:', Object.keys(campusData.simulatingUsers).length);
+            }
+            
+            // 确保数据结构完整
+            if (!campusData.social) {
+                console.log('[社交模块] 初始化社交数据结构');
+                campusData.social = {
+                    userProfiles: {},
+                    friends: [],
+                    friendRequests: [],
+                    matchPreferences: {
+                        targetGender: 'all',
+                        minMatchScore: 60,
+                        preferredInterests: [],
+                        targetGrade: 'all',
+                        targetMajor: 'all'
+                    },
+                    behaviorData: {
+                        libraryVisits: 0,
+                        gymVisits: 0,
+                        cafeteriaVisits: 0,
+                        studyHours: 0,
+                        socialScore: 50
+                    }
+                };
+            }
+            
+            // 确保通知数据结构完整
+            if (!campusData.notifications) {
+                campusData.notifications = {
+                    all: [],
+                    unreadCount: 0,
+                    likes: []
+                };
+            }
+            
+            console.log('[社交模块] 渲染兴趣筛选按钮');
+            // 渲染兴趣筛选按钮
+            renderInterestFilterButtons();
+            
+            console.log('[社交模块] 获取当前用户信息');
+            // 获取当前用户信息
+            const currentUser = getCurrentUser();
+            console.log('[社交模块] 当前用户:', currentUser);
+            
+            console.log('[社交模块] 加载匹配用户');
+            // 加载匹配用户
+            loadMatchedUsers(currentUser);
+            
+            console.log('[社交模块] 显示模态框');
+            const modal = document.getElementById('socialDiscoverModal');
+            if (modal) {
+                modal.style.display = 'flex';
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+                console.log('[社交模块] 模态框显示成功');
+            } else {
+                console.error('[社交模块] 找不到 socialDiscoverModal 元素');
+                showError('界面加载失败，请刷新页面重试');
+            }
+        }
+        
+        /**
+         * 关闭社交发现模态框
+         */
+        function closeSocialDiscoverModal() {
+            document.getElementById('socialDiscoverModal').style.display = 'none';
+        }
+        
+        /**
+         * 渲染兴趣筛选按钮
+         */
+        function renderInterestFilterButtons() {
+            const container = document.getElementById('interestFilterButtons');
+            if (!container) return;
+            
+            const buttonsHtml = INTEREST_TAGS.slice(0, 6).map(tag =>
+                `<button onclick="filterUsersByInterest('${tag}')" class="filter-btn px-3 py-1 text-sm rounded-full bg-gray-200 text-gray-700 hover:bg-blue-100 transition-colors">${tag}</button>`
+            ).join('');
+            
+            container.innerHTML = buttonsHtml;
+        }
+        
+        /**
+         * 加载匹配用户列表
+         */
+        function loadMatchedUsers(currentUser, filterInterest = null) {
+            const container = document.getElementById('matchedUsersList');
+            container.innerHTML = '<div class="text-center py-8 text-gray-500"><i class="fas fa-spinner fa-spin text-2xl mb-2"></i><p>正在寻找志同道合的朋友...</p></div>';
+            
+            console.log('[匹配模块] 开始匹配，当前用户:', currentUser);
+            console.log('[匹配模块] 匹配偏好:', campusData.social.matchPreferences);
+            console.log('[匹配模块] 模拟用户数量:', Object.keys(campusData.simulatingUsers || {}).length);
+            
+            setTimeout(() => {
+                try {
+                    let matchedUsers = getMatchedUsers(currentUser, campusData.social.matchPreferences);
+                    console.log('[匹配模块] 初步匹配结果数量:', matchedUsers.length);
+                    
+                    // 按兴趣筛选
+                    if (filterInterest && filterInterest !== 'all') {
+                        matchedUsers = matchedUsers.filter(user =>
+                            user.interests && user.interests.includes(filterInterest)
+                        );
+                        console.log('[匹配模块] 兴趣筛选后数量:', matchedUsers.length);
+                    }
+                    
+                    // 显示前20个用户
+                    matchedUsers = matchedUsers.slice(0, 20);
+                    
+                    console.log('[匹配模块] 最终显示数量:', matchedUsers.length);
+                    
+                    if (matchedUsers.length === 0) {
+                        container.innerHTML = `
+                            <div class="text-center py-12 text-gray-500">
+                                <i class="fas fa-search text-4xl mb-4 text-gray-300"></i>
+                                <p class="text-lg">暂无匹配的用户</p>
+                                <p class="text-sm mt-2">试试调整匹配设置吧</p>
+                            </div>
+                        `;
+                        document.getElementById('matchCount').textContent = '找到 0 位朋友';
+                        return;
+                    }
+                    
+                    container.innerHTML = matchedUsers.map(user => renderUserCard(user)).join('');
+                    document.getElementById('matchCount').textContent = `找到 ${matchedUsers.length} 位朋友`;
+                } catch (error) {
+                    console.error('[匹配模块] 匹配过程出错:', error);
+                    container.innerHTML = `
+                        <div class="text-center py-12 text-red-500">
+                            <i class="fas fa-exclamation-triangle text-4xl mb-4"></i>
+                            <p class="text-lg">匹配出错</p>
+                            <p class="text-sm mt-2">${error.message}</p>
+                        </div>
+                    `;
+                }
+            }, 500);
+        }
+        
+        /**
+         * 渲染用户卡片
+         */
+        function renderUserCard(user) {
+            const commonInterestsHtml = user.commonInterests && user.commonInterests.length > 0
+                ? user.commonInterests.slice(0, 3).map(tag =>
+                    `<span class="px-2 py-0.5 bg-blue-100 text-blue-600 rounded-full text-xs">${tag}</span>`
+                ).join('')
+                : '';
+            
+            const matchScoreClass = user.matchScore >= 80 ? 'text-green-500' : user.matchScore >= 60 ? 'text-blue-500' : 'text-yellow-500';
+            
+            return `
+                <div class="bg-white rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow cursor-pointer border border-gray-100" onclick="showUserDetail('${user.id}')">
+                    <div class="flex items-start">
+                        <div class="w-14 h-14 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center text-white font-bold text-xl flex-shrink-0">
+                            ${user.avatar || user.name.charAt(0)}
+                        </div>
+                        <div class="ml-4 flex-1">
+                            <div class="flex items-center justify-between">
+                                <h4 class="font-semibold text-gray-900">${user.name}</h4>
+                                <span class="px-2 py-0.5 bg-green-100 text-green-600 rounded-full text-xs font-medium">${user.matchScore}%匹配</span>
+                            </div>
+                            <p class="text-sm text-gray-500 mt-1">${user.major} · ${user.grade}</p>
+                            <p class="text-sm text-gray-500">${user.gender} · ${user.personality}</p>
+                            <div class="flex flex-wrap gap-1 mt-2">
+                                ${user.interests.slice(0, 3).map(tag =>
+                                    `<span class="px-2 py-0.5 bg-gray-100 text-gray-600 rounded-full text-xs">${tag}</span>`
+                                ).join('')}
+                            </div>
+                            ${commonInterestsHtml ? `
+                                <div class="mt-2 flex items-center text-xs text-green-600">
+                                    <i class="fas fa-heart mr-1"></i>
+                                    <span>共同兴趣: ${commonInterestsHtml}</span>
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        /**
+         * 按兴趣过滤用户
+         */
+        function filterUsersByInterest(interest) {
+            // 更新按钮状态
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active', 'bg-blue-500', 'text-white');
+                btn.classList.add('bg-gray-200', 'text-gray-700');
+            });
+            
+            event.target.classList.remove('bg-gray-200', 'text-gray-700');
+            event.target.classList.add('active', 'bg-blue-500', 'text-white');
+            
+            const currentUser = getCurrentUser();
+            loadMatchedUsers(currentUser, interest);
+        }
+        
+        /**
+         * 刷新匹配
+         */
+        function refreshMatches() {
+            const btn = event.target.closest('button');
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> 刷新中...';
+            btn.disabled = true;
+            
+            setTimeout(() => {
+                const currentUser = getCurrentUser();
+                loadMatchedUsers(currentUser);
+                btn.innerHTML = '<i class="fas fa-sync-alt mr-2"></i> 刷新匹配';
+                btn.disabled = false;
+                showSuccess('匹配已更新');
+            }, 1000);
+        }
+        
+        /**
+         * 显示用户详情
+         */
+        function showUserDetail(userId) {
+            const simulatingUsers = campusData.simulatingUsers || {};
+            const user = simulatingUsers[userId];
+            
+            if (!user) return;
+            
+            const currentUser = getCurrentUser();
+            const matchResult = calculateMatchScore(currentUser, user);
+            const commonInterests = getCommonInterests(currentUser.interests || [], user.interests);
+            
+            const content = `
+                <div class="text-center">
+                    <div class="w-24 h-24 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center text-white font-bold text-3xl mx-auto mb-4">
+                        ${user.avatar || user.name.charAt(0)}
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900">${user.name}</h3>
+                    <p class="text-gray-500">${user.major} · ${user.grade}</p>
+                    <div class="flex justify-center items-center mt-2">
+                        <span class="px-3 py-1 bg-green-100 text-green-600 rounded-full font-medium">${matchResult.score}% 匹配度</span>
+                    </div>
+                </div>
+                
+                <div class="mt-6 space-y-4">
+                    <div class="bg-gray-50 rounded-lg p-3">
+                        <h4 class="font-semibold text-sm text-gray-700 mb-2">📝 个人简介</h4>
+                        <p class="text-sm text-gray-600">${user.bio || '该用户还没有填写简介'}</p>
+                    </div>
+                    
+                    <div class="bg-gray-50 rounded-lg p-3">
+                        <h4 class="font-semibold text-sm text-gray-700 mb-2">🎯 兴趣标签</h4>
+                        <div class="flex flex-wrap gap-2">
+                            ${user.interests.map(tag =>
+                                `<span class="px-2 py-1 bg-purple-100 text-purple-600 rounded-full text-sm">${tag}</span>`
+                            ).join('')}
+                        </div>
+                    </div>
+                    
+                    ${commonInterests.length > 0 ? `
+                        <div class="bg-blue-50 rounded-lg p-3">
+                            <h4 class="font-semibold text-sm text-blue-700 mb-2">💙 共同兴趣</h4>
+                            <div class="flex flex-wrap gap-2">
+                                ${commonInterests.map(tag =>
+                                    `<span class="px-2 py-1 bg-blue-200 text-blue-700 rounded-full text-sm">${tag}</span>`
+                                ).join('')}
+                            </div>
+                        </div>
+                    ` : ''}
+                    
+                    <div class="grid grid-cols-2 gap-3">
+                        <div class="bg-gray-50 rounded-lg p-3 text-center">
+                            <p class="text-xs text-gray-500">性格</p>
+                            <p class="font-semibold text-gray-900">${user.personality}</p>
+                        </div>
+                        <div class="bg-gray-50 rounded-lg p-3 text-center">
+                            <p class="text-xs text-gray-500">常去地点</p>
+                            <p class="font-semibold text-gray-900">${user.favoriteLocations.slice(0, 2).join(', ')}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-gray-50 rounded-lg p-3">
+                        <h4 class="font-semibold text-sm text-gray-700 mb-2">💡 匹配分析</h4>
+                        <div class="space-y-2">
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm text-gray-600">兴趣相似度</span>
+                                <div class="flex items-center">
+                                    <div class="w-24 bg-gray-200 rounded-full h-2 mr-2">
+                                        <div class="bg-blue-500 h-2 rounded-full" style="width: ${matchResult.details.interest}%"></div>
+                                    </div>
+                                    <span class="text-sm font-medium">${matchResult.details.interest}%</span>
+                                </div>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm text-gray-600">行为相似度</span>
+                                <div class="flex items-center">
+                                    <div class="w-24 bg-gray-200 rounded-full h-2 mr-2">
+                                        <div class="bg-green-500 h-2 rounded-full" style="width: ${matchResult.details.behavior}%"></div>
+                                    </div>
+                                    <span class="text-sm font-medium">${matchResult.details.behavior}%</span>
+                                </div>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm text-gray-600">互补性</span>
+                                <div class="flex items-center">
+                                    <div class="w-24 bg-gray-200 rounded-full h-2 mr-2">
+                                        <div class="bg-purple-500 h-2 rounded-full" style="width: ${matchResult.details.complement}%"></div>
+                                    </div>
+                                    <span class="text-sm font-medium">${matchResult.details.complement}%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-6 flex space-x-3">
+                    <button onclick="sendFriendRequest('${user.id}')" class="flex-1 bg-blue-500 hover:bg-blue-600 text-white py-2 rounded-lg transition-colors flex items-center justify-center">
+                        <i class="fas fa-user-plus mr-2"></i> 添加好友
+                    </button>
+                    <button onclick="sendChat('${user.id}')" class="flex-1 bg-green-500 hover:bg-green-600 text-white py-2 rounded-lg transition-colors flex items-center justify-center">
+                        <i class="fas fa-comment mr-2"></i> 发消息
+                    </button>
+                </div>
+            `;
+            
+            document.getElementById('userDetailContent').innerHTML = content;
+            document.getElementById('userDetailModal').style.display = 'flex';
+        }
+        
+        /**
+         * 关闭用户详情模态框
+         */
+        function closeUserDetailModal() {
+            document.getElementById('userDetailModal').style.display = 'none';
+        }
+        
+        /**
+         * 发送好友请求
+         */
+        function sendFriendRequest(userId) {
+            closeUserDetailModal();
+            showSuccess('好友请求已发送！');
+            
+            // 添加通知（模拟）
+            campusData.notifications.all.push({
+                id: Date.now(),
+                type: 'friend_request',
+                title: '好友请求',
+                message: '您已向该用户发送好友请求',
+                time: new Date().toISOString(),
+                read: false
+            });
+            updateNotificationBadge();
+        }
+        
+        /**
+         * 发送消息
+         */
+        function sendChat(userId) {
+            closeUserDetailModal();
+            closeSocialDiscoverModal();
+            addMessage('ai', `💬 聊天功能正在开发中...\n\n这是一个模拟功能，真实应用中会跳转到聊天界面与对方进行对话。`);
+        }
+        
+        /**
+         * 打开匹配设置
+         */
+        function showMatchSettings() {
+            // 渲染兴趣标签选择器
+            renderInterestTagsSelector();
+            
+            // 渲染年级选项
+            renderGradeOptions();
+            
+            // 恢复当前设置
+            const prefs = campusData.social.matchPreferences;
+            document.getElementById('minMatchScore').value = prefs.minMatchScore;
+            document.getElementById('minMatchScoreValue').textContent = prefs.minMatchScore + '%';
+            
+            // 恢复年级选择
+            if (prefs.targetGrade && prefs.targetGrade !== 'all') {
+                document.getElementById('matchGrade').value = prefs.targetGrade;
+            }
+            
+            document.getElementById('socialDiscoverModal').style.display = 'none';
+            document.getElementById('matchSettingsModal').style.display = 'flex';
+        }
+        
+        /**
+         * 渲染兴趣标签选择器
+         */
+        function renderInterestTagsSelector() {
+            const container = document.getElementById('interestTagsSelector');
+            if (!container) return;
+            
+            const prefs = campusData.social.matchPreferences;
+            container.innerHTML = INTEREST_TAGS.map(tag => {
+                const isSelected = prefs.preferredInterests.includes(tag);
+                return `
+                    <button onclick="toggleInterestTag('${tag}')"
+                            class="interest-tag-btn px-3 py-1 text-sm rounded-full ${isSelected ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'} hover:bg-blue-100 transition-colors">
+                        ${tag}
+                    </button>
+                `;
+            }).join('');
+        }
+        
+        /**
+         * 渲染年级选项（动态加载）
+         */
+        function renderGradeOptions() {
+            const select = document.getElementById('matchGrade');
+            if (!select) return;
+            
+            // 清空现有选项
+            select.innerHTML = '<option value="all">不限</option>';
+            
+            // 添加年级选项
+            GRADES.forEach(grade => {
+                const option = document.createElement('option');
+                option.value = grade;
+                option.textContent = grade;
+                select.appendChild(option);
+            });
+        }
+        
+        /**
+         * 关闭匹配设置模态框
+         */
+        function closeMatchSettingsModal() {
+            document.getElementById('matchSettingsModal').style.display = 'none';
+            document.getElementById('socialDiscoverModal').style.display = 'flex';
+        }
+        
+        /**
+         * 设置匹配目标性别
+         */
+        function setMatchTargetGender(gender) {
+            document.querySelectorAll('.gender-btn').forEach(btn => {
+                btn.classList.remove('border-blue-500', 'bg-blue-500', 'text-white');
+                btn.classList.add('border-gray-300', 'text-gray-700');
+            });
+            
+            event.target.classList.remove('border-gray-300', 'text-gray-700');
+            event.target.classList.add('border-blue-500', 'bg-blue-500', 'text-white');
+            
+            campusData.social.matchPreferences.targetGender = gender;
+        }
+        
+        /**
+         * 设置目标年级
+         */
+        function setTargetGrade(grade) {
+            document.querySelectorAll('.grade-btn').forEach(btn => {
+                btn.classList.remove('active', 'border-blue-500', 'bg-blue-500', 'text-white');
+                btn.classList.add('border-gray-300', 'text-gray-700');
+            });
+            
+            event.target.classList.remove('border-gray-300', 'text-gray-700');
+            event.target.classList.add('active', 'border-blue-500', 'bg-blue-500', 'text-white');
+            
+            campusData.social.matchPreferences.targetGrade = grade;
+        }
+        
+        /**
+         * 切换兴趣标签
+         */
+        function toggleInterestTag(tag) {
+            const prefs = campusData.social.matchPreferences;
+            const index = prefs.preferredInterests.indexOf(tag);
+            
+            if (index > -1) {
+                prefs.preferredInterests.splice(index, 1);
+            } else {
+                prefs.preferredInterests.push(tag);
+            }
+            
+            renderInterestTagsSelector();
+        }
+        
+        /**
+         * 保存匹配设置
+         */
+        function saveMatchSettings() {
+            const minScore = parseInt(document.getElementById('minMatchScore').value);
+            campusData.social.matchPreferences.minMatchScore = minScore;
+            
+            localStorage.setItem('socialMatchPreferences', JSON.stringify(campusData.social.matchPreferences));
+            
+            closeMatchSettingsModal();
+            
+            const currentUser = getCurrentUser();
+            loadMatchedUsers(currentUser);
+            
+            showSuccess('匹配设置已保存');
+        }
+        
+        /**
+         * 重置匹配设置
+         */
+        function resetMatchSettings() {
+            campusData.social.matchPreferences = {
+                targetGender: 'all',
+                minMatchScore: 60,
+                preferredInterests: [],
+                targetGrade: 'all',
+                targetMajor: 'all'
+            };
+            
+            document.getElementById('minMatchScore').value = 60;
+            document.getElementById('minMatchScoreValue').textContent = '60%';
+            
+            // 重置性别按钮
+            document.querySelectorAll('.gender-btn').forEach(btn => {
+                btn.classList.remove('border-blue-500', 'bg-blue-500', 'text-white');
+                btn.classList.add('border-gray-300', 'text-gray-700');
+            });
+            document.querySelector('.gender-btn').classList.add('border-blue-500', 'bg-blue-500', 'text-white');
+            document.querySelector('.gender-btn').classList.remove('border-gray-300', 'text-gray-700');
+            
+            renderInterestTagsSelector();
+            
+            showSuccess('匹配设置已重置');
+        }
+        
+        /**
+        * 获取当前用户信息
+        */
+       function getCurrentUser() {
+           const studentId = localStorage.getItem('studentId') || 'user_1000';
+           const userData = campusData.users[studentId];
+           
+           return {
+               id: studentId,
+               name: userData?.name || userSettings.nickname,
+               gender: '男',
+               major: userData?.major || '计算机科学',
+               grade: '大二',
+               personality: '开朗',
+               interests: ['编程', '音乐', '阅读', '运动'],
+               favoriteLocations: ['图书馆', '健身房', '食堂'],
+               behaviorData: campusData.social.behaviorData || {
+                   libraryVisits: 10,
+                   gymVisits: 5,
+                   studyHours: 20,
+                   socialScore: 60
+               }
+           };
+       }
+       
+       /**
+        * 保存所有数据到localStorage（AI生成部分）
+        * 统一保存社交、通知、校园墙等所有模块数据
+        */
+       function saveAllData() {
+           try {
+               // 保存模拟用户数据
+               if (campusData.simulatingUsers && Object.keys(campusData.simulatingUsers).length > 0) {
+                   localStorage.setItem('simulatingUsers', JSON.stringify(campusData.simulatingUsers));
+               }
+               
+               // 保存通知数据
+               if (campusData.notifications && campusData.notifications.all) {
+                   localStorage.setItem('notifications', JSON.stringify(campusData.notifications));
+               }
+               
+               // 保存校园墙帖子
+               if (campusData.campusWall && campusData.campusWall.posts) {
+                   localStorage.setItem('campusWallPosts', JSON.stringify(campusData.campusWall.posts));
+               }
+               
+               // 保存评论数据
+               if (campusData.campusWall && campusData.campusWall.comments) {
+                   localStorage.setItem('campusWallComments', JSON.stringify(campusData.campusWall.comments));
+               }
+               
+               // 保存点赞记录
+               if (campusData.campusWall && campusData.campusWall.likes) {
+                   localStorage.setItem('campusWallLikes', JSON.stringify(campusData.campusWall.likes));
+               }
+               
+               // 保存社交匹配偏好
+               if (campusData.social && campusData.social.matchPreferences) {
+                   localStorage.setItem('socialMatchPreferences', JSON.stringify(campusData.social.matchPreferences));
+               }
+               
+               // 保存收藏的帖子
+               if (campusData.campusWall && campusData.campusWall.savedPosts) {
+                   localStorage.setItem('savedPosts', JSON.stringify(campusData.campusWall.savedPosts));
+               }
+               
+               console.log('[数据保存] 所有数据已成功保存');
+           } catch (e) {
+               console.error('[数据保存] 保存失败:', e);
+           }
+       }
+        
+        /**
+         * 初始化社交模块（AI生成部分）
+         */
+        function initializeSocialModule() {
+            // 初始化社交数据结构
+            if (!campusData.simulatingUsers || Object.keys(campusData.simulatingUsers).length === 0) {
+                generateSimulatingUsers(100);
+            }
+            
+            // 初始化校园墙帖子
+            if (!campusData.campusWall.posts || campusData.campusWall.posts.length === 0) {
+                generateCampusWallPosts(50);
+            }
+            
+            // 初始化通知
+            if (!campusData.notifications.all || campusData.notifications.all.length === 0) {
+                generateSimulatingNotifications();
+            }
+            
+            console.log('社交模块初始化完成');
+        }
+        
+        /**
+         * 生成模拟通知数据（AI生成部分）
+         */
+        function generateSimulatingNotifications() {
+            const notifications = [];
+            const types = Object.keys(NOTIFICATION_TYPES);
+            
+            // 用户名列表
+            const userNameList = ['张同学', '李同学', '王同学', '赵同学', '刘同学', '陈同学', '杨同学', '黄同学'];
+            
+            for (let i = 0; i < 10; i++) {
+                const type = types[Math.floor(Math.random() * types.length)];
+                const user = userNameList[Math.floor(Math.random() * userNameList.length)];
+                let title, message;
+                
+                switch(type) {
+                    case 'friend_request':
+                        title = '好友请求';
+                        message = `${user}向你发送了好友请求`;
+                        break;
+                    case 'comment':
+                        title = '新评论';
+                        message = `${user}评论了你的帖子`;
+                        break;
+                    case 'like':
+                        title = '点赞通知';
+                        message = `${user}赞了你的帖子`;
+                        break;
+                    case 'post_reply':
+                        title = '帖子回复';
+                        message = `${user}回复了你的帖子`;
+                        break;
+                    case 'mention':
+                        title = '@提到你';
+                        message = `${user}在帖子中提到了你`;
+                        break;
+                    case 'system':
+                        title = '系统通知';
+                        message = '欢迎使用校园AI助手';
+                        break;
+                }
+                
+                notifications.push({
+                    id: 'notify_' + Date.now() + '_' + i,
+                    type: type,
+                    title: title,
+                    message: message,
+                    read: Math.random() > 0.5,
+                    time: new Date(Date.now() - Math.random() * 24 * 60 * 60 * 1000).toISOString()
+                });
+            }
+            
+            campusData.notifications.all = notifications.sort((a, b) => new Date(b.time) - new Date(a.time));
+            saveAllData();
+        }
+        
+        /**
+         * 更新通知角标
+         */
+        function updateNotificationBadge() {
+            campusData.notifications.unreadCount = campusData.notifications.all.filter(n => !n.read).length;
+            
+            // 更新侧边栏角标
+            const badge = document.getElementById('notificationBadge');
+            if (badge) {
+                badge.textContent = campusData.notifications.unreadCount > 99 ? '99+' : campusData.notifications.unreadCount;
+                badge.style.display = campusData.notifications.unreadCount > 0 ? 'flex' : 'none';
+                
+                // 添加动画效果 - 使用红色圆点样式
+                if (campusData.notifications.unreadCount > 0) {
+                    badge.classList.add('animate-pulse', 'bg-red-500');
+                    badge.classList.remove('bg-gray-400');
+                } else {
+                    badge.classList.remove('animate-pulse', 'bg-red-500');
+                }
+            }
+            
+            // 更新模态框标题角标
+            const titleBadge = document.getElementById('notificationTitleBadge');
+            if (titleBadge) {
+                titleBadge.textContent = campusData.notifications.unreadCount > 99 ? '99+' : campusData.notifications.unreadCount;
+                titleBadge.style.display = campusData.notifications.unreadCount > 0 ? 'inline-block' : 'none';
+            }
+            
+            // 更新模态框内的未读计数文字
+            const unreadCountInModal = document.getElementById('unreadCountInModal');
+            if (unreadCountInModal) {
+                unreadCountInModal.textContent = campusData.notifications.unreadCount;
+            }
+        }
+        
+        /**
+         * 显示通知中心
+         */
+        function showNotifications() {
+            const modal = document.getElementById('notificationsModal');
+            modal.style.display = 'flex';
+            renderNotifications();
+        }
+        
+        /**
+         * 渲染通知列表（AI生成部分）
+         */
+        function renderNotifications() {
+            const container = document.getElementById('notificationsList');
+            const notifications = campusData.notifications.all || [];
+            
+            if (notifications.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-12 text-gray-500">
+                        <i class="fas fa-bell-slash text-4xl mb-4 text-gray-300"></i>
+                        <p class="text-lg">暂无通知</p>
+                        <p class="text-sm mt-2">当有新通知时，会在这里显示</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            const typeIcons = {
+                friend_request: 'fa-user-plus text-blue-500',
+                comment: 'fa-comment text-green-500',
+                like: 'fa-heart text-red-500',
+                post_reply: 'fa-reply text-purple-500',
+                mention: 'fa-at text-yellow-500',
+                system: 'fa-bell text-gray-500'
+            };
+            
+            container.innerHTML = notifications.map(notify => `
+                <div class="p-4 border-b ${!notify.read ? 'bg-blue-50' : ''} hover:bg-gray-50 transition-colors">
+                    <div class="flex items-start space-x-3">
+                        <div class="w-12 h-12 rounded-full ${!notify.read ? 'bg-blue-100' : 'bg-gray-100'} flex items-center justify-center flex-shrink-0">
+                            <i class="fas ${typeIcons[notify.type] || 'fa-bell'} text-xl"></i>
+                        </div>
+                        <div class="flex-1">
+                            <p class="text-sm font-semibold text-gray-900">${notify.title}</p>
+                            <p class="text-xs text-gray-700 mt-1">${notify.message}</p>
+                            <p class="text-xs text-gray-500 mt-1">${formatTime(notify.time)}</p>
+                        </div>
+                        ${!notify.read ? `
+                            <div class="flex-shrink-0">
+                                <span class="inline-block w-2 h-2 bg-blue-500 rounded-full"></span>
+                            </div>
+                        ` : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        /**
+         * 标记通知为已读（AI生成部分）
+         */
+        function markNotificationAsRead(notifyId) {
+            const notify = campusData.notifications.all.find(n => n.id === notifyId);
+            if (notify && !notify.read) {
+                notify.read = true;
+                saveAllData();
+                updateNotificationBadge();
+                renderNotifications();
+            }
+        }
+        
+        /**
+         * 将所有通知标记为已读（AI生成部分）
+         */
+        function markAllNotificationsAsRead() {
+            campusData.notifications.all.forEach(n => n.read = true);
+            saveAllData();
+            updateNotificationBadge();
+            renderNotifications();
+            showSuccess('所有通知已标记为已读');
+        }
+        
+        /**
+         * 关闭通知中心
+         */
+        function closeNotificationsModal() {
+            document.getElementById('notificationsModal').style.display = 'none';
+        }
+        
+        // ========== 校园墙模块 - 数据生成和核心功能（AI生成部分）==========
+        
+        /**
+         * 生成随机帖子
+         */
+        function generateRandomPost(postId) {
+            const postTypeKeys = Object.keys(POST_TYPES);
+            const postType = POST_TYPES[postTypeKeys[Math.floor(Math.random() * postTypeKeys.length)]];
+            
+            const titles = {
+                lost: ['丢失黑色钱包', '寻找蓝色雨伞', '丢失白色耳机', '遗失课本', '丢失校园卡'],
+                found: ['拾到黑色钱包', '找到蓝色雨伞', '拾到耳机', '发现课本', '捡到校园卡'],
+                team: ['寻找羽毛球搭档', '篮球队招新', '组队参加编程比赛', '组建学习小组', '周末骑行组队'],
+                help: ['求推荐学习方法', '急需英语笔记', '求购二手书籍', '求助计算机问题', '需要搬运帮忙'],
+                trade: ['转让二手自行车', '出售闲置书籍', '转让健身卡', '出售台灯', '转让游戏机'],
+                news: ['校园音乐节预告', '图书馆活动通知', '学术讲座报名', '社团招新信息', '校庆活动'],
+                pet: ['校园流浪猫需要领养', '发现受伤鸟类', '寻找走失的猫咪', '校园猫咪喂养倡议', '宠物丢失']
+            };
+            
+            const contents = {
+                lost: ['今天早上在食堂附近丢失，内有重要证件，望归还必有重谢。', '昨天下午在教学楼遗失，非常重要，请看到的朋友联系。', '今天在操场丢失，耳机是白色的，型号AirPods Pro。'],
+                found: ['在图书馆三层拾到，物品完好，请失主联系。', '在食堂二楼发现，请带证件领取。', '在宿舍楼下发现，请尽快认领。'],
+                team: ['周末上午9点在体育馆，水平不限，重在参与。', '欢迎加入我们的队伍，一起锻炼身体。', '我们需要3-5人，有兴趣的请私信。'],
+                help: ['有没有好的备考资料可以分享一下？', '急需英语笔记，愿意付费购买。', '求助：如何提高编程能力？'],
+                trade: ['九成新，价格实惠，有需要的联系。', '因毕业出售，价格面议。', '闲置物品，附赠配件，价格可议。'],
+                news: ['本周六晚7点在大礼堂举行，欢迎全校师生参加。', '本次讲座主题是人工智能，欢迎感兴趣的同学参加。', '社团现有成员50人，欢迎新同学加入。'],
+                pet: ['猫咪很乖，需要负责任的主人。', '发现一只受伤的鸟，需要帮助。', '希望大家关爱校园流浪动物。']
+            };
+            
+            const titleList = titles[postType.id] || titles.lost;
+            const contentList = contents[postType.id] || contents.lost;
+            
+            const usernames = ['张同学', '李同学', '王同学', '刘同学', '陈同学', '杨同学', '赵同学', '黄同学'];
+            const locations = ['图书馆', '食堂', '体育馆', '教学楼', '宿舍', '操场', '实验楼'];
+            
+            const date = new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000);
+            
+            return {
+                id: postId,
+                type: postType,
+                title: titleList[Math.floor(Math.random() * titleList.length)],
+                content: contentList[Math.floor(Math.random() * contentList.length)],
+                author: usernames[Math.floor(Math.random() * usernames.length)],
+                authorId: 'user_' + Math.floor(Math.random() * 1000),
+                avatar: usernames[Math.floor(Math.random() * usernames.length)].charAt(0),
+                location: locations[Math.floor(Math.random() * locations.length)],
+                price: postType.id === 'trade' ? (Math.floor(Math.random() * 500) + 50) + '元' : null,
+                contact: '微信联系',
+                status: Math.random() > 0.8 ? POST_STATUS.SOLVED : POST_STATUS.ACTIVE,
+                likes: Math.floor(Math.random() * 50),
+                commentsCount: Math.floor(Math.random() * 20),
+                views: Math.floor(Math.random() * 500) + 50,
+                createdAt: date.toISOString(),
+                images: postType.id === 'trade' || postType.id === 'pet' ? [`https://picsum.photos/400/300?random=${postId}`] : []
+            };
+        }
+        
+        /**
+         * 批量生成演示帖子数据
+         */
+        function generateCampusWallPosts(count = 50) {
+            const posts = [];
+            for (let i = 0; i < count; i++) {
+                posts.push(generateRandomPost(Date.now() + i));
+            }
+            // 按创建时间降序排序
+            posts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            campusData.campusWall.posts = posts;
+            localStorage.setItem('campusWallPosts', JSON.stringify(posts));
+            console.log(`已生成 ${count} 条校园墙帖子`);
+            return posts;
+        }
+        
+        /**
+         * 格式化时间
+         */
+        function formatTime(timestamp) {
+            const date = new Date(timestamp);
+            const now = new Date();
+            const diff = now - date;
+            
+            const minutes = Math.floor(diff / (1000 * 60));
+            const hours = Math.floor(diff / (1000 * 60 * 60));
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            
+            if (minutes < 1) return '刚刚';
+            if (minutes < 60) return `${minutes}分钟前`;
+            if (hours < 24) return `${hours}小时前`;
+            if (days < 7) return `${days}天前`;
+            
+            return date.toLocaleDateString('zh-CN', { month: '2-digit', day: '2-digit' });
+        }
+        
+        // ========== 校园墙模块 - 界面控制函数（AI生成部分）==========
+        
+        let currentPostFilter = 'all';
+        let selectedPostType = '';
+        
+        /**
+         * 打开校园墙模态框
+         */
+        function showCampusWall() {
+            // 确保帖子数据存在
+            if (!campusData.campusWall.posts || campusData.campusWall.posts.length === 0) {
+                generateCampusWallPosts(50);
+            }
+            
+            // 加载帖子
+            loadCampusWallPosts();
+            
+            document.getElementById('campusWallModal').style.display = 'flex';
+        }
+        
+        /**
+         * 关闭校园墙模态框
+         */
+        function closeCampusWallModal() {
+            document.getElementById('campusWallModal').style.display = 'none';
+        }
+        
+        /**
+         * 按类型筛选帖子
+         */
+        function filterPostsByType(type) {
+            currentPostFilter = type;
+            
+            // 更新按钮状态
+            document.querySelectorAll('.post-filter-btn').forEach(btn => {
+                if (btn.dataset.type === type) {
+                    btn.classList.remove('bg-gray-100', 'text-gray-700');
+                    btn.classList.add('bg-blue-500', 'text-white');
+                } else {
+                    btn.classList.remove('bg-blue-500', 'text-white');
+                    btn.classList.add('bg-gray-100', 'text-gray-700');
+                }
+            });
+            
+            loadCampusWallPosts();
+        }
+        
+        /**
+         * 加载校园墙帖子列表
+         */
+        function loadCampusWallPosts() {
+            const container = document.getElementById('campusWallPosts');
+            const posts = campusData.campusWall.posts || [];
+            
+            let filteredPosts = currentPostFilter === 'all'
+                ? posts.slice(0, 30)
+                : posts.filter(p => p.type.id === currentPostFilter).slice(0, 30);
+            
+            if (filteredPosts.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-12 text-gray-500">
+                        <i class="fas fa-inbox text-4xl mb-4 text-gray-300"></i>
+                        <p class="text-lg">暂无帖子</p>
+                        <p class="text-sm mt-2">快来发布第一条帖子吧</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = filteredPosts.map(post => renderPostCard(post)).join('');
+        }
+        
+        /**
+         * 渲染帖子卡片
+         */
+        function renderPostCard(post) {
+            const statusBadge = post.status === POST_STATUS.SOLVED
+                ? '<span class="px-2 py-0.5 bg-green-100 text-green-600 rounded-full text-xs">已解决</span>'
+                : post.status === POST_STATUS.ACTIVE
+                    ? '<span class="px-2 py-0.5 bg-blue-100 text-blue-600 rounded-full text-xs">进行中</span>'
+                    : '';
+            
+            return `
+                <div class="bg-white rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow cursor-pointer border border-gray-100" onclick="showPostDetail('${post.id}')">
+                    <div class="flex items-start">
+                        <!-- 用户头像 -->
+                        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-cyan-400 to-blue-500 flex items-center justify-center text-white font-bold flex-shrink-0">
+                            ${post.avatar}
+                        </div>
+                        
+                        <div class="ml-3 flex-1">
+                            <!-- 头部信息 -->
+                            <div class="flex items-center justify-between mb-2">
+                                <div class="flex items-center space-x-2">
+                                    <span class="font-medium text-gray-900">${post.author}</span>
+                                    <span class="text-xs text-gray-500">${formatTime(post.createdAt)}</span>
+                                    ${statusBadge}
+                                </div>
+                                <span class="text-2xl">${post.type.icon}</span>
+                            </div>
+                            
+                            <!-- 标题 -->
+                            <h4 class="font-semibold text-gray-900 mb-1">${post.title}</h4>
+                            
+                            <!-- 内容预览 -->
+                            <p class="text-sm text-gray-600 mb-2 line-clamp-2">${post.content}</p>
+                            
+                            <!-- 标签 -->
+                            ${post.price ? `<span class="px-2 py-0.5 bg-yellow-100 text-yellow-700 rounded-full text-xs">¥${post.price}</span>` : ''}
+                            ${post.location ? `<span class="px-2 py-0.5 bg-gray-100 text-gray-600 rounded-full text-xs ml-1">📍 ${post.location}</span>` : ''}
+                            
+                            <!-- 图片预览 -->
+                            ${post.images && post.images.length > 0 ? `
+                                <div class="mt-2">
+                                    <img src="${post.images[0]}" alt="帖子图片" class="w-full h-40 object-cover rounded-lg" onerror="this.style.display='none'">
+                                </div>
+                            ` : ''}
+                            
+                            <!-- 底部操作 -->
+                            <div class="flex items-center justify-between mt-3 pt-3 border-t border-gray-100">
+                                <div class="flex space-x-4 text-sm text-gray-500">
+                                    <button class="flex items-center hover:text-red-500 transition-colors" onclick="event.stopPropagation(); likePost('${post.id}')">
+                                        <i class="far fa-heart mr-1"></i>
+                                        <span>${post.likes}</span>
+                                    </button>
+                                    <button class="flex items-center hover:text-blue-500 transition-colors">
+                                        <i class="far fa-comment mr-1"></i>
+                                        <span>${post.commentsCount}</span>
+                                    </button>
+                                    <button class="flex items-center hover:text-gray-700 transition-colors">
+                                        <i class="far fa-eye mr-1"></i>
+                                        <span>${post.views}</span>
+                                    </button>
+                                </div>
+                                <button class="flex items-center text-sm text-gray-400 hover:text-blue-500 transition-colors" onclick="event.stopPropagation(); toggleSavePost('${post.id}')">
+                                    <i class="far fa-bookmark mr-1"></i>
+                                    <span>收藏</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        /**
+         * 发布帖子模态框
+         */
+        function showCreatePostModal() {
+            // 选中第一个类型
+            selectPostType('lost');
+            
+            document.getElementById('postTitle').value = '';
+            document.getElementById('postContent').value = '';
+            document.getElementById('postPrice').value = '';
+            document.getElementById('postLocation').value = '';
+            document.getElementById('priceField').classList.add('hidden');
+            
+            document.getElementById('campusWallModal').style.display = 'none';
+            document.getElementById('createPostModal').style.display = 'flex';
+        }
+        
+        /**
+         * 关闭发布帖子模态框
+         */
+        function closeCreatePostModal() {
+            document.getElementById('createPostModal').style.display = 'none';
+            document.getElementById('campusWallModal').style.display = 'flex';
+        }
+        
+        /**
+         * 选择帖子类型
+         */
+        function selectPostType(type) {
+            selectedPostType = type;
+            document.getElementById('selectedPostType').value = type;
+            
+            // 更新按钮状态
+            document.querySelectorAll('.post-type-btn').forEach(btn => {
+                if (btn.dataset.type === type) {
+                    btn.classList.add('border-blue-500', 'bg-blue-50');
+                    btn.classList.remove('border-gray-200');
+                } else {
+                    btn.classList.remove('border-blue-500', 'bg-blue-50');
+                    btn.classList.add('border-gray-200');
+                }
+            });
+            
+            // 交易类型显示价格字段
+            const priceField = document.getElementById('priceField');
+            if (type === 'trade') {
+                priceField.classList.remove('hidden');
+            } else {
+                priceField.classList.add('hidden');
+            }
+        }
+        
+        /**
+         * 提交帖子
+         */
+        function submitPost() {
+            const title = document.getElementById('postTitle').value.trim();
+            const content = document.getElementById('postContent').value.trim();
+            const price = document.getElementById('postPrice').value.trim();
+            const location = document.getElementById('postLocation').value;
+            
+            if (!selectedPostType) {
+                showError('请选择帖子类型');
+                return;
+            }
+            
+            if (!title || !content) {
+                showError('请填写标题和内容');
+                return;
+            }
+            
+            const newPost = {
+                id: Date.now().toString(),
+                type: POST_TYPES[selectedPostType.toUpperCase()],
+                title: title,
+                content: content,
+                author: userSettings.nickname,
+                authorId: localStorage.getItem('studentId') || 'user_1000',
+                avatar: userSettings.nickname.charAt(0),
+                location: location || '校园内',
+                price: selectedPostType === 'trade' ? price : null,
+                contact: '微信联系',
+                status: POST_STATUS.ACTIVE,
+                likes: 0,
+                commentsCount: 0,
+                views: 0,
+                createdAt: new Date().toISOString(),
+                images: []
+            };
+            
+            // 添加到帖子列表
+            campusData.campusWall.posts.unshift(newPost);
+            localStorage.setItem('campusWallPosts', JSON.stringify(campusData.campusWall.posts));
+            
+            closeCreatePostModal();
+            loadCampusWallPosts();
+            showSuccess('帖子发布成功！');
+        }
+        
+        /**
+         * 显示帖子详情
+         */
+        function showPostDetail(postId) {
+            const post = campusData.campusWall.posts.find(p => p.id === postId);
+            if (!post) return;
+            
+            // 增加浏览量
+            post.views++;
+            localStorage.setItem('campusWallPosts', JSON.stringify(campusData.campusWall.posts));
+            
+            const statusBadge = post.status === POST_STATUS.SOLVED
+                ? '<span class="px-3 py-1 bg-green-100 text-green-600 rounded-full text-sm">已解决</span>'
+                : post.status === POST_STATUS.ACTIVE
+                    ? '<span class="px-3 py-1 bg-blue-100 text-blue-600 rounded-full text-sm">进行中</span>'
+                    : '';
+            
+            const content = `
+                <!-- 帖子头部 -->
+                <div class="flex items-start mb-4">
+                    <div class="w-12 h-12 rounded-full bg-gradient-to-br from-cyan-400 to-blue-500 flex items-center justify-center text-white font-bold text-xl flex-shrink-0">
+                        ${post.avatar}
+                    </div>
+                    <div class="ml-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="font-semibold text-gray-900">${post.author}</span>
+                            <span class="text-sm text-gray-500">${formatTime(post.createdAt)}</span>
+                        </div>
+                        <p class="text-sm text-gray-500">${post.location} · ${post.authorId}</p>
+                    </div>
+                </div>
+                
+                <!-- 类型标签 -->
+                <div class="flex items-center space-x-2 mb-3">
+                    <span class="px-3 py-1 rounded-full text-sm font-medium" style="background-color: ${post.type.color}20; color: ${post.type.color}">
+                        ${post.type.icon} ${post.type.name}
+                    </span>
+                    ${statusBadge}
+                </div>
+                
+                <!-- 标题 -->
+                <h3 class="text-xl font-bold text-gray-900 mb-3">${post.title}</h3>
+                
+                <!-- 内容 -->
+                <p class="text-gray-700 mb-4 leading-relaxed">${post.content}</p>
+                
+                <!-- 价格 -->
+                ${post.price ? `
+                    <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-4">
+                        <p class="text-yellow-800 font-semibold">价格：${post.price}</p>
+                    </div>
+                ` : ''}
+                
+                <!-- 位置 -->
+                <div class="bg-gray-50 rounded-lg p-3 mb-4">
+                    <div class="flex items-center text-gray-600">
+                        <i class="fas fa-map-marker-alt text-gray-400 mr-2"></i>
+                        <span>${post.location}</span>
+                    </div>
+                </div>
+                
+                <!-- 联系方式 -->
+                <div class="bg-blue-50 rounded-lg p-3 mb-4">
+                    <p class="text-blue-800">
+                        <i class="fas fa-comment-alt text-blue-600 mr-2"></i>
+                        联系方式：${post.contact}
+                    </p>
+                </div>
+                
+                <!-- 图片 -->
+                ${post.images && post.images.length > 0 ? `
+                    <div class="mb-4">
+                        <img src="${post.images[0]}" alt="帖子图片" class="w-full rounded-lg" onerror="this.style.display='none'">
+                    </div>
+                ` : ''}
+                
+                <!-- 统计信息和操作按钮 -->
+                <div class="flex items-center justify-between py-3 border-t border-gray-200 mb-4">
+                    <div class="flex space-x-6 text-sm text-gray-500">
+                        <button onclick="toggleLikePost('${post.id}')" class="flex items-center hover:text-red-500 transition-colors focus:outline-none" id="likeBtn-${post.id}">
+                            <i class="fas fa-heart mr-1 ${campusData.notifications.likes && campusData.notifications.likes.includes(post.id) ? 'text-red-500' : ''}"></i>
+                            <span id="likeCount-${post.id}">${post.likes}</span>
+                        </button>
+                        <span class="flex items-center">
+                            <i class="far fa-comment mr-1"></i>
+                            <span id="commentCount-${post.id}">${post.commentsCount}</span> 评论
+                        </span>
+                        <span class="flex items-center">
+                            <i class="far fa-eye mr-1"></i>${post.views} 浏览
+                        </span>
+                    </div>
+                    <button onclick="toggleSavePost('${post.id}')" class="text-sm text-gray-400 hover:text-blue-500 transition-colors">
+                        <i class="far fa-bookmark mr-1"></i> 收藏
+                    </button>
+                </div>
+                
+                <!-- 点赞用户列表 -->
+                ${post.likes > 0 ? `
+                <div class="mb-4 p-3 bg-blue-50 rounded-lg">
+                    <div class="flex items-center text-sm text-gray-600">
+                        <i class="fas fa-heart text-red-500 mr-2"></i>
+                        <span>${post.likes} 人点赞了这条帖子</span>
+                    </div>
+                </div>
+                ` : ''}
+                
+                <!-- 分隔线 -->
+                <div class="border-t border-gray-200 my-4"></div>
+                
+                <!-- 评论输入框 -->
+                <div class="mb-4">
+                    <div class="flex space-x-3">
+                        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-cyan-400 to-blue-500 flex items-center justify-center text-white font-bold flex-shrink-0">
+                            ${userSettings.nickname.charAt(0)}
+                        </div>
+                        <div class="flex-1">
+                            <textarea
+                                id="commentInput-${post.id}"
+                                class="w-full p-3 border border-gray-200 rounded-lg resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                                rows="2"
+                                placeholder="写下你的评论..."
+                            ></textarea>
+                            <div class="flex justify-end mt-2">
+                                <button onclick="submitComment('${post.id}')" class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors text-sm flex items-center">
+                                    <i class="fas fa-paper-plane mr-2"></i> 发送评论
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 评论区 -->
+                <div>
+                    <h4 class="font-semibold text-gray-900 mb-3">
+                        <i class="far fa-comments mr-2"></i>评论 (${post.commentsCount})
+                    </h4>
+                    <div id="commentsList-${post.id}" class="space-y-4">
+                        <!-- 动态加载评论 -->
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('postDetailContent').innerHTML = content;
+            document.getElementById('campusWallModal').style.display = 'none';
+            document.getElementById('postDetailModal').style.display = 'flex';
+            
+            // 加载帖子评论（AI生成部分）
+            loadPostComments(postId);
+            
+            // 更新点赞按钮状态（AI生成部分）
+            const isLiked = campusData.notifications.likes && campusData.notifications.likes.includes(postId);
+            updateLikeButton(postId, post.likes, isLiked);
+        }
+        
+        /**
+         * 关闭帖子详情模态框
+         */
+        function closePostDetailModal() {
+            document.getElementById('postDetailModal').style.display = 'none';
+            document.getElementById('campusWallModal').style.display = 'flex';
+        }
+        
+        /**
+         * 切换点赞状态（AI生成部分）
+         */
+        function toggleLikePost(postId) {
+            const post = campusData.campusWall.posts.find(p => p.id === postId);
+            if (!post) return;
+            
+            // 初始化likes数组
+            if (!campusData.notifications.likes) {
+                campusData.notifications.likes = [];
+            }
+            
+            const userId = localStorage.getItem('studentId') || 'user_1000';
+            const likeIndex = campusData.notifications.likes.indexOf(postId);
+            
+            if (likeIndex > -1) {
+                // 取消点赞
+                campusData.notifications.likes.splice(likeIndex, 1);
+                post.likes--;
+                showSuccess('已取消点赞');
+            } else {
+                // 点赞
+                campusData.notifications.likes.push(postId);
+                post.likes++;
+                
+                // 创建点赞通知
+                const notification = {
+                    id: 'notify_like_' + Date.now(),
+                    type: 'like',
+                    content: `${userSettings.nickname} 点赞了你的帖子`,
+                    avatar: userSettings.nickname.charAt(0),
+                    read: false,
+                    timestamp: new Date().toISOString()
+                };
+                campusData.notifications.all.unshift(notification);
+                campusData.notifications.unreadCount++;
+                
+                showSuccess('点赞成功！');
+            }
+            
+            // 更新UI
+            updateLikeButton(postId, post.likes, campusData.notifications.likes.includes(postId));
+            saveAllData();
+            updateNotificationBadge();
+        }
+        
+        /**
+         * 更新点赞按钮状态（AI生成部分）
+         */
+        function updateLikeButton(postId, likes, isLiked) {
+            const likeBtn = document.getElementById(`likeBtn-${postId}`);
+            const likeCount = document.getElementById(`likeCount-${postId}`);
+            
+            if (likeBtn) {
+                const icon = likeBtn.querySelector('i');
+                if (isLiked) {
+                    icon.classList.add('text-red-500');
+                    likeBtn.classList.add('text-red-500');
+                } else {
+                    icon.classList.remove('text-red-500');
+                    likeBtn.classList.remove('text-red-500');
+                }
+            }
+            
+            if (likeCount) {
+                likeCount.textContent = likes;
+            }
+        }
+        
+        /**
+         * 提交评论（AI生成部分）
+         */
+        function submitComment(postId) {
+            const input = document.getElementById(`commentInput-${postId}`);
+            const content = input.value.trim();
+            
+            if (!content) {
+                showWarning('请输入评论内容');
+                return;
+            }
+            
+            const post = campusData.campusWall.posts.find(p => p.id === postId);
+            if (!post) return;
+            
+            // 初始化comments对象
+            if (!campusData.campusWall.comments) {
+                campusData.campusWall.comments = {};
+            }
+            if (!campusData.campusWall.comments[postId]) {
+                campusData.campusWall.comments[postId] = [];
+            }
+            
+            // 创建新评论
+            const comment = {
+                id: 'comment_' + Date.now(),
+                content: content,
+                author: userSettings.nickname,
+                authorId: localStorage.getItem('studentId') || 'user_1000',
+                avatar: userSettings.nickname.charAt(0),
+                createdAt: new Date().toISOString(),
+                likes: 0
+            };
+            
+            // 添加评论
+            campusData.campusWall.comments[postId].push(comment);
+            post.commentsCount++;
+            
+            // 创建评论通知
+            if (post.authorId !== localStorage.getItem('studentId')) {
+                const notification = {
+                    id: 'notify_comment_' + Date.now(),
+                    type: 'comment',
+                    content: `${userSettings.nickname} 评论了你的帖子`,
+                    avatar: userSettings.nickname.charAt(0),
+                    read: false,
+                    timestamp: new Date().toISOString()
+                };
+                campusData.notifications.all.unshift(notification);
+                campusData.notifications.unreadCount++;
+                updateNotificationBadge();
+            }
+            
+            // 更新UI
+            input.value = '';
+            renderComments(postId);
+            document.getElementById(`commentCount-${postId}`).textContent = post.commentsCount;
+            
+            saveAllData();
+            showSuccess('评论发布成功！');
+        }
+        
+        /**
+         * 渲染评论列表（AI生成部分）
+         */
+        function renderComments(postId) {
+            const container = document.getElementById(`commentsList-${postId}`);
+            const comments = campusData.campusWall.comments?.[postId] || [];
+            
+            if (comments.length === 0) {
+                container.innerHTML = `
+                    <div class="bg-gray-50 rounded-lg p-4 text-center text-gray-500 text-sm">
+                        <i class="far fa-comment-alt text-2xl mb-2"></i>
+                        <p>暂无评论，来抢沙发吧~</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = comments.map(comment => `
+                <div class="flex items-start space-x-3 bg-gray-50 rounded-lg p-4">
+                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-cyan-400 to-blue-500 flex items-center justify-center text-white font-bold flex-shrink-0">
+                        ${comment.avatar}
+                    </div>
+                    <div class="flex-1">
+                        <div class="flex items-center space-x-2 mb-1">
+                            <span class="font-semibold text-gray-900 text-sm">${comment.author}</span>
+                            <span class="text-xs text-gray-500">${formatTime(comment.createdAt)}</span>
+                        </div>
+                        <p class="text-gray-700 text-sm leading-relaxed">${comment.content}</p>
+                        <div class="flex items-center mt-2 space-x-4 text-xs text-gray-500">
+                            <button class="hover:text-red-500 transition-colors flex items-center">
+                                <i class="far fa-heart mr-1"></i> ${comment.likes}
+                            </button>
+                            <button class="hover:text-blue-500 transition-colors">回复</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        /**
+         * 加载并显示帖子评论（AI生成部分）
+         */
+        function loadPostComments(postId) {
+            renderComments(postId);
+        }
+        
+        /**
+         * 点赞帖子（保留原有函数，向后兼容）
+         */
+        function likePost(postId) {
+            toggleLikePost(postId);
+        }
+        
+        /**
+         * 收藏帖子
+         */
+        function toggleSavePost(postId) {
+            const savedPosts = JSON.parse(localStorage.getItem('savedPosts') || '[]');
+            const index = savedPosts.indexOf(postId);
+            
+            if (index > -1) {
+                savedPosts.splice(index, 1);
+                showSuccess('已取消收藏');
+            } else {
+                savedPosts.push(postId);
+                showSuccess('收藏成功！');
+            }
+            
+            localStorage.setItem('savedPosts', JSON.stringify(savedPosts));
+        }
+        
+        /**
+         * 显示通知中心
+         */
+        function showNotifications() {
+            // 确保有模拟数据
+            if (!campusData.notifications.all || campusData.notifications.all.length === 0) {
+                // 生成一些模拟通知
+                campusData.notifications.all = [
+                    {
+                        id: 1,
+                        type: 'friend_request',
+                        title: '好友请求',
+                        message: '张同学向你发送了好友请求',
+                        time: new Date(Date.now() - 300000).toISOString(),
+                        read: false
+                    },
+                    {
+                        id: 2,
+                        type: 'comment',
+                        title: '新评论',
+                        message: '李同学评论了你的帖子',
+                        time: new Date(Date.now() - 3600000).toISOString(),
+                        read: false
+                    },
+                    {
+                        id: 3,
+                        type: 'like',
+                        title: '点赞通知',
+                        message: '王同学赞了你的帖子',
+                        time: new Date(Date.now() - 7200000).toISOString(),
+                        read: false
+                    },
+                    {
+                        id: 4,
+                        type: 'system',
+                        title: '系统通知',
+                        message: '欢迎使用校园AI助手',
+                        time: new Date(Date.now() - 86400000).toISOString(),
+                        read: true
+                    }
+                ];
+            }
+            
+            renderNotifications();
+            document.getElementById('notificationsModal').style.display = 'flex';
+        }
+        
+        /**
+         * 渲染通知列表
+         */
+        function renderNotifications() {
+            const container = document.getElementById('notificationsList');
+            const notifications = campusData.notifications.all || [];
+            
+            const icons = {
+                friend_request: 'fas fa-user-plus text-blue-500',
+                comment: 'fas fa-comment text-green-500',
+                like: 'fas fa-heart text-red-500',
+                system: 'fas fa-bell text-gray-500'
+            };
+            
+            if (notifications.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-12 text-gray-500">
+                        <i class="fas fa-bell-slash text-4xl mb-4 text-gray-300"></i>
+                        <p class="text-lg">暂无通知</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = notifications.map(notif => `
+                <div class="flex items-start p-4 rounded-lg ${notif.read ? 'bg-white' : 'bg-blue-50'} mb-2 cursor-pointer hover:shadow-sm transition-shadow" onclick="markNotificationAsRead(${notif.id})">
+                    <div class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0">
+                        <i class="${icons[notif.type] || icons.system}"></i>
+                    </div>
+                    <div class="ml-3 flex-1">
+                        <div class="flex items-center justify-between mb-1">
+                            <span class="font-medium text-gray-900">${notif.title}</span>
+                            <span class="text-xs text-gray-500">${formatTime(notif.time)}</span>
+                        </div>
+                        <p class="text-sm text-gray-600">${notif.message}</p>
+                    </div>
+                    ${!notif.read ? '<div class="w-2 h-2 rounded-full bg-blue-500 ml-2"></div>' : ''}
+                </div>
+            `).join('');
+            
+            // 标记所有通知为已读（可选，这里暂时不自动标记）
+            // notifications.forEach(n => n.read = true);
+            // campusData.notifications.unreadCount = 0;
+            // updateNotificationBadge();
+        }
+        
+        /**
+         * 关闭通知中心模态框
+         */
+        function closeNotificationsModal() {
+            document.getElementById('notificationsModal').style.display = 'none';
+        }
+        
+        /**
+         * 标记通知为已读
+         */
+        function markNotificationAsRead(notifId) {
+            const notif = campusData.notifications.all.find(n => n.id === notifId);
+            if (notif) {
+                notif.read = true;
+                campusData.notifications.unreadCount = campusData.notifications.all.filter(n => !n.read).length;
+                updateNotificationBadge();
+                renderNotifications();
+            }
+        }
         
         // 生成今日菜单信息（AI生成）
         function generateTodayMenu() {
