@@ -423,8 +423,8 @@ const ChatModule = {
             case 'canteen':
             case 'canteen_menu':
                 response = this.handleCanteenQuery(context);
-                if (typeof campusData !== 'undefined' && campusData.todayMenu) {
-                    extraData = { type: 'menu', data: campusData.todayMenu };
+                if (typeof faqData !== 'undefined' && faqData.campus_services?.today_menu) {
+                    extraData = { type: 'menu', data: faqData.campus_services.today_menu };
                 }
                 break;
                 
