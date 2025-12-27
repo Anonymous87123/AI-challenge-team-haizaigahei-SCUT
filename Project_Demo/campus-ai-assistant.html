@@ -187,13 +187,17 @@
         .ai-message {
             background: var(--bg-primary);
             color: var(--text-primary);
-            border-bottom-left-radius: 4px;
+            /* 机器人消息：左边直角（对着机器人），其余三个角圆角 */
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
         }
 
         .user-message {
             background: var(--campus-blue);
             color: white;
-            border-bottom-right-radius: 4px;
+            /* 用户消息：右边直角（对着用户），其余三个角圆角 */
+            border-top-right-radius: 0;
+            border-bottom-right-radius: 0;
         }
 
         /* 课程卡片样式 */
@@ -301,6 +305,27 @@
             backdrop-filter: blur(15px);
             border-right: 1px solid var(--glass-border);
             transition: all 0.3s ease;
+            overflow-y: auto; /* 添加垂直滚动条 */
+            overflow-x: hidden; /* 隐藏水平滚动条 */
+        }
+
+        /* 设置滚动条样式 */
+        .sidebar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .sidebar::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+        }
+
+        .sidebar::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 3px;
+        }
+
+        .sidebar::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.5);
         }
 
         .sidebar.collapsed {
@@ -4041,16 +4066,19 @@
                 userB.favoriteLocations
             );
             
-            // 加权计算总分
-            const totalScore =
+            // 加权计算总分（增加基础分数20分，确保每个用户都有一定的匹配度）
+            const baseScore = 0.2; // 基础分数20%
+            const totalScore = baseScore + (
                 interestScore * 0.4 +
                 behaviorScore * 0.3 +
                 complementScore * 0.2 +
-                locationScore * 0.1;
+                locationScore * 0.1
+            );
             
             return {
                 score: Math.round(totalScore * 100),
                 details: {
+                    base: Math.round(baseScore * 100), // 显示基础分
                     interest: Math.round(interestScore * 100),
                     behavior: Math.round(behaviorScore * 100),
                     complement: Math.round(complementScore * 100),
@@ -4198,60 +4226,65 @@
         function generateSimulatingUsers(count = 100) {
             const users = {};
             
-            // 创建属性分配数组，确保均衡分布（AI生成部分）
-            const personalityDistribution = [];
-            const majorDistribution = [];
-            const gradeDistribution = [];
-            const genderDistribution = [];
+            console.log(`[社交模块] 开始生成 ${count} 个模拟用户`);
             
-            // 确保每个性格至少有一定的用户数
-            for (let p = 0; p < PERSONALITIES.length; p++) {
-                const countForPersonality = Math.floor(count / PERSONALITIES.length) + (Math.random() < 0.5 ? 1 : 0);
-                for (let i = 0; i < countForPersonality && personalityDistribution.length < count; i++) {
-                    personalityDistribution.push(p);
-                }
-            }
-            
-            // 确保每个专业都有用户
-            for (let m = 0; m < MAJORS.length; m++) {
-                const countForMajor = Math.floor(count / MAJORS.length) + (Math.random() < 0.5 ? 1 : 0);
-                for (let i = 0; i < countForMajor && majorDistribution.length < count; i++) {
-                    majorDistribution.push(m);
-                }
-            }
-            
-            // 填充到目标数量
-            while (personalityDistribution.length < count) {
-                personalityDistribution.push(Math.floor(Math.random() * PERSONALITIES.length));
-            }
-            while (majorDistribution.length < count) {
-                majorDistribution.push(Math.floor(Math.random() * MAJORS.length));
-            }
-            
-            // 打乱数组
-            for (let i = personalityDistribution.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [personalityDistribution[i], personalityDistribution[j]] = [personalityDistribution[j], personalityDistribution[i]];
-                [majorDistribution[i], majorDistribution[j]] = [majorDistribution[j], majorDistribution[i]];
-            }
-            
-            // 生成用户（AI优化部分：确保多样化）
             for (let i = 0; i < count; i++) {
-                const userId = 'user_' + (1000 + i).toString();
+                const userId = 'user_' + (1000 + i);
                 
-                // 使用预分配的属性确保多样性
-                const assignedPersonality = personalityDistribution[i];
-                const assignedMajor = majorDistribution[i];
+                // 随机分配属性
+                const personalityIndex = Math.floor(Math.random() * PERSONALITIES.length);
+                const majorIndex = Math.floor(Math.random() * MAJORS.length);
+                const gender = GENDERS[Math.floor(Math.random() * GENDERS.length)];
                 
-                users[userId] = generateRandomUserWithAssignments(
-                    userId,
-                    assignedPersonality,
-                    assignedMajor
-                );
+                // 生成用户名
+                const namePrefixes = ['张', '李', '王', '刘', '陈', '杨', '赵', '黄', '周', '吴'];
+                const nameSuffixes = ['伟', '芳', '娜', '敏', '静', '强', '磊', '洋', '艳', '杰', '勇', '军', '平'];
+                const name = namePrefixes[Math.floor(Math.random() * namePrefixes.length)] +
+                            nameSuffixes[Math.floor(Math.random() * nameSuffixes.length)];
+                
+                // 随机选择3-5个兴趣标签
+                const numInterests = Math.floor(Math.random() * 3) + 3;
+                const shuffledInterests = [...INTEREST_TAGS].sort(() => 0.5 - Math.random());
+                const interests = shuffledInterests.slice(0, numInterests);
+                
+                // 随机选择常去地点
+                const allLocations = ['图书馆', '健身房', '体育馆', '食堂', '教学楼', '实验室', '自习室', '操场'];
+                const numLocations = Math.floor(Math.random() * 3) + 2;
+                const favoriteLocations = allLocations.sort(() => 0.5 - Math.random()).slice(0, numLocations);
+                
+                // 生成行为数据
+                const behaviorData = {
+                    libraryVisits: Math.floor(Math.random() * 20),
+                    gymVisits: Math.floor(Math.random() * 10),
+                    studyHours: Math.floor(Math.random() * 30) + 10,
+                    socialScore: Math.floor(Math.random() * 40) + 30
+                };
+                
+                users[userId] = {
+                    id: userId,
+                    name: name,
+                    avatar: name.charAt(0),
+                    gender: gender,
+                    major: MAJORS[majorIndex],
+                    grade: GRADES[Math.floor(Math.random() * GRADES.length)],
+                    personality: PERSONALITIES[personalityIndex],
+                    bio: `我是${name}，一个${PERSONALITIES[personalityIndex]}的${MAJORS[majorIndex]}专业学生，喜欢${interests.slice(0, 2).join('、')}。`,
+                    interests: interests,
+                    favoriteLocations: favoriteLocations,
+                    behaviorData: behaviorData,
+                    skills: ['学习', '沟通', '团队合作'].sort(() => 0.5 - Math.random()).slice(0, 2),
+                    matchScore: Math.floor(Math.random() * 40) + 60, // 60-100的匹配度
+                    commonInterests: interests.slice(0, 2),
+                    createdAt: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000).toISOString(),
+                    lastActive: new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000).toISOString()
+                };
             }
+            
+            // 保存到全局数据
             campusData.simulatingUsers = users;
             localStorage.setItem('simulatingUsers', JSON.stringify(users));
-            console.log(`已生成 ${count} 个模拟用户数据`);
+            
+            console.log(`[社交模块] 已生成 ${Object.keys(users).length} 个模拟用户`);
             return users;
         }
         
@@ -4264,36 +4297,100 @@
             
             const currentUserId = localStorage.getItem('studentId') || 'user_1000';
             
+            console.log('[匹配算法] ========== 开始匹配流程 ==========');
+            console.log('[匹配算法] 当前用户ID:', currentUserId);
+            console.log('[匹配算法] 模拟用户总数:', Object.keys(simulatingUsers).length);
+            console.log('[匹配算法] 当前用户已添加好友:', campusData.social.friends);
+            console.log('[匹配算法] 匹配偏好:', preferences);
+            console.log('[匹配算法] 当前用户信息:', {
+                id: currentUser.id,
+                name: currentUser.name,
+                gender: currentUser.gender,
+                major: currentUser.major,
+                grade: currentUser.grade,
+                interests: currentUser.interests
+            });
+
+            const stats = {
+                totalProcessed: 0,
+                skippedSelf: 0,
+                skippedFriend: 0,
+                skippedGender: 0,
+                skippedGrade: 0,
+                skippedScore: 0,
+                matched: 0
+            };
+
             for (const [userId, user] of Object.entries(simulatingUsers)) {
+                stats.totalProcessed++;
+                
                 // 跳过自己和已添加的好友
-                if (userId === currentUserId || campusData.social.friends.includes(userId)) {
+                if (userId === currentUserId) {
+                    stats.skippedSelf++;
+                    console.log('[匹配算法] 跳过自己:', userId);
+                    continue;
+                }
+                if (campusData.social.friends.includes(userId)) {
+                    stats.skippedFriend++;
+                    console.log('[匹配算法] 跳过已添加好友:', userId);
                     continue;
                 }
                 
                 // 根据偏好过滤
                 if (preferences) {
                     if (preferences.targetGender !== 'all' && user.gender !== preferences.targetGender) {
+                        stats.skippedGender++;
+                        console.log('[匹配算法] 跳过性别不匹配:', userId,
+                            `期望:${preferences.targetGender}, 实际:${user.gender}`);
                         continue;
                     }
                     if (preferences.targetGrade !== 'all' && user.grade !== preferences.targetGrade) {
+                        stats.skippedGrade++;
+                        console.log('[匹配算法] 跳过年级不匹配:', userId,
+                            `期望:${preferences.targetGrade}, 实际:${user.grade}`);
                         continue;
                     }
                 }
                 
                 const matchResult = calculateMatchScore(currentUser, user);
+                const minScore = preferences?.minMatchScore || 50; // 降低默认最低匹配分数到50
                 
-                if (matchResult.score >= (preferences?.minMatchScore || 60)) {
+                console.log('[匹配算法] 用户匹配结果:', userId, user.name,
+                    `分数:${matchResult.score}, 最低:${minScore}`);
+
+                if (matchResult.score >= minScore) {
+                    stats.matched++;
                     matchedUsers.push({
                         ...user,
                         matchScore: matchResult.score,
                         matchDetails: matchResult.details,
                         commonInterests: getCommonInterests(currentUser.interests || [], user.interests)
                     });
+                } else {
+                    stats.skippedScore++;
+                    console.log('[匹配算法] 跳过分数过低:', userId,
+                        `分数:${matchResult.score} < 最低:${minScore}`);
                 }
             }
+
+            console.log('[匹配算法] ========== 匹配统计 ==========');
+            console.log('[匹配算法] 处理总数:', stats.totalProcessed);
+            console.log('[匹配算法] 跳过自己:', stats.skippedSelf);
+            console.log('[匹配算法] 跳过好友:', stats.skippedFriend);
+            console.log('[匹配算法] 跳过性别:', stats.skippedGender);
+            console.log('[匹配算法] 跳过年级:', stats.skippedGrade);
+            console.log('[匹配算法] 跳过分数:', stats.skippedScore);
+            console.log('[匹配算法] 最终匹配:', stats.matched);
+            console.log('[匹配算法] ========== 匹配完成 ==========');
             
             // 按匹配度降序排序
-            return matchedUsers.sort((a, b) => b.matchScore - a.matchScore);
+            const sorted = matchedUsers.sort((a, b) => b.matchScore - a.matchScore);
+            console.log('[匹配算法] 排序后前3位:', sorted.slice(0, 3).map(u => ({
+                id: u.id,
+                name: u.name,
+                score: u.matchScore
+            })));
+            return sorted;
         }
         
         // ========== 社交匹配界面控制函数（AI生成部分）==========
@@ -4849,28 +4946,38 @@
         
         /**
         * 获取当前用户信息
-        */
-       function getCurrentUser() {
-           const studentId = localStorage.getItem('studentId') || 'user_1000';
-           const userData = campusData.users[studentId];
-           
-           return {
-               id: studentId,
-               name: userData?.name || userSettings.nickname,
-               gender: '男',
-               major: userData?.major || '计算机科学',
-               grade: '大二',
-               personality: '开朗',
-               interests: ['编程', '音乐', '阅读', '运动'],
-               favoriteLocations: ['图书馆', '健身房', '食堂'],
-               behaviorData: campusData.social.behaviorData || {
-                   libraryVisits: 10,
-                   gymVisits: 5,
-                   studyHours: 20,
-                   socialScore: 60
-               }
-           };
-       }
+         */
+        function getCurrentUser() {
+            const studentId = localStorage.getItem('studentId') || 'user_1000';
+            const userData = campusData.users[studentId];
+            
+            const currentUser = {
+                id: studentId,
+                name: userData?.name || userSettings.nickname,
+                gender: '男',
+                major: userData?.major || '计算机科学',
+                grade: '大二',
+                personality: '开朗',
+                interests: ['编程', '音乐', '阅读', '运动'],
+                favoriteLocations: ['图书馆', '健身房', '食堂'],
+                behaviorData: campusData.social.behaviorData || {
+                    libraryVisits: 10,
+                    gymVisits: 5,
+                    studyHours: 20,
+                    socialScore: 60
+                }
+            };
+
+            console.log('[用户模块] ========== 当前用户信息 ==========');
+            console.log('[用户模块] studentId:', studentId);
+            console.log('[用户模块] userData:', userData);
+            console.log('[用户模块] userSettings:', userSettings);
+            console.log('[用户模块] campusData.social.behaviorData:', campusData.social.behaviorData);
+            console.log('[用户模块] 返回的currentUser:', currentUser);
+            console.log('[用户模块] ======================================');
+
+            return currentUser;
+        }
        
        /**
         * 保存所有数据到localStorage（AI生成部分）
@@ -4920,81 +5027,146 @@
        }
         
         /**
-         * 初始化社交模块（AI生成部分）
+         * 初始化社交模块（修复版）
          */
         function initializeSocialModule() {
-            // 初始化社交数据结构
+            console.log('[社交模块] 初始化社交模块');
+            
+            // 确保模拟用户数据存在
             if (!campusData.simulatingUsers || Object.keys(campusData.simulatingUsers).length === 0) {
-                generateSimulatingUsers(100);
+                console.log('[社交模块] 生成模拟用户数据');
+                generateSimulatingUsers(50); // 生成50个用户用于测试
             }
             
-            // 初始化校园墙帖子
-            if (!campusData.campusWall.posts || campusData.campusWall.posts.length === 0) {
-                generateCampusWallPosts(50);
-            }
-            
-            // 初始化通知
-            if (!campusData.notifications.all || campusData.notifications.all.length === 0) {
+            // 确保通知数据存在
+            if (!campusData.notifications || campusData.notifications.all.length === 0) {
+                console.log('[社交模块] 生成模拟通知数据');
                 generateSimulatingNotifications();
             }
             
-            console.log('社交模块初始化完成');
+            // 数据迁移：处理旧的通知数据（修复时间字段问题）
+            if (campusData.notifications && campusData.notifications.all) {
+                const needMigration = campusData.notifications.all.some(n => !n.timestamp && !n.time);
+                if (needMigration) {
+                    console.log('[社交模块] 检测到旧数据格式，执行数据迁移');
+                    const now = new Date().toISOString();
+                    campusData.notifications.all = campusData.notifications.all.map((notif, index) => {
+                        if (!notif.timestamp && !notif.time) {
+                            return {
+                                ...notif,
+                                timestamp: now,
+                                time: now
+                            };
+                        }
+                        // 确保只有一个字段时，补充另一个字段
+                        if (notif.timestamp && !notif.time) {
+                            return { ...notif, time: notif.timestamp };
+                        }
+                        if (notif.time && !notif.timestamp) {
+                            return { ...notif, timestamp: notif.time };
+                        }
+                        return notif;
+                    });
+                    // 保存迁移后的数据
+                    localStorage.setItem('notifications', JSON.stringify(campusData.notifications));
+                    console.log('[社交模块] 数据迁移完成');
+                }
+            }
+            
+            // 确保社交数据结构完整
+            if (!campusData.social) {
+                campusData.social = {
+                    friends: [],
+                    friendRequests: [],
+                    matchPreferences: {
+                        targetGender: 'all',
+                        minMatchScore: 50, // 降低默认最低匹配分数到50
+                        preferredInterests: [],
+                        targetGrade: 'all',
+                        targetMajor: 'all'
+                    }
+                };
+            } else if (!campusData.social.matchPreferences) {
+                // 如果社交数据存在但匹配偏好不存在，初始化默认值
+                campusData.social.matchPreferences = {
+                    targetGender: 'all',
+                    minMatchScore: 50,
+                    preferredInterests: [],
+                    targetGrade: 'all',
+                    targetMajor: 'all'
+                };
+            }
+            
+            console.log('[社交模块] 社交模块初始化完成');
         }
         
         /**
-         * 生成模拟通知数据（AI生成部分）
+         * 生成模拟通知数据（修复版）
          */
         function generateSimulatingNotifications() {
             const notifications = [];
-            const types = Object.keys(NOTIFICATION_TYPES);
+            const notificationTypes = [
+                { type: 'friend_request', title: '好友请求', icon: 'fa-user-plus' },
+                { type: 'comment', title: '新评论', icon: 'fa-comment' },
+                { type: 'like', title: '点赞通知', icon: 'fa-heart' },
+                { type: 'system', title: '系统通知', icon: 'fa-bell' }
+            ];
             
             // 用户名列表
-            const userNameList = ['张同学', '李同学', '王同学', '赵同学', '刘同学', '陈同学', '杨同学', '黄同学'];
+            const userNameList = ['张同学', '李同学', '王同学', '刘同学', '陈同学', '杨同学', '赵同学', '黄同学'];
             
-            for (let i = 0; i < 10; i++) {
-                const type = types[Math.floor(Math.random() * types.length)];
+            for (let i = 0; i < 8; i++) {
+                const notifType = notificationTypes[Math.floor(Math.random() * notificationTypes.length)];
                 const user = userNameList[Math.floor(Math.random() * userNameList.length)];
-                let title, message;
                 
-                switch(type) {
+                let message = '';
+                switch(notifType.type) {
                     case 'friend_request':
-                        title = '好友请求';
                         message = `${user}向你发送了好友请求`;
                         break;
                     case 'comment':
-                        title = '新评论';
-                        message = `${user}评论了你的帖子`;
+                        message = `${user}评论了你的帖子"今天图书馆人多吗？"`;
                         break;
                     case 'like':
-                        title = '点赞通知';
-                        message = `${user}赞了你的帖子`;
-                        break;
-                    case 'post_reply':
-                        title = '帖子回复';
-                        message = `${user}回复了你的帖子`;
-                        break;
-                    case 'mention':
-                        title = '@提到你';
-                        message = `${user}在帖子中提到了你`;
+                        message = `${user}赞了你的动态`;
                         break;
                     case 'system':
-                        title = '系统通知';
-                        message = '欢迎使用校园AI助手';
+                        message = '欢迎使用校园AI助手新版本！';
                         break;
                 }
                 
+                // 生成时间戳（同时设置 timestamp 和 time 字段以保持向后兼容）
+                const timestamp = new Date(Date.now() - Math.random() * 24 * 60 * 60 * 1000).toISOString();
+                
                 notifications.push({
                     id: 'notify_' + Date.now() + '_' + i,
-                    type: type,
-                    title: title,
+                    type: notifType.type,
+                    title: notifType.title,
                     message: message,
+                    icon: notifType.icon,
                     read: Math.random() > 0.5,
-                    time: new Date(Date.now() - Math.random() * 24 * 60 * 60 * 1000).toISOString()
+                    // 两个字段都设置，确保兼容性
+                    timestamp: timestamp,
+                    time: timestamp
                 });
             }
             
-            campusData.notifications.all = notifications.sort((a, b) => new Date(b.time) - new Date(a.time));
-            saveAllData();
+            // 初始化通知数据结构
+            if (!campusData.notifications) {
+                campusData.notifications = {
+                    all: [],
+                    unreadCount: 0,
+                    likes: []
+                };
+            }
+            
+            campusData.notifications.all = notifications.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+            campusData.notifications.unreadCount = notifications.filter(n => !n.read).length;
+            
+            // 保存到localStorage
+            localStorage.setItem('notifications', JSON.stringify(campusData.notifications));
+            
+            return notifications;
         }
         
         /**
@@ -5042,12 +5214,29 @@
         }
         
         /**
-         * 渲染通知列表（AI生成部分）
+         * 渲染通知列表（修复版 - 兼容时间字段）
          */
         function renderNotifications() {
             const container = document.getElementById('notificationsList');
-            const notifications = campusData.notifications.all || [];
+            if (!container) return;
             
+            // 确保通知数据存在
+            if (!campusData.notifications || !campusData.notifications.all) {
+                console.log('[通知模块] 通知数据不存在，生成模拟数据');
+                generateSimulatingNotifications();
+            }
+            
+            const notifications = campusData.notifications.all || [];
+            console.log('[通知模块] 通知数量:', notifications.length);
+            console.log('[通知模块] 通知样本数据:', notifications.slice(0, 2).map(n => ({
+                id: n.id,
+                type: n.type,
+                timestamp: n.timestamp,
+                time: n.time,
+                hasTimestamp: !!n.timestamp,
+                hasTime: !!n.time
+            })));
+
             if (notifications.length === 0) {
                 container.innerHTML = `
                     <div class="text-center py-12 text-gray-500">
@@ -5059,34 +5248,42 @@
                 return;
             }
             
-            const typeIcons = {
+            const icons = {
                 friend_request: 'fa-user-plus text-blue-500',
                 comment: 'fa-comment text-green-500',
                 like: 'fa-heart text-red-500',
-                post_reply: 'fa-reply text-purple-500',
-                mention: 'fa-at text-yellow-500',
-                system: 'fa-bell text-gray-500'
+                system: 'fa-bell text-yellow-500'
             };
             
-            container.innerHTML = notifications.map(notify => `
-                <div class="p-4 border-b ${!notify.read ? 'bg-blue-50' : ''} hover:bg-gray-50 transition-colors">
-                    <div class="flex items-start space-x-3">
-                        <div class="w-12 h-12 rounded-full ${!notify.read ? 'bg-blue-100' : 'bg-gray-100'} flex items-center justify-center flex-shrink-0">
-                            <i class="fas ${typeIcons[notify.type] || 'fa-bell'} text-xl"></i>
+            container.innerHTML = notifications.map(notif => {
+                const iconClass = icons[notif.type] || 'fa-bell text-gray-500';
+                // 兼容时间字段：优先使用 timestamp，如果没有则使用 time
+                const timeValue = notif.timestamp || notif.time;
+                
+                return `
+                    <div class="flex items-start p-4 border-b border-gray-200 hover:bg-gray-50 cursor-pointer transition-colors"
+                         onclick="markNotificationAsRead('${notif.id}')">
+                        <div class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0 mr-3">
+                            <i class="fas ${iconClass.split(' ')[0]} text-lg"></i>
                         </div>
-                        <div class="flex-1">
-                            <p class="text-sm font-semibold text-gray-900">${notify.title}</p>
-                            <p class="text-xs text-gray-700 mt-1">${notify.message}</p>
-                            <p class="text-xs text-gray-500 mt-1">${formatTime(notify.time)}</p>
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center justify-between mb-1">
+                                <span class="font-medium text-gray-900 text-sm">${notif.title || '通知'}</span>
+                                <span class="text-xs text-gray-500">${formatTime(timeValue)}</span>
+                            </div>
+                            <p class="text-sm text-gray-600 truncate">${notif.message || '新通知'}</p>
                         </div>
-                        ${!notify.read ? `
-                            <div class="flex-shrink-0">
+                        ${!notif.read ? `
+                            <div class="flex-shrink-0 ml-2">
                                 <span class="inline-block w-2 h-2 bg-blue-500 rounded-full"></span>
                             </div>
                         ` : ''}
                     </div>
-                </div>
-            `).join('');
+                `;
+            }).join('');
+            
+            // 更新未读计数
+            updateNotificationBadge();
         }
         
         /**
@@ -5194,23 +5391,71 @@
         }
         
         /**
-         * 格式化时间
+         * 格式化时间（修复版 - 支持无效日期处理）
          */
         function formatTime(timestamp) {
+            // 详细的调试日志
+            console.log('[formatTime] 输入参数:', {
+                timestamp: timestamp,
+                type: typeof timestamp,
+                isUndefined: typeof timestamp === 'undefined',
+                isNull: timestamp === null,
+                isString: typeof timestamp === 'string',
+                stringValue: String(timestamp)
+            });
+            
+            // 检查时间戳是否存在和有效
+            if (!timestamp) {
+                console.warn('[formatTime] 时间戳为空或无效:', timestamp, '返回"未知时间"');
+                return '未知时间';
+            }
+            
             const date = new Date(timestamp);
+            console.log('[formatTime] Date对象:', {
+                date: date,
+                isValid: !isNaN(date.getTime()),
+                valueOf: date.valueOf(),
+                toISOString: date.toISOString(),
+                toLocaleString: date.toLocaleString('zh-CN')
+            });
+            
+            // 检查日期是否有效
+            if (isNaN(date.getTime())) {
+                console.warn('[formatTime] 无效的时间戳:', timestamp,
+                    'Date.getTime()返回NaN，返回"未知时间"');
+                return '未知时间';
+            }
+            
             const now = new Date();
             const diff = now - date;
+            
+            console.log('[formatTime] 时间差计算:', {
+                now: now.toISOString(),
+                timestampDate: date.toISOString(),
+                diff: diff,
+                diffMs: diff,
+                diffSeconds: diff / 1000,
+                diffMinutes: diff / (1000 * 60),
+                diffHours: diff / (1000 * 60 * 60),
+                diffDays: diff / (1000 * 60 * 60 * 24)
+            });
+            
+            // 如果时间在未来，显示为刚刚
+            if (diff < 0) return '刚刚';
             
             const minutes = Math.floor(diff / (1000 * 60));
             const hours = Math.floor(diff / (1000 * 60 * 60));
             const days = Math.floor(diff / (1000 * 60 * 60 * 24));
             
-            if (minutes < 1) return '刚刚';
-            if (minutes < 60) return `${minutes}分钟前`;
-            if (hours < 24) return `${hours}小时前`;
-            if (days < 7) return `${days}天前`;
+            let result;
+            if (minutes < 1) result = '刚刚';
+            else if (minutes < 60) result = `${minutes}分钟前`;
+            else if (hours < 24) result = `${hours}小时前`;
+            else if (days < 7) result = `${days}天前`;
+            else result = date.toLocaleDateString('zh-CN', { month: '2-digit', day: '2-digit' });
             
-            return date.toLocaleDateString('zh-CN', { month: '2-digit', day: '2-digit' });
+            console.log('[formatTime] 返回结果:', result);
+            return result;
         }
         
         // ========== 校园墙模块 - 界面控制函数（AI生成部分）==========
