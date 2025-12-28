@@ -498,7 +498,195 @@
 
         .markdown-content a:hover {
             color: var(--campus-orange);
-            text-decoration: underline;
+        }
+
+        /* 点赞动画效果 */
+        @keyframes likeAnimation {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.3); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes heartPulse {
+            0% { transform: scale(1); }
+            25% { transform: scale(1.2); }
+            50% { transform: scale(0.95); }
+            75% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-2px); }
+            20%, 40%, 60%, 80% { transform: translateX(2px); }
+        }
+
+        .like-btn-active {
+            animation: heartPulse 0.5s ease-out;
+        }
+
+        .like-shake {
+            animation: shake 0.5s ease-in-out;
+        }
+
+        .like-btn.active {
+            color: #ef4444 !important;
+        }
+
+        .like-btn.active i {
+            color: #ef4444 !important;
+        }
+
+        /* 收藏动画效果 */
+        @keyframes bookmarkAnimation {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2) rotate(15deg); }
+            100% { transform: scale(1) rotate(0deg); }
+        }
+
+        .bookmark-btn-active {
+            animation: bookmarkAnimation 0.4s ease-out;
+        }
+
+        .bookmark-btn.active {
+            color: #3b82f6 !important;
+        }
+
+        .bookmark-btn.active i {
+            color: #3b82f6 !important;
+        }
+
+        /* 表情选择器样式 */
+        .emoji-picker-container {
+            position: relative;
+        }
+
+        .emoji-picker {
+            position: absolute;
+            bottom: 100%;
+            left: 0;
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            padding: 12px;
+            width: 320px;
+            z-index: 100;
+            display: none;
+        }
+
+        .emoji-picker.show {
+            display: block;
+            animation: fadeInUp 0.2s ease-out;
+        }
+
+        .emoji-grid {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            gap: 8px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .emoji-item {
+            font-size: 24px;
+            cursor: pointer;
+            text-align: center;
+            padding: 4px;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .emoji-item:hover {
+            background: #f3f4f6;
+            transform: scale(1.2);
+        }
+
+        .emoji-picker-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-bottom: 8px;
+            margin-bottom: 8px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .emoji-picker-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .emoji-picker-close {
+            font-size: 18px;
+            color: #9ca3af;
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+
+        .emoji-picker-close:hover {
+            background: #f3f4f6;
+            color: #374151;
+        }
+
+        /* 评论排序按钮 */
+        .comment-sort-btn {
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .comment-sort-btn.active {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .comment-sort-btn:not(.active) {
+            background: #f3f4f6;
+            color: #6b7280;
+        }
+
+        .comment-sort-btn:hover:not(.active) {
+            background: #e5e7eb;
+        }
+
+        /* 收藏中心样式 */
+        .saved-posts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .saved-post-card {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .saved-post-card:hover {
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .saved-post-empty {
+            text-align: center;
+            padding: 60px 20px;
+            color: #9ca3af;
+        }
+
+        .saved-post-empty i {
+            font-size: 64px;
+            margin-bottom: 20px;
+            color: #d1d5db;
         }
 
         /* 特殊卡片样式 */
@@ -1870,6 +2058,9 @@
                     <i class="fas fa-newspaper text-cyan-500 mr-2"></i> 校园墙
                 </h3>
                 <div class="flex items-center space-x-3">
+                    <button onclick="showSavedPostsModal()" class="px-3 py-1.5 bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg text-sm transition-colors flex items-center">
+                        <i class="fas fa-bookmark mr-1"></i> 我的收藏
+                    </button>
                     <button onclick="showCreatePostModal()" class="px-3 py-1.5 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-sm transition-colors flex items-center">
                         <i class="fas fa-plus mr-1"></i> 发布
                     </button>
@@ -1893,6 +2084,28 @@
             
             <!-- 帖子列表 -->
             <div id="campusWallPosts" class="flex-1 overflow-y-auto space-y-4">
+                <div class="text-center py-8 text-gray-500">
+                    <i class="fas fa-spinner fa-spin text-2xl mb-2"></i>
+                    <p>加载中...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 个人收藏中心模态框 -->
+    <div id="savedPostsModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-[10000]">
+        <div class="glass-card rounded-2xl p-6 max-w-5xl w-full mx-4 slide-in-up max-h-[90vh] overflow-hidden flex flex-col">
+            <div class="flex items-center justify-between mb-4 flex-shrink-0">
+                <h3 class="text-lg font-semibold text-gray-900 flex items-center">
+                    <i class="fas fa-bookmark text-blue-500 mr-2"></i> 我的收藏
+                </h3>
+                <button onclick="closeSavedPostsModal()" class="text-gray-400 hover:text-gray-600">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            
+            <!-- 收藏列表 -->
+            <div id="savedPostsList" class="flex-1 overflow-y-auto">
                 <div class="text-center py-8 text-gray-500">
                     <i class="fas fa-spinner fa-spin text-2xl mb-2"></i>
                     <p>加载中...</p>
@@ -2638,8 +2851,34 @@
             '娱乐类': ['电影', '动漫', '游戏', '阅读', '写作', '旅行', '美食', '烹饪'],
             '社交类': ['志愿者', '社团活动', '学生会', '创业', '投资理财', '营销', '设计']
         };
-        
+        // ========== 表情符号定义 ==========
+        const EMOJIS = [
+            '😀', '😃', '😄', '😁', '😆', '😅', '🤣', '😂',
+            '🙂', '🙃', '😉', '😊', '😇', '🥰', '😍', '🤩',
+            '😘', '😗', '😚', '😙', '😋', '😛', '😜', '🤪',
+            '😝', '🤑', '🤗', '🤭', '🤫', '🤔', '🤐', '🤨',
+            '😐', '😑', '😶', '😏', '😒', '🙄', '😬', '🤥',
+            '😌', '😔', '😪', '🤤', '😴', '😷', '🤒', '🤕',
+            '🤢', '🤮', '🤧', '🥵', '🥶', '🥴', '😵', '🤯',
+            '🤠', '🥳', '😎', '🤓', '🧐', '😕', '😟', '🙁',
+            '☹️', '😮', '😯', '😲', '😳', '🥺', '😦', '😧',
+            '😨', '😰', '😥', '😢', '😭', '😱', '😖', '😣',
+            '😞', '😓', '😩', '😫', '🥱', '😤', '😡', '😠',
+            '🤬', '😈', '👿', '💀', '☠️', '💩', '🤡', '👹',
+            '👺', '👻', '👽', '👾', '🤖', '😺', '😸', '😹',
+            '😻', '😼', '😽', '🙀', '😿', '😾', '🙈', '🙉',
+            '🙊', '💋', '💌', '💘', '💝', '💖', '💗', '💓',
+            '💞', '💕', '💟', '❣️', '💔', '❤️', '🧡', '💛',
+            '💚', '💙', '💜', '🖤', '🤍', '🤎', '💯', '💢',
+            '💥', '💫', '💦', '💨', '🕳️', '💣', '💬', '🗯️',
+            '💭', '💤', '👋', '🤚', '🖐️', '✋', '🖖', '👌',
+            '🤏', '✌️', '🤞', '🤟', '🤘', '🤙', '👈', '👉',
+            '👆', '🖕', '👇', '☝️', '👍', '👎', '✊', '👊',
+            '🤛', '🤜', '👏', '🙌', '👐', '🤲', '🤝', '🙏'
+        ];
+
         // ========== 校园墙帖子类型定义（AI生成部分）==========
+
         
         const POST_TYPES = {
             LOST: {
@@ -2777,11 +3016,22 @@
 
         // 初始化应用
         function initializeApp() {
+            console.log('[初始化] 开始初始化应用');
+            
+            // 从 localStorage 加载保存的数据
+            loadAllData();
+            
+            // 初始化社交模块数据
+            initializeSocialModule();
+            
             // 检查主题设置
             const savedTheme = localStorage.getItem('theme') || 'light';
             if (savedTheme === 'dark') {
                 document.documentElement.setAttribute('data-theme', 'dark');
-                document.getElementById('themeIcon').className = 'fas fa-sun text-yellow-500';
+                const themeIcon = document.getElementById('themeIcon');
+                if (themeIcon) {
+                    themeIcon.className = 'fas fa-sun text-yellow-500';
+                }
             }
 
             // 加载用户昵称
@@ -2801,6 +3051,8 @@
                     console.warn('[初始化] 未找到发现朋友按钮');
                 }
             }, 500);
+            
+            console.log('[初始化] 应用初始化完成');
         }
 
         // 设置响应式处理
@@ -7612,15 +7864,49 @@
          * 批量生成演示帖子数据
          */
         function generateCampusWallPosts(count = 50) {
+            console.log('[生成帖子] 开始生成', count, '条帖子');
+            
             const posts = [];
             for (let i = 0; i < count; i++) {
-                posts.push(generateRandomPost(Date.now() + i));
+                const post = generateRandomPost(String(Date.now() + i));
+                posts.push(post);
+                
+                // 为每个帖子生成一些示例评论
+                campusData.campusWall.comments[post.id] = [];
+                const commentCount = Math.floor(Math.random() * 5) + 1;
+                for (let j = 0; j < commentCount; j++) {
+                    const comment = {
+                        id: `comment_${post.id}_${j}`,
+                        content: [
+                            '很有意思！我也想参加',
+                            '求联系方式',
+                            '这个需求我也有',
+                            '太好了，谢谢分享',
+                            '请问具体在哪里呀？',
+                            '已点赞，支持！',
+                            '我想问一下具体时间'
+                        ][Math.floor(Math.random() * 7)],
+                        author: ['张同学', '李同学', '王同学', '刘同学', '陈同学'][Math.floor(Math.random() * 5)],
+                        authorId: 'user_' + Math.floor(Math.random() * 1000),
+                        avatar: ['张', '李', '王', '刘', '陈'][Math.floor(Math.random() * 5)],
+                        createdAt: new Date(Date.now() - Math.random() * 86400000 * j).toISOString(),
+                        likes: Math.floor(Math.random() * 10)
+                    };
+                    campusData.campusWall.comments[post.id].push(comment);
+                }
+                post.commentsCount = commentCount;
             }
+            
             // 按创建时间降序排序
             posts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
             campusData.campusWall.posts = posts;
+            
+            // 保存数据
             localStorage.setItem('campusWallPosts', JSON.stringify(posts));
-            console.log(`已生成 ${count} 条校园墙帖子`);
+            localStorage.setItem('campusWallComments', JSON.stringify(campusData.campusWall.comments));
+            
+            console.log('[生成帖子] 已生成', count, '条帖子，每条帖子包含示例评论');
+            console.log('[生成帖子] 帖子ID示例:', posts[0].id);
             return posts;
         }
         
@@ -7813,9 +8099,9 @@
                             <!-- 底部操作 -->
                             <div class="flex items-center justify-between mt-3 pt-3 border-t border-gray-100">
                                 <div class="flex space-x-4 text-sm text-gray-500">
-                                    <button class="flex items-center hover:text-red-500 transition-colors" onclick="event.stopPropagation(); likePost('${post.id}')">
-                                        <i class="far fa-heart mr-1"></i>
-                                        <span>${post.likes}</span>
+                                    <button class="flex items-center hover:text-red-500 transition-colors like-btn" onclick="event.stopPropagation(); toggleLikePost('${post.id}')" id="likeBtn-card-${post.id}">
+                                        <i class="mr-1 ${campusData.notifications.likes && campusData.notifications.likes.includes(post.id) ? 'fas fa-heart text-red-500' : 'far fa-heart'}"></i>
+                                        <span id="likeCount-card-${post.id}">${post.likes}</span>
                                     </button>
                                     <button class="flex items-center hover:text-blue-500 transition-colors">
                                         <i class="far fa-comment mr-1"></i>
@@ -7937,15 +8223,22 @@
         }
         
         /**
-         * 显示帖子详情
+         * 显示帖子详情（修复版 - 确保数据正确加载）
          */
         function showPostDetail(postId) {
             const post = campusData.campusWall.posts.find(p => p.id === postId);
-            if (!post) return;
+            if (!post) {
+                console.error('[showPostDetail] 帖子不存在:', postId);
+                showError('帖子不存在');
+                return;
+            }
             
             // 增加浏览量
-            post.views++;
-            localStorage.setItem('campusWallPosts', JSON.stringify(campusData.campusWall.posts));
+            post.views = (post.views || 0) + 1;
+            console.log('[showPostDetail] 浏览帖子:', postId, '当前浏览量:', post.views);
+            
+            // 保存数据
+            saveAllData();
             
             const statusBadge = post.status === POST_STATUS.SOLVED
                 ? '<span class="px-3 py-1 bg-green-100 text-green-600 rounded-full text-sm">已解决</span>'
@@ -8051,13 +8344,31 @@
                         <div class="w-10 h-10 rounded-full bg-gradient-to-br from-cyan-400 to-blue-500 flex items-center justify-center text-white font-bold flex-shrink-0">
                             ${userSettings.nickname.charAt(0)}
                         </div>
-                        <div class="flex-1">
+                        <div class="flex-1 emoji-picker-container">
                             <textarea
                                 id="commentInput-${post.id}"
-                                class="w-full p-3 border border-gray-200 rounded-lg resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                                class="w-full p-3 border border-gray-200 rounded-lg resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all pr-12"
                                 rows="2"
                                 placeholder="写下你的评论..."
                             ></textarea>
+                            <button
+                                onclick="toggleEmojiPicker('${post.id}')"
+                                class="absolute right-3 bottom-10 text-gray-400 hover:text-gray-600 text-xl transition-colors"
+                            >
+                                😀
+                            </button>
+                            
+                            <!-- 表情选择器 -->
+                            <div id="emojiPicker-${post.id}" class="emoji-picker">
+                                <div class="emoji-picker-header">
+                                    <span class="emoji-picker-title">选择表情</span>
+                                    <span class="emoji-picker-close" onclick="event.stopPropagation(); toggleEmojiPicker('${post.id}')">×</span>
+                                </div>
+                                <div class="emoji-grid" id="emojiGrid-${post.id}">
+                                    ${EMOJIS.map(emoji => `<span class="emoji-item" onclick="insertEmoji('${post.id}', '${emoji}')">${emoji}</span>`).join('')}
+                                </div>
+                            </div>
+                            
                             <div class="flex justify-end mt-2">
                                 <button onclick="submitComment('${post.id}')" class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors text-sm flex items-center">
                                     <i class="fas fa-paper-plane mr-2"></i> 发送评论
@@ -8069,9 +8380,19 @@
                 
                 <!-- 评论区 -->
                 <div>
-                    <h4 class="font-semibold text-gray-900 mb-3">
-                        <i class="far fa-comments mr-2"></i>评论 (${post.commentsCount})
-                    </h4>
+                    <div class="flex items-center justify-between mb-3">
+                        <h4 class="font-semibold text-gray-900">
+                            <i class="far fa-comments mr-2"></i>评论 (${post.commentsCount})
+                        </h4>
+                        <div class="flex space-x-2">
+                            <button onclick="sortComments('${post.id}', 'time')" class="comment-sort-btn active" id="sortTime-${post.id}">
+                                <i class="far fa-clock mr-1"></i> 时间
+                            </button>
+                            <button onclick="sortComments('${post.id}', 'likes')" class="comment-sort-btn" id="sortLikes-${post.id}">
+                                <i class="far fa-heart mr-1"></i> 热度
+                            </button>
+                        </div>
+                    </div>
                     <div id="commentsList-${post.id}" class="space-y-4">
                         <!-- 动态加载评论 -->
                     </div>
@@ -8099,79 +8420,197 @@
         }
         
         /**
-         * 切换点赞状态（AI生成部分）
+         * 切换帖子点赞状态（完整修复版）
          */
         function toggleLikePost(postId) {
-            const post = campusData.campusWall.posts.find(p => p.id === postId);
-            if (!post) return;
+            console.log('[点赞] =====================');
+            console.log('[点赞] 开始处理点赞，帖子ID:', postId);
             
-            // 初始化likes数组
+            const post = campusData.campusWall.posts.find(p => p.id === postId);
+            if (!post) {
+                console.error('[点赞] 帖子不存在:', postId);
+                showError('帖子不存在');
+                return;
+            }
+            
+            console.log('[点赞] 找到帖子，标题:', post.title, '当前点赞数:', post.likes);
+            
+            // 防重复点击
+            const likeBtn = document.getElementById(`likeBtn-${postId}`);
+            if (likeBtn && likeBtn.dataset.processing === 'true') {
+                console.log('[点赞] 正在处理中，跳过');
+                return;
+            }
+            
+            if (likeBtn) {
+                likeBtn.dataset.processing = 'true';
+            }
+            
+            // 确保点赞数据结构存在
             if (!campusData.notifications.likes) {
+                console.log('[点赞] 初始化likes数组');
                 campusData.notifications.likes = [];
             }
             
             const userId = localStorage.getItem('studentId') || 'user_1000';
             const likeIndex = campusData.notifications.likes.indexOf(postId);
+            const isLiked = likeIndex > -1;
             
-            if (likeIndex > -1) {
+            console.log('[点赞] 当前状态:', isLiked ? '已点赞' : '未点赞', '点赞索引:', likeIndex);
+            
+            if (isLiked) {
                 // 取消点赞
                 campusData.notifications.likes.splice(likeIndex, 1);
-                post.likes--;
+                post.likes = Math.max(0, (post.likes || 0) - 1);
+                console.log('[点赞] 取消点赞成功，新点赞数:', post.likes);
                 showSuccess('已取消点赞');
             } else {
                 // 点赞
                 campusData.notifications.likes.push(postId);
-                post.likes++;
+                post.likes = (post.likes || 0) + 1;
+                console.log('[点赞] 点赞成功，新点赞数:', post.likes);
                 
-                // 创建点赞通知
-                const notification = {
-                    id: 'notify_like_' + Date.now(),
-                    type: 'like',
-                    content: `${userSettings.nickname} 点赞了你的帖子`,
-                    avatar: userSettings.nickname.charAt(0),
-                    read: false,
-                    timestamp: new Date().toISOString()
-                };
-                campusData.notifications.all.unshift(notification);
-                campusData.notifications.unreadCount++;
+                // 创建点赞通知（如果不是自己的帖子）
+                if (post.authorId !== userId) {
+                    const notification = {
+                        id: 'notify_like_' + Date.now(),
+                        type: 'like',
+                        title: '点赞通知',
+                        message: `${userSettings.nickname} 点赞了你的帖子"${post.title}"`,
+                        icon: 'fa-heart',
+                        read: false,
+                        timestamp: new Date().toISOString(),
+                        time: new Date().toISOString()
+                    };
+                    campusData.notifications.all.unshift(notification);
+                    campusData.notifications.unreadCount++;
+                }
                 
-                showSuccess('点赞成功！');
+                showSuccess('点赞成功！✨');
             }
             
             // 更新UI
-            updateLikeButton(postId, post.likes, campusData.notifications.likes.includes(postId));
+            updateLikeButton(postId, post.likes, !isLiked);
             saveAllData();
             updateNotificationBadge();
+            
+            // 重新渲染帖子列表以更新点赞数
+            if (document.getElementById('campusWallModal').style.display === 'flex') {
+                console.log('[点赞] 重新渲染帖子列表');
+                loadCampusWallPosts();
+            }
+            
+            // 如果帖子详情模态框正在显示，刷新详情页面
+            if (document.getElementById('postDetailModal').style.display === 'flex') {
+                console.log('[点赞] 刷新帖子详情页');
+                showPostDetail(postId);
+            }
+            
+            console.log('[点赞] 当前likes数组:', campusData.notifications.likes);
+            console.log('[点赞] =====================');
+            
+            // 延迟解除处理标记
+            setTimeout(() => {
+                if (likeBtn) {
+                    likeBtn.dataset.processing = 'false';
+                }
+            }, 300);
         }
         
         /**
-         * 更新点赞按钮状态（AI生成部分）
+         * 更新点赞按钮状态（完整修复版）
          */
         function updateLikeButton(postId, likes, isLiked) {
+            console.log('[点赞UI] =====================');
+            console.log('[点赞UI] 更新点赞按钮，帖子ID:', postId, '点赞数:', likes, '是否已点赞:', isLiked);
+            
+            // 更新详情页的点赞按钮
             const likeBtn = document.getElementById(`likeBtn-${postId}`);
             const likeCount = document.getElementById(`likeCount-${postId}`);
             
+            console.log('[点赞UI] 详情页按钮ID:', `likeBtn-${postId}`, '元素存在:', !!likeBtn);
+            console.log('[点赞UI] 详情页计数ID:', `likeCount-${postId}`, '元素存在:', !!likeCount);
+            
             if (likeBtn) {
                 const icon = likeBtn.querySelector('i');
-                if (isLiked) {
-                    icon.classList.add('text-red-500');
-                    likeBtn.classList.add('text-red-500');
-                } else {
-                    icon.classList.remove('text-red-500');
-                    likeBtn.classList.remove('text-red-500');
+                if (icon) {
+                    icon.className = isLiked ? 'fas fa-heart text-red-500' : 'far fa-heart';
+                    console.log('[点赞UI] 详情页图标已更新:', icon.className);
                 }
+                likeBtn.classList.toggle('text-red-500', isLiked);
             }
             
             if (likeCount) {
                 likeCount.textContent = likes;
+                console.log('[点赞UI] 详情页计数已更新:', likes);
+            }
+            
+            // 同时更新帖子卡片上的点赞按钮
+            const cardLikeBtn = document.getElementById(`likeBtn-card-${postId}`);
+            const cardLikeCount = document.getElementById(`likeCount-card-${postId}`);
+            
+            console.log('[点赞UI] 卡片按钮ID:', `likeBtn-card-${postId}`, '元素存在:', !!cardLikeBtn);
+            console.log('[点赞UI] 卡片计数ID:', `likeCount-card-${postId}`, '元素存在:', !!cardLikeCount);
+            
+            if (cardLikeBtn) {
+                const icon = cardLikeBtn.querySelector('i');
+                if (icon) {
+                    icon.className = isLiked ? 'fas fa-heart text-red-500' : 'far fa-heart';
+                    console.log('[点赞UI] 卡片图标已更新:', icon.className);
+                }
+            }
+            
+            if (cardLikeCount) {
+                cardLikeCount.textContent = likes;
+                console.log('[点赞UI] 卡片计数已更新:', likes);
+            }
+            
+            console.log('[点赞UI] =====================');
+        }
+        
+        /**
+         * 评论点赞
+         */
+        function commentLike(postId, commentId) {
+            const comments = campusData.campusWall.comments?.[postId];
+            if (!comments) return;
+            
+            const comment = comments.find(c => c.id === commentId);
+            if (!comment) return;
+            
+            // 简单点赞逻辑（实际项目应该跟踪用户是否已点赞）
+            comment.likes = (comment.likes || 0) + 1;
+            saveAllData();
+            renderComments(postId);
+            showSuccess('点赞成功！');
+        }
+        
+        /**
+         * 回复评论
+         */
+        function replyToComment(postId, commentId, authorName) {
+            const input = document.getElementById(`commentInput-${postId}`);
+            if (input) {
+                input.value = `@${authorName} `;
+                input.focus();
+                input.setSelectionRange(input.value.length, input.value.length);
             }
         }
         
         /**
-         * 提交评论（AI生成部分）
+         * 提交评论（完整修复版）
          */
         function submitComment(postId) {
+            console.log('[评论] =====================');
+            console.log('[评论] 开始提交评论，帖子ID:', postId);
+            
             const input = document.getElementById(`commentInput-${postId}`);
+            if (!input) {
+                console.error('[评论] 找不到评论输入框:', `commentInput-${postId}`);
+                showError('评论输入框不可用');
+                return;
+            }
+            
             const content = input.value.trim();
             
             if (!content) {
@@ -8180,13 +8619,21 @@
             }
             
             const post = campusData.campusWall.posts.find(p => p.id === postId);
-            if (!post) return;
+            if (!post) {
+                console.error('[评论] 帖子不存在:', postId);
+                showError('帖子不存在');
+                return;
+            }
             
-            // 初始化comments对象
+            console.log('[评论] 找到帖子，标题:', post.title, '当前评论数:', post.commentsCount);
+            
+            // 确保评论数据结构存在
             if (!campusData.campusWall.comments) {
+                console.log('[评论] 初始化comments对象');
                 campusData.campusWall.comments = {};
             }
             if (!campusData.campusWall.comments[postId]) {
+                console.log('[评论] 初始化帖子评论数组');
                 campusData.campusWall.comments[postId] = [];
             }
             
@@ -8198,43 +8645,65 @@
                 authorId: localStorage.getItem('studentId') || 'user_1000',
                 avatar: userSettings.nickname.charAt(0),
                 createdAt: new Date().toISOString(),
-                likes: 0
+                likes: 0,
+                replies: []
             };
             
             // 添加评论
             campusData.campusWall.comments[postId].push(comment);
-            post.commentsCount++;
+            post.commentsCount = (post.commentsCount || 0) + 1;
             
-            // 创建评论通知
-            if (post.authorId !== localStorage.getItem('studentId')) {
+            console.log('[评论] 评论添加成功，新评论数:', post.commentsCount);
+            console.log('[评论] 当前帖子评论数量:', campusData.campusWall.comments[postId].length);
+            
+            // 创建评论通知（如果不是自己的帖子）
+            const userId = localStorage.getItem('studentId') || 'user_1000';
+            if (post.authorId !== userId) {
                 const notification = {
                     id: 'notify_comment_' + Date.now(),
                     type: 'comment',
-                    content: `${userSettings.nickname} 评论了你的帖子`,
-                    avatar: userSettings.nickname.charAt(0),
+                    title: '新评论',
+                    message: `${userSettings.nickname} 评论了你的帖子"${post.title}"`,
+                    icon: 'fa-comment',
                     read: false,
-                    timestamp: new Date().toISOString()
+                    timestamp: new Date().toISOString(),
+                    time: new Date().toISOString()
                 };
                 campusData.notifications.all.unshift(notification);
                 campusData.notifications.unreadCount++;
-                updateNotificationBadge();
+                console.log('[评论] 已创建评论通知');
             }
             
             // 更新UI
             input.value = '';
             renderComments(postId);
-            document.getElementById(`commentCount-${postId}`).textContent = post.commentsCount;
+            
+            // 更新评论计数
+            const commentCountEl = document.getElementById(`commentCount-${postId}`);
+            if (commentCountEl) {
+                commentCountEl.textContent = post.commentsCount;
+                console.log('[评论] 已更新评论计数显示');
+            }
             
             saveAllData();
+            updateNotificationBadge();
             showSuccess('评论发布成功！');
+            
+            // 重新渲染帖子列表以更新评论数
+            if (document.getElementById('campusWallModal').style.display === 'flex') {
+                console.log('[评论] 重新渲染帖子列表');
+                loadCampusWallPosts();
+            }
+            
+            console.log('[评论] =====================');
         }
         
         /**
-         * 渲染评论列表（AI生成部分）
+         * 渲染评论列表（增强版 - 支持排序和楼主标识）
          */
-        function renderComments(postId) {
+        function renderComments(postId, sortBy = 'time') {
             const container = document.getElementById(`commentsList-${postId}`);
-            const comments = campusData.campusWall.comments?.[postId] || [];
+            let comments = campusData.campusWall.comments?.[postId] || [];
             
             if (comments.length === 0) {
                 container.innerHTML = `
@@ -8246,33 +8715,99 @@
                 return;
             }
             
-            container.innerHTML = comments.map(comment => `
-                <div class="flex items-start space-x-3 bg-gray-50 rounded-lg p-4">
-                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-cyan-400 to-blue-500 flex items-center justify-center text-white font-bold flex-shrink-0">
-                        ${comment.avatar}
-                    </div>
-                    <div class="flex-1">
-                        <div class="flex items-center space-x-2 mb-1">
-                            <span class="font-semibold text-gray-900 text-sm">${comment.author}</span>
-                            <span class="text-xs text-gray-500">${formatTime(comment.createdAt)}</span>
+            // 根据排序方式排序
+            if (sortBy === 'likes') {
+                comments.sort((a, b) => (b.likes || 0) - (a.likes || 0));
+            } else {
+                comments.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            }
+            
+            // 获取帖子作者ID用于识别楼主
+            const post = campusData.campusWall.posts.find(p => p.id === postId);
+            const postAuthorId = post?.authorId;
+            
+            container.innerHTML = comments.map(comment => {
+                const isAuthor = comment.authorId === postAuthorId;
+                return `
+                    <div class="flex items-start space-x-3 bg-gray-50 rounded-lg p-4">
+                        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-cyan-400 to-blue-500 flex items-center justify-center text-white font-bold flex-shrink-0">
+                            ${comment.avatar}
                         </div>
-                        <p class="text-gray-700 text-sm leading-relaxed">${comment.content}</p>
-                        <div class="flex items-center mt-2 space-x-4 text-xs text-gray-500">
-                            <button class="hover:text-red-500 transition-colors flex items-center">
-                                <i class="far fa-heart mr-1"></i> ${comment.likes}
-                            </button>
-                            <button class="hover:text-blue-500 transition-colors">回复</button>
+                        <div class="flex-1">
+                            <div class="flex items-center space-x-2 mb-1">
+                                <span class="font-semibold text-gray-900 text-sm">${comment.author}</span>
+                                ${isAuthor ? '<span class="px-2 py-0.5 bg-orange-100 text-orange-600 rounded-full text-xs">楼主</span>' : ''}
+                                <span class="text-xs text-gray-500">${formatTime(comment.createdAt)}</span>
+                            </div>
+                            <p class="text-gray-700 text-sm leading-relaxed">${comment.content}</p>
+                            <div class="flex items-center mt-2 space-x-4 text-xs text-gray-500">
+                                <button
+                                    onclick="commentLike('${postId}', '${comment.id}')"
+                                    class="hover:text-red-500 transition-colors flex items-center"
+                                >
+                                    <i class="far fa-heart mr-1"></i> ${comment.likes || 0}
+                                </button>
+                                <button
+                                    onclick="replyToComment('${postId}', '${comment.id}', '${comment.author}')"
+                                    class="hover:text-blue-500 transition-colors"
+                                >
+                                    回复
+                                </button>
+                            </div>
+                            
+                            <!-- 回复列表区域 -->
+                            <div id="replyList-${comment.id}" class="mt-3 ml-3 space-y-2">
+                                <!-- 动态加载回复 -->
+                            </div>
                         </div>
                     </div>
-                </div>
-            `).join('');
+                `;
+            }).join('');
         }
         
         /**
-         * 加载并显示帖子评论（AI生成部分）
+         * 切换表情选择器
+         */
+        function toggleEmojiPicker(postId) {
+            const picker = document.getElementById(`emojiPicker-${postId}`);
+            if (picker) {
+                picker.classList.toggle('show');
+            }
+        }
+        
+        /**
+         * 插入表情到评论输入框
+         */
+        function insertEmoji(postId, emoji) {
+            const input = document.getElementById(`commentInput-${postId}`);
+            if (input) {
+                const start = input.selectionStart;
+                const end = input.selectionEnd;
+                const text = input.value;
+                
+                input.value = text.substring(0, start) + emoji + text.substring(end);
+                input.focus();
+                input.selectionStart = input.selectionEnd = start + emoji.length;
+            }
+        }
+        
+        /**
+         * 排序评论
+         */
+        function sortComments(postId, sortBy) {
+            // 更新按钮状态
+            document.getElementById(`sortTime-${postId}`).classList.toggle('active', sortBy === 'time');
+            document.getElementById(`sortLikes-${postId}`).classList.toggle('active', sortBy === 'likes');
+            
+            // 重新渲染评论
+            renderComments(postId, sortBy);
+        }
+        
+        /**
+         * 加载并显示帖子评论（增强版 - 支持排序）
          */
         function loadPostComments(postId) {
-            renderComments(postId);
+            renderComments(postId, 'time');
         }
         
         /**
@@ -8283,23 +8818,122 @@
         }
         
         /**
-         * 收藏帖子
+         * 收藏帖子（增强版 - 添加动画）
          */
         function toggleSavePost(postId) {
             const savedPosts = JSON.parse(localStorage.getItem('savedPosts') || '[]');
             const index = savedPosts.indexOf(postId);
+            const isSaved = index > -1;
             
-            if (index > -1) {
+            if (isSaved) {
+                // 取消收藏
                 savedPosts.splice(index, 1);
                 showSuccess('已取消收藏');
             } else {
+                // 收藏
                 savedPosts.push(postId);
-                showSuccess('收藏成功！');
+                showSuccess('收藏成功！⭐');
             }
             
             localStorage.setItem('savedPosts', JSON.stringify(savedPosts));
+            
+            // 更新收藏按钮状态
+            updateBookmarkButton(postId, !isSaved);
         }
         
+        /**
+         * 更新收藏按钮状态
+         */
+        function updateBookmarkButton(postId, isSaved) {
+            // 更新详情页的收藏按钮
+            const bookmarkBtns = document.querySelectorAll(`[onclick*="toggleSavePost('${postId}')"]`);
+            bookmarkBtns.forEach(btn => {
+                const icon = btn.querySelector('i');
+                if (icon) {
+                    icon.classList.remove('fas', 'far');
+                    if (isSaved) {
+                        icon.classList.add('fas');
+                        icon.style.color = '#3b82f6';
+                    } else {
+                        icon.classList.add('far');
+                        icon.style.color = '';
+                    }
+                }
+                
+                // 添加动画
+                btn.classList.add('bookmark-btn-active');
+                setTimeout(() => {
+                    btn.classList.remove('bookmark-btn-active');
+                }, 400);
+            });
+        }
+        
+        /**
+         * 显示个人收藏中心
+         */
+        function showSavedPostsModal() {
+            const savedPosts = JSON.parse(localStorage.getItem('savedPosts') || '[]');
+            const container = document.getElementById('savedPostsList');
+            
+            if (savedPosts.length === 0) {
+                container.innerHTML = `
+                    <div class="saved-post-empty">
+                        <i class="far fa-bookmark"></i>
+                        <p class="text-xl font-semibold mb-2">暂无收藏</p>
+                        <p class="text-sm">在校园墙中收藏感兴趣的帖子吧~</p>
+                    </div>
+                `;
+            } else {
+                // 获取收藏的帖子
+                const posts = campusData.campusWall.posts.filter(post => savedPosts.includes(post.id));
+                
+                if (posts.length === 0) {
+                    container.innerHTML = `
+                        <div class="saved-post-empty">
+                            <i class="far fa-folder-open"></i>
+                            <p class="text-xl font-semibold mb-2">收藏的帖子不存在</p>
+                            <p class="text-sm">这些帖子可能已被删除</p>
+                        </div>
+                    `;
+                } else {
+                    container.innerHTML = `
+                        <div class="saved-posts-grid">
+                            ${posts.map(post => `
+                                <div class="saved-post-card" onclick="showPostDetail('${post.id}'); closeSavedPostsModal();">
+                                    <div class="flex items-start mb-3">
+                                        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-cyan-400 to-blue-500 flex items-center justify-center text-white font-bold flex-shrink-0">
+                                            ${post.avatar}
+                                        </div>
+                                        <div class="ml-3 flex-1">
+                                            <span class="font-medium text-gray-900">${post.author}</span>
+                                            <span class="text-xs text-gray-500 ml-2">${formatTime(post.createdAt)}</span>
+                                            <div class="text-lg mt-1">${post.type.icon}</div>
+                                        </div>
+                                    </div>
+                                    <h4 class="font-semibold text-gray-900 mb-2">${post.title}</h4>
+                                    <p class="text-sm text-gray-600 mb-3 line-clamp-2">${post.content}</p>
+                                    <div class="flex items-center justify-between text-sm text-gray-500">
+                                        <span><i class="fas fa-heart text-red-500 mr-1"></i> ${post.likes}</span>
+                                        <span><i class="far fa-comment mr-1"></i> ${post.commentsCount}</span>
+                                        <span><i class="far fa-eye mr-1"></i> ${post.views}</span>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                }
+            }
+            
+            document.getElementById('savedPostsModal').style.display = 'flex';
+        }
+        
+        /**
+         * 关闭收藏中心
+         */
+        function closeSavedPostsModal() {
+            document.getElementById('savedPostsModal').style.display = 'none';
+        }
+
         /**
          * 显示通知中心
          */
@@ -8866,6 +9500,121 @@
             setTimeout(() => {
                 successDiv.remove();
             }, 3000);
+        }
+
+        // 显示警告信息
+        function showWarning(message) {
+            const warningDiv = document.createElement('div');
+            warningDiv.className = 'fixed top-4 right-4 bg-yellow-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 slide-in-right';
+            warningDiv.innerHTML = `
+                <div class="flex items-center">
+                    <i class="fas fa-exclamation-triangle mr-2"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            document.body.appendChild(warningDiv);
+            
+            setTimeout(() => {
+                warningDiv.remove();
+            }, 3000);
+        }
+
+        // 显示错误信息
+        function showError(message) {
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'fixed top-4 right-4 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 slide-in-right';
+            errorDiv.innerHTML = `
+                <div class="flex items-center">
+                    <i class="fas fa-times-circle mr-2"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            document.body.appendChild(errorDiv);
+            
+            setTimeout(() => {
+                errorDiv.remove();
+            }, 3000);
+        }
+
+        /**
+         * 初始化社交模块数据（完整版）
+         */
+        function initializeSocialModule() {
+            console.log('[初始化] =====================');
+            console.log('[初始化] 开始初始化社交模块数据');
+            
+            // 确保notifications对象存在
+            if (!campusData.notifications) {
+                console.log('[初始化] 创建notifications对象');
+                campusData.notifications = {
+                    all: [],
+                    unreadCount: 0,
+                    likes: []
+                };
+            } else {
+                // 确保点赞数组存在
+                if (!campusData.notifications.likes) {
+                    console.log('[初始化] 创建likes数组');
+                    campusData.notifications.likes = [];
+                }
+                // 确保all数组存在
+                if (!campusData.notifications.all) {
+                    console.log('[初始化] 创建all数组');
+                    campusData.notifications.all = [];
+                }
+                // 确保unreadCount存在
+                if (typeof campusData.notifications.unreadCount !== 'number') {
+                    console.log('[初始化] 初始化unreadCount');
+                    campusData.notifications.unreadCount = 0;
+                }
+            }
+            
+            // 确保campusWall对象存在
+            if (!campusData.campusWall) {
+                console.log('[初始化] 创建campusWall对象');
+                campusData.campusWall = {
+                    posts: [],
+                    comments: {},
+                    likes: []
+                };
+            } else {
+                // 确保comments对象存在
+                if (!campusData.campusWall.comments) {
+                    console.log('[初始化] 创建comments对象');
+                    campusData.campusWall.comments = {};
+                }
+                // 确保posts数组存在
+                if (!campusData.campusWall.posts) {
+                    console.log('[初始化] 创建posts数组');
+                    campusData.campusWall.posts = [];
+                }
+            }
+            
+            // 确保帖子数据完整
+            if (campusData.campusWall.posts && campusData.campusWall.posts.length > 0) {
+                console.log('[初始化] 检查帖子数据完整性，帖子数量:', campusData.campusWall.posts.length);
+                campusData.campusWall.posts.forEach((post, index) => {
+                    if (!post.likes) {
+                        post.likes = 0;
+                        console.log('[初始化] 帖子', index, '初始化likes为0');
+                    }
+                    if (!post.commentsCount) {
+                        post.commentsCount = 0;
+                        console.log('[初始化] 帖子', index, '初始化commentsCount为0');
+                    }
+                    if (!post.views) {
+                        post.views = 0;
+                        console.log('[初始化] 帖子', index, '初始化views为0');
+                    }
+                });
+            }
+            
+            console.log('[初始化] 当前点赞数组:', campusData.notifications.likes);
+            console.log('[初始化] 当前评论对象:', Object.keys(campusData.campusWall.comments));
+            console.log('[初始化] =====================');
+            console.log('[初始化] 社交模块数据初始化完成');
         }
 
         // 游客体验
