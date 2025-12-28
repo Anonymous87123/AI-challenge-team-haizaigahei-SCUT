@@ -328,6 +328,24 @@
             background: rgba(255, 255, 255, 0.5);
         }
 
+        /* 校车预约系统样式 */
+        .tab-active {
+            background-color: #3b82f6 !important;
+            color: white !important;
+            position: relative;
+        }
+
+        .tab-active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: white;
+            border-radius: 3px 3px 0 0;
+        }
+
         .sidebar.collapsed {
             width: 80px;
         }
@@ -1242,6 +1260,11 @@
             <div class="flex-1 p-4 space-y-2">
                 <h4 class="text-sm font-semibold text-gray-300 mb-3 sidebar-content">快捷功能</h4>
                 
+                <button onclick="showWeatherModal()" class="quick-action-btn w-full flex items-center space-x-3">
+                    <i class="fas fa-cloud-sun text-cyan-500"></i>
+                    <span class="sidebar-content">天气预报</span>
+                </button>
+
                 <button onclick="quickAction('schedule')" class="quick-action-btn w-full flex items-center space-x-3">
                     <i class="fas fa-calendar-alt text-blue-500"></i>
                     <span class="sidebar-content">课程表</span>
@@ -1252,9 +1275,9 @@
                     <span class="sidebar-content">食堂菜单</span>
                 </button>
 
-                <button onclick="quickAction('library')" class="quick-action-btn w-full flex items-center space-x-3">
-                    <i class="fas fa-book text-green-500"></i>
-                    <span class="sidebar-content">图书馆</span>
+                <button onclick="showVenueModal()" class="quick-action-btn w-full flex items-center space-x-3">
+                    <i class="fas fa-building text-green-500"></i>
+                    <span class="sidebar-content">场馆开放时间</span>
                 </button>
 
                 <button onclick="quickAction('shuttle')" class="quick-action-btn w-full flex items-center space-x-3">
@@ -1276,6 +1299,12 @@
             <!-- 社交功能快捷入口（AI生成部分）-->
             <div class="p-4 border-t border-gray-200 border-opacity-20">
                 <h4 class="text-sm font-semibold text-gray-300 mb-3 sidebar-content">社交中心</h4>
+                
+                <button onclick="showFriendsList()" class="quick-action-btn w-full flex items-center space-x-3">
+                    <i class="fas fa-user-friends text-pink-500"></i>
+                    <span class="sidebar-content">我的好友</span>
+                    <span id="friendCountInSidebar" class="ml-auto px-2 py-0.5 bg-pink-500 text-white text-xs rounded-full">0</span>
+                </button>
                 
                 <button id="discoverFriendsBtn" onclick="handleOpenSocialDiscoverModal()" class="quick-action-btn w-full flex items-center space-x-3">
                     <i class="fas fa-users text-pink-500"></i>
@@ -2015,6 +2044,186 @@
         </div>
     </div>
 
+    <!-- 场馆选择模态框 -->
+    <div id="venueModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="glass-card rounded-2xl p-6 max-w-2xl w-full mx-4 slide-in-up">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="text-lg font-semibold text-gray-900 flex items-center">
+                    <i class="fas fa-building text-green-500 mr-2"></i> 场馆开放时间
+                </h3>
+                <button onclick="closeVenueModal()" class="text-gray-400 hover:text-gray-600">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                <div onclick="showVenueDetail('swimming')" class="venue-card cursor-pointer bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-6 hover:shadow-lg hover:scale-105 transition-all duration-300">
+                    <div class="text-4xl mb-3">🏊</div>
+                    <h4 class="font-semibold text-gray-900">游泳馆</h4>
+                    <p class="text-sm text-gray-600 mt-1">室内恒温泳池</p>
+                </div>
+                
+                <div onclick="showVenueDetail('yoga')" class="venue-card cursor-pointer bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-6 hover:shadow-lg hover:scale-105 transition-all duration-300">
+                    <div class="text-4xl mb-3">🧘</div>
+                    <h4 class="font-semibold text-gray-900">瑜伽馆</h4>
+                    <p class="text-sm text-gray-600 mt-1">身心放松</p>
+                </div>
+                
+                <div onclick="showVenueDetail('gym')" class="venue-card cursor-pointer bg-gradient-to-br from-orange-50 to-orange-100 rounded-xl p-6 hover:shadow-lg hover:scale-105 transition-all duration-300">
+                    <div class="text-4xl mb-3">💪</div>
+                    <h4 class="font-semibold text-gray-900">体育馆</h4>
+                    <p class="text-sm text-gray-600 mt-1">篮球/羽毛球</p>
+                </div>
+                
+                <div onclick="showVenueDetail('badminton')" class="venue-card cursor-pointer bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-6 hover:shadow-lg hover:scale-105 transition-all duration-300">
+                    <div class="text-4xl mb-3">🏸</div>
+                    <h4 class="font-semibold text-gray-900">羽毛球馆</h4>
+                    <p class="text-sm text-gray-600 mt-1">专业场地</p>
+                </div>
+                
+                <div onclick="showVenueDetail('tennis')" class="venue-card cursor-pointer bg-gradient-to-br from-red-50 to-red-100 rounded-xl p-6 hover:shadow-lg hover:scale-105 transition-all duration-300">
+                    <div class="text-4xl mb-3">🎾</div>
+                    <h4 class="font-semibold text-gray-900">网球场</h4>
+                    <p class="text-sm text-gray-600 mt-1">室外场地</p>
+                </div>
+                
+                <div onclick="showVenueDetail('track')" class="venue-card cursor-pointer bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-xl p-6 hover:shadow-lg hover:scale-105 transition-all duration-300">
+                    <div class="text-4xl mb-3">🏃</div>
+                    <h4 class="font-semibold text-gray-900">田径场</h4>
+                    <p class="text-sm text-gray-600 mt-1">塑胶跑道</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 场馆详情模态框 -->
+    <div id="venueDetailModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="glass-card rounded-2xl p-6 max-w-4xl w-full mx-4 slide-in-up max-h-[85vh] overflow-y-auto">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="text-lg font-semibold text-gray-900 flex items-center" id="venueDetailTitle">
+                    <i class="fas fa-building text-green-500 mr-2"></i> 场馆详情
+                </h3>
+                <button onclick="closeVenueDetailModal()" class="text-gray-400 hover:text-gray-600">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div id="venueDetailContent">
+                <!-- 动态内容 -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 天气查询模态框 -->
+    <div id="weatherModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="glass-card rounded-2xl p-6 max-w-2xl w-full mx-4 slide-in-up">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="text-lg font-semibold text-gray-900 flex items-center">
+                    <i class="fas fa-cloud-sun text-cyan-500 mr-2"></i> 天气预报
+                </h3>
+                <button onclick="closeWeatherModal()" class="text-gray-400 hover:text-gray-600">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div id="weatherContent">
+                <!-- 动态内容 -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 好友列表模态框 -->
+    <div id="friendsListModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="glass-card rounded-2xl p-6 max-w-2xl w-full mx-4 slide-in-up max-h-[80vh] overflow-hidden flex flex-col">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="text-lg font-semibold text-gray-900 flex items-center">
+                    <i class="fas fa-user-friends text-pink-500 mr-2"></i> 我的好友
+                    <span id="friendsCount" class="ml-2 px-2 py-0.5 bg-pink-100 text-pink-700 rounded-full text-sm">0</span>
+                </h3>
+                <button onclick="closeFriendsListModal()" class="text-gray-400 hover:text-gray-600">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="flex-1 overflow-y-auto">
+                <div id="friendsListContent" class="space-y-3">
+                    <div class="text-center py-8 text-gray-500">
+                        <i class="fas fa-user-friends text-4xl mb-4 text-gray-300"></i>
+                        <p>暂无好友</p>
+                        <p class="text-sm mt-2">去发现朋友模块添加好友吧</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 私聊模态框 -->
+    <div id="chatModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-[9999]">
+        <div class="glass-card rounded-2xl w-full h-screen md:h-[90vh] flex flex-col slide-in-up">
+            <!-- 聊天头部 -->
+            <div class="flex items-center justify-between p-4 border-b border-gray-200 border-opacity-20">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-full bg-gradient-to-r from-pink-500 to-purple-600 flex items-center justify-center text-white font-bold" id="chatUserAvatar">
+                        <!-- 动态内容 -->
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-white" id="chatUserName">用户</h4>
+                        <p class="text-xs text-gray-300" id="chatUserStatus">在线</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <button onclick="showChatUserProfile()" class="text-gray-300 hover:text-white px-3 py-1 rounded">
+                        <i class="fas fa-user-circle"></i>
+                    </button>
+                    <button onclick="closeChatModal()" class="text-gray-300 hover:text-white px-3 py-1 rounded">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 聊天内容区域 -->
+            <div id="chatMessages" class="flex-1 overflow-y-auto p-4 space-y-4">
+                <!-- 消息内容动态生成 -->
+            </div>
+
+            <!-- 聊天输入区域 -->
+            <div class="p-4 border-t border-gray-200 border-opacity-20">
+                <div class="flex items-end space-x-3">
+                    <div class="flex-1 relative">
+                        <textarea
+                            id="chatMessageInput"
+                            class="w-full px-4 py-3 bg-white bg-opacity-10 border border-gray-300 border-opacity-30 rounded-xl text-white placeholder-gray-400 resize-none focus:outline-none focus:ring-2 focus:ring-pink-500"
+                            rows="1"
+                            placeholder="输入消息..."
+                            onkeypress="handleChatKeyPress(event)"
+                            oninput="autoResizeChatInput(this)"
+                        ></textarea>
+                    </div>
+                    <button
+                        onclick="sendChatMessage()"
+                        class="px-6 py-3 bg-gradient-to-r from-pink-500 to-purple-600 text-white rounded-xl hover:shadow-lg hover:scale-105 transition-all duration-300">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 好友用户资料弹窗（在聊天中显示） -->
+    <div id="chatUserProfileModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-[10000]">
+        <div class="glass-card rounded-2xl p-6 max-w-md w-full mx-4 slide-in-up">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="text-lg font-semibold text-gray-900">用户资料</h3>
+                <button onclick="closeChatUserProfileModal()" class="text-gray-400 hover:text-gray-600">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div id="chatUserProfileContent">
+                <!-- 动态内容 -->
+            </div>
+        </div>
+    </div>
+
     <script>
         // 全局变量
         let messageHistory = [];
@@ -2365,7 +2574,16 @@
                 all: [],
                 // 未读通知数
                 unreadCount: 0
-            }
+            },
+            // ========== 校车预约系统数据（AI生成部分）=========
+            shuttleReservations: [],
+            // 收藏的路线和站点
+            shuttleFavorites: {
+                routes: [],
+                stops: []
+            },
+            // 常用站点（基于用户使用频率）
+            commonStops: []
         };
 
         // ========== 社交匹配系统常量定义（AI生成部分）==========
@@ -2548,6 +2766,9 @@
                 // 已登录，显示主应用
                 document.getElementById('loginPage').style.display = 'none';
                 showMainApp();
+                
+                // 初始化校车预约演示数据（AI生成部分）
+                initializeShuttleDemoData();
             } else {
                 // 未登录，显示登录页面
                 document.getElementById('loginPage').style.display = 'grid';
@@ -2610,6 +2831,103 @@
                     sidebar.classList.remove('open');
                 }
             });
+        }
+
+        // ========== 校车预约系统演示数据初始化（AI生成部分）==========
+        
+        /**
+         * 初始化校车预约系统演示数据
+         * 为当前用户生成一些历史预约记录和常用站点数据
+         */
+        function initializeShuttleDemoData() {
+            const studentId = localStorage.getItem('studentId');
+            if (!studentId) return;
+
+            // 检查是否已初始化
+            if (campusData.shuttleReservations.length > 0) {
+                console.log('[校车系统] 演示数据已存在，跳过初始化');
+                return;
+            }
+
+            console.log('[校车系统] 开始初始化演示数据');
+
+            // 生成当前时间
+            const now = new Date();
+            
+            // 生成未来24小时内的预约（即将出行）
+            const upcomingReservations = [
+                {
+                    ticketId: generateTicketId(),
+                    studentId: studentId,
+                    routeId: 'route-main-east',
+                    routeName: '校本部 → 东校区',
+                    busId: 'bus_002',
+                    departureTime: new Date(now.getTime() + 30 * 60 * 1000).toISOString(), // 30分钟后
+                    boardingStop: '理科楼站',
+                    seatPreference: 'window',
+                    seatNumber: 'A1',
+                    status: 'active',
+                    bookingTime: new Date(now.getTime() - 2 * 60 * 1000).toISOString()
+                },
+                {
+                    ticketId: generateTicketId(),
+                    studentId: studentId,
+                    routeId: 'route-campus',
+                    routeName: '环校线',
+                    busId: 'bus_022',
+                    departureTime: new Date(now.getTime() + 3 * 60 * 60 * 1000).toISOString(), // 3小时后
+                    boardingStop: '图书馆',
+                    seatPreference: 'any',
+                    seatNumber: 'C5',
+                    status: 'active',
+                    bookingTime: new Date(now.getTime() - 30 * 60 * 1000).toISOString()
+                }
+            ];
+
+            // 生成过去7天内的历史预约
+            const historyReservations = [];
+            for (let i = 1; i <= 5; i++) {
+                const pastTime = new Date(now.getTime() - i * 24 * 60 * 60 * 1000);
+                historyReservations.push({
+                    ticketId: generateTicketId(),
+                    studentId: studentId,
+                    routeId: i % 2 === 0 ? 'route-main-east' : 'route-campus',
+                    routeName: i % 2 === 0 ? '校本部 → 东校区' : '环校线',
+                    busId: `bus_${Math.floor(Math.random() * 10) + 1}`,
+                    departureTime: pastTime.toISOString(),
+                    boardingStop: ['图书馆站', '理科楼站', '体育馆站', '宿舍区'][Math.floor(Math.random() * 4)],
+                    seatPreference: ['window', 'aisle', 'any'][Math.floor(Math.random() * 3)],
+                    seatNumber: ['A1', 'B2', 'C3', 'D4'][Math.floor(Math.random() * 4)],
+                    status: 'completed',
+                    bookingTime: new Date(pastTime.getTime() - 2 * 60 * 60 * 1000).toISOString()
+                });
+            }
+
+            // 合并预约数据
+            campusData.shuttleReservations = [...upcomingReservations, ...historyReservations];
+
+            // 初始化常用站点
+            campusData.shuttleFavorites = {
+                routes: ['route-main-east', 'route-campus'],
+                stops: [
+                    { routeId: 'route-main-east', stopId: 'stop_library', stopName: '图书馆站', usageCount: 5 },
+                    { routeId: 'route-main-east', stopId: 'stop_student', stopName: '学生宿舍站', usageCount: 8 },
+                    { routeId: 'route-campus', stopId: 'stop_lib', stopName: '图书馆', usageCount: 6 }
+                ]
+            };
+
+            console.log(`[校车系统] 演示数据初始化完成，共生成 ${campusData.shuttleReservations.length} 条预约记录`);
+        }
+
+        /**
+         * 生成车票ID（唯一标识）
+         * 格式: SHUTTLE + 时间戳 + 6位随机数
+         * @returns {string} 车票ID
+         */
+        function generateTicketId() {
+            const timestamp = Date.now().toString(36).toUpperCase();
+            const random = Math.random().toString(36).substring(2, 8).toUpperCase();
+            return `SHUTTLE${timestamp}${random}`;
         }
 
         // 更新倒计时
@@ -2768,7 +3086,7 @@
                     sendQuickMessage('图书馆空位查询');
                     break;
                 case 'shuttle':
-                    sendQuickMessage('校车时刻表');
+                    showShuttleReservation(); // 打开校车预约系统（AI生成部分）
                     break;
                 case 'express':
                     sendQuickMessage('快递点位置');
@@ -2810,8 +3128,8 @@
                     <div class="w-10 h-10 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center flex-shrink-0">
                         <i class="fas fa-robot text-white"></i>
                     </div>
-                    <div class="max-w-2xl">
-                        <div class="message-bubble ai-message">
+                    <div class="w-[calc(100%-3.5rem)] max-w-3xl">
+                        <div class="message-bubble ai-message w-full">
                             ${messageContent}
                         </div>
                         <div class="text-xs text-gray-500 mt-1">${getCurrentTime()}</div>
@@ -2870,7 +3188,165 @@
                                 <span class="px-3 py-1 text-xs rounded-full bg-white bg-opacity-20 backdrop-blur">
                                     ${course.status}
                                 </span>
+                        <!-- 校车预约系统模态框 -->
+                        <div id="shuttleReservationModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 p-4">
+                            <div class="bg-white rounded-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
+                                <!-- 标题栏 -->
+                                <div class="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-6 py-4 flex items-center justify-between">
+                                    <div class="flex items-center space-x-3">
+                                        <i class="fas fa-bus text-2xl"></i>
+                                        <h2 class="text-xl font-bold">智能校车预约系统</h2>
+                                    </div>
+                                    <button onclick="closeShuttleReservationModal()" class="text-white hover:bg-white/20 rounded-lg p-2">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                                
+                                <!-- Tab 导航 -->
+                                <div class="flex border-b border-gray-200 bg-gray-50">
+                                    <button id="shuttleTabHome" onclick="showShuttleHome()" class="flex-1 py-3 text-sm font-medium text-center tab-active hover:bg-gray-100">
+                                        <i class="fas fa-home mr-2"></i>实时班次
+                                    </button>
+                                    <button id="shuttleTabReservations" onclick="showMyReservations()" class="flex-1 py-3 text-sm font-medium text-center hover:bg-gray-100">
+                                        <i class="fas fa-ticket-alt mr-2"></i>我的预约
+                                    </button>
+                                </div>
+                                
+                                <!-- 内容区域 -->
+                                <div class="flex-1 overflow-hidden bg-gray-100">
+                                    <!-- 校车主页 -->
+                                    <div id="shuttleHomePage" class="h-full overflow-y-auto p-6">
+                                        <div class="flex gap-4">
+                                            <!-- 左侧：班次列表 -->
+                                            <div class="w-1/2">
+                                                <h3 class="font-bold text-gray-900 mb-4">选择线路</h3>
+                                                
+                                                <!-- 线路按钮 -->
+                                                <div class="flex space-x-2 mb-4">
+                                                    <button id="routeBtn_route-main-east" onclick="loadRouteSchedules('route-main-east')"
+                                                            class="px-4 py-2 bg-blue-500 text-white rounded-lg text-sm font-medium flex-1">
+                                                        校本部→东校区
+                                                    </button>
+                                                    <button id="routeBtn_route-main-west" onclick="loadRouteSchedules('route-main-west')"
+                                                            class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm flex-1 hover:bg-gray-200">
+                                                        校本部→西校区
+                                                    </button>
+                                                    <button id="routeBtn_route-campus" onclick="loadRouteSchedules('route-campus')"
+                                                            class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm flex-1 hover:bg-gray-200">
+                                                        环校线
+                                                    </button>
+                                                </div>
+                                                
+                                                <!-- 班次列表 -->
+                                                <div id="busSchedulesList" class="space-y-3">
+                                                    <!-- 动态生成 -->
+                                                </div>
+                                            </div>
+                                            
+                                            <!-- 右侧：班次详情 -->
+                                            <div class="w-1/2">
+                                                <h3 class="font-bold text-gray-900 mb-4">班次详情</h3>
+                                                <div id="busDetailContent" class="sticky top-0">
+                                                    <!-- 动态生成 -->
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- 我的预约页面 -->
+                                    <div id="shuttleMyReservationsPage" class="h-full overflow-y-auto p-6 hidden">
+                                        <h3 class="font-bold text-gray-900 mb-4 flex items-center">
+                                            <i class="fas fa-history text-blue-500 mr-2"></i>我的预约记录
+                                        </h3>
+                                        <div id="myReservationsList">
+                                            <!-- 动态生成 -->
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
+                        </div>
+                        
+                        <!-- 校车预约表单模态框 -->
+                        <div id="reservationModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 p-4">
+                            <div class="bg-white rounded-2xl w-full max-w-lg max-h-[90vh] overflow-hidden flex flex-col">
+                                <!-- 标题栏 -->
+                                <div class="bg-gradient-to-r from-green-500 to-teal-600 text-white px-6 py-4 flex items-center justify-between">
+                                    <div class="flex items-center">
+                                        <i class="fas fa-ticket-alt text-xl mr-3"></i>
+                                        <div>
+                                            <h2 class="text-lg font-bold">选择上车站点</h2>
+                                            <p id="reservationRouteInfo" class="text-sm opacity-90">线路信息</p>
+                                        </div>
+                                    </div>
+                                    <button onclick="closeReservationModal()" class="text-white hover:bg-white/20 rounded-lg p-2">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                                
+                                <!-- 内容区域 -->
+                                <div class="flex-1 overflow-y-auto p-6">
+                                    <!-- 站点列表 -->
+                                    <div class="mb-6">
+                                        <h4 class="font-semibold text-gray-900 mb-3">选择上车站点</h4>
+                                        <div id="boardingStopsContent">
+                                            <!-- 动态生成 -->
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- 座位偏好 -->
+                                    <h4 class="font-semibold text-gray-900 mb-3">座位偏好（可选）</h4>
+                                    <select id="seatPreference" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                        <option value="any">无所谓</option>
+                                        <option value="window">靠窗位置</option>
+                                        <option value="aisle">过道位置</option>
+                                    </select>
+                                    
+                                    <!-- 选中的站点显示 -->
+                                    <input type="hidden" id="selectedStopId">
+                                    <input type="hidden" id="selectedStopRoute">
+                                    <input type="hidden" id="selectedStopBus">
+                                </div>
+                                
+                                <!-- 底部按钮 -->
+                                <div class="p-6 bg-gray-50 border-t border-gray-200">
+                                    <div class="flex items-center justify-between mb-4">
+                                        <span class="text-sm text-gray-500">已选择：</span>
+                                        <span id="selectedStopName" class="font-semibold text-blue-600">请选择站点</span>
+                                    </div>
+                                    <div class="flex space-x-3">
+                                        <button onclick="closeReservationModal()"
+                                                class="flex-1 py-3 border border-gray-300 text-gray-700 rounded-xl font-medium hover:bg-gray-100">
+                                            取消
+                                        </button>
+                                        <button onclick="confirmReservation()"
+                                                class="flex-1 py-3 bg-gradient-to-r from-green-500 to-teal-600 text-white rounded-xl font-medium hover:shadow-lg">
+                                            <i class="fas fa-check mr-2"></i>确认预约
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 车票二维码模态框 -->
+                        <div id="ticketQRModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 p-4">
+                            <div class="bg-white rounded-2xl w-full max-w-sm max-h-[90vh] overflow-hidden">
+                                <!-- 标题栏 -->
+                                <div class="bg-gradient-to-r from-purple-500 to-pink-600 text-white px-6 py-4 flex items-center justify-between">
+                                    <div class="flex items-center">
+                                        <i class="fas fa-qrcode text-xl mr-3"></i>
+                                        <h2 class="text-lg font-bold">乘车车票</h2>
+                                    </div>
+                                    <button onclick="closeTicketQRModal()" class="text-white hover:bg-white/20 rounded-lg p-2">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                                
+                                <!-- 内容区域 -->
+                                <div class="p-6" id="qrCodeContent">
+                                    <!-- 动态生成 -->
+                                </div>
+                            </div>
+                        </div>
                         </div>
                     `).join('')}
                 </div>
@@ -4775,12 +5251,26 @@
         }
         
         /**
-         * 发送消息
+         * 发送消息 - 打开私聊窗口
          */
         function sendChat(userId) {
+            const friend = campusData.simulatingUsers[userId];
+            if (!friend) {
+                showError('未找到该用户');
+                return;
+            }
+
+            // 检查是否已经是好友
+            if (!campusData.social.friends.includes(userId)) {
+                showInfo('请先添加好友后再进行聊天');
+                return;
+            }
+
             closeUserDetailModal();
             closeSocialDiscoverModal();
-            addMessage('ai', `💬 聊天功能正在开发中...\n\n这是一个模拟功能，真实应用中会跳转到聊天界面与对方进行对话。`);
+            
+            // 打开私聊窗口
+            openChat(userId);
         }
         
         /**
@@ -5042,6 +5532,13 @@
             if (!campusData.notifications || campusData.notifications.all.length === 0) {
                 console.log('[社交模块] 生成模拟通知数据');
                 generateSimulatingNotifications();
+            }
+            
+            // 加载好友聊天记录
+            const savedChats = localStorage.getItem('friendChatHistory');
+            if (savedChats) {
+                Object.assign(friendChatHistory, JSON.parse(savedChats));
+                console.log('[好友系统] 加载了', Object.keys(friendChatHistory).length, '个好友的聊天记录');
             }
             
             // 数据迁移：处理旧的通知数据（修复时间字段问题）
@@ -5317,6 +5814,1743 @@
             document.getElementById('notificationsModal').style.display = 'none';
         }
         
+        // ========== 场馆模块（AI生成部分）==========
+        
+        /**
+         * 场馆数据
+         */
+        const VENUE_DATA = {
+            swimming: {
+                name: '游泳馆',
+                emoji: '🏊',
+                icon: 'fa-swimmer',
+                color: 'blue',
+                location: '西区体育中心1楼',
+                phone: '010-88881234',
+                description: '校内恒温游泳池，水质优良，适合日常锻炼和游泳课程。',
+                features: ['50米标准泳池', '恒温28°C', '淋浴间', '储物柜', '救生员全程'],
+                openingHours: {
+                    weekdays: '6:00-22:00',
+                    weekends: '7:00-21:00'
+                },
+                price: '学生: 10元/次，教职工: 20元/次',
+                capacity: '同时容纳120人',
+                facilities: [
+                    {
+                        name: '主场馆',
+                        area: '1200平方米',
+                        description: '标准50米泳道，水深1.2-2.0米'
+                    },
+                    {
+                        name: '儿童池',
+                        area: '200平方米',
+                        description: '浅水区，适合初学者和儿童'
+                    },
+                    {
+                        name: '淋浴区',
+                        area: '300平方米',
+                        description: '24小时热水供应'
+                    }
+                ],
+                rules: [
+                    '游泳前请务必淋浴',
+                    '禁止在泳池内嬉戏打闹',
+                    '请佩戴泳帽入池',
+                    '儿童需有成人陪同'
+                ],
+                status: 'open'
+            },
+            yoga: {
+                name: '瑜伽馆',
+                emoji: '🧘',
+                icon: 'fa-spa',
+                color: 'purple',
+                location: '东区文体楼3楼',
+                phone: '010-88885678',
+                description: '专业瑜伽练习空间，配备专业瑜伽垫和辅具。',
+                features: ['专业瑜伽垫', '空调恒温', '瑜伽辅具', '静音环境', '专业导师'],
+                openingHours: {
+                    weekdays: '8:00-21:00',
+                    weekends: '9:00-20:00'
+                },
+                price: '学生: 5元/课时，教职工: 10元/课时',
+                capacity: '同时容纳30人',
+                facilities: [
+                    {
+                        name: '主练习区',
+                        area: '150平方米',
+                        description: '配备专业瑜伽垫'
+                    },
+                    {
+                        name: '私教室',
+                        area: '30平方米',
+                        description: '一对一辅导'
+                    },
+                    {
+                        name: '休息区',
+                        area: '50平方米',
+                        description: '茶水、书籍'
+                    }
+                ],
+                rules: [
+                    '请穿着舒适的瑜伽服',
+                    '上课前请关闭手机',
+                    '保持安静，尊重他人',
+                    '请勿在馆内进食'
+                ],
+                status: 'open'
+            },
+            gym: {
+                name: '体育馆',
+                emoji: '💪',
+                icon: 'fa-dumbbell',
+                color: 'orange',
+                location: '西区体育中心主楼',
+                phone: '010-88889012',
+                description: '多功能体育场馆，可进行篮球、排球等多种运动。',
+                features: ['标准篮球场', '排球场', '羽毛球场', '观众席', '电子记分牌'],
+                openingHours: {
+                    weekdays: '7:00-22:00',
+                    weekends: '8:00-22:00'
+                },
+                price: '学生: 15元/小时，教职工: 30元/小时',
+                capacity: '观众席可容纳2000人',
+                facilities: [
+                    {
+                        name: '篮球场',
+                        area: '600平方米',
+                        description: '标准NBA尺寸场地'
+                    },
+                    {
+                        name: '排球场',
+                        area: '400平方米',
+                        description: '木质地板'
+                    },
+                    {
+                        name: '羽毛球场',
+                        area: '200平方米',
+                        description: '标准4片场地'
+                    }
+                ],
+                rules: [
+                    '运动前请做好热身',
+                    '请穿着运动鞋入内',
+                    '爱护场地设施',
+                    '租用场地需提前预约'
+                ],
+                status: 'open'
+            },
+            badminton: {
+                name: '羽毛球馆',
+                emoji: '🏸',
+                icon: 'fa-feather',
+                color: 'green',
+                location: '东区文体楼1楼',
+                phone: '010-88882345',
+                description: '专业羽毛球场馆，配备标准场地和专业照明。',
+                features: ['标准场地', '专业照明', '租赁服务', '更衣室', '空调'],
+                openingHours: {
+                    weekdays: '8:00-22:00',
+                    weekends: '8:30-21:30'
+                },
+                price: '学生: 20元/小时/片，教职工: 40元/小时/片',
+                capacity: '12片同时开放',
+                facilities: [
+                    {
+                        name: '羽毛球场地',
+                        area: '每片100平方米',
+                        description: 'PVC运动地板'
+                    },
+                    {
+                        name: '休息区',
+                        area: '100平方米',
+                        description: '座椅、饮水机'
+                    }
+                ],
+                rules: [
+                    '请穿着专业羽毛球鞋',
+                    '禁止穿硬底鞋入场',
+                    '请自备球拍和羽毛球',
+                    '预约后请在30分钟内到场'
+                ],
+                status: 'open'
+            },
+            tennis: {
+                name: '网球场',
+                emoji: '🎾',
+                icon: 'fa-baseball-ball',
+                color: 'red',
+                location: '西区体育中心南侧',
+                phone: '010-88886789',
+                description: '室外网球场，灯光设备完善，适合夜间练习。',
+                features: ['标准场地', '夜间照明', '座椅', '球杆租赁', '换衣间'],
+                openingHours: {
+                    weekdays: '6:00-22:00',
+                    weekends: '7:00-21:00'
+                },
+                price: '学生: 25元/小时，教职工: 50元/小时',
+                capacity: '4片同时开放',
+                facilities: [
+                    {
+                        name: '网球场',
+                        area: '每片600平方米',
+                        description: '硬地场地'
+                    }
+                ],
+                rules: [
+                    '请佩戴护具入场',
+                    '雨天请勿使用',
+                    '请爱护场地',
+                    '结束后请将球杆归还'
+                ],
+                status: 'open'
+            },
+            track: {
+                name: '田径场',
+                emoji: '🏃',
+                icon: 'fa-running',
+                color: 'yellow',
+                location: '西区体育中心田径场',
+                phone: '010-88883456',
+                description: '标准400米塑胶跑道，中央草坪可用于足球等活动。',
+                features: ['塑胶跑道', '草坪足球场', '照明设备', '观众席', '健身器材'],
+                openingHours: {
+                    weekdays: '5:30-22:00',
+                    weekends: '6:00-22:00'
+                },
+                price: '学生免费，教职工免费',
+                capacity: '观众席可容纳5000人',
+                facilities: [
+                    {
+                        name: '塑胶跑道',
+                        area: '8条400米标准跑道',
+                        description: '国际标准塑胶跑道'
+                    },
+                    {
+                        name: '中心草坪',
+                        area: '7000平方米',
+                        description: '天然草坪足球场'
+                    },
+                    {
+                        name: '健身区',
+                        area: '200平方米',
+                        description: '室外健身器材'
+                    }
+                ],
+                rules: [
+                    '跑道逆时针方向跑步',
+                    '禁止穿钉鞋',
+                    '请爱护草坪',
+                    '晚上注意安全'
+                ],
+                status: 'open'
+            }
+        };
+
+        /**
+         * 显示场馆选择模态框
+         */
+        function showVenueModal() {
+            const modal = document.getElementById('venueModal');
+            modal.style.display = 'flex';
+            console.log('[场馆模块] 打开场馆选择模态框');
+        }
+
+        /**
+         * 关闭场馆选择模态框
+         */
+        function closeVenueModal() {
+            document.getElementById('venueModal').style.display = 'none';
+            console.log('[场馆模块] 关闭场馆选择模态框');
+        }
+
+        /**
+         * 显示场馆详情
+         */
+        function showVenueDetail(venueId) {
+            const venue = VENUE_DATA[venueId];
+            if (!venue) {
+                console.error('[场馆模块] 未找到场馆数据:', venueId);
+                return;
+            }
+
+            console.log('[场馆模块] 显示场馆详情:', venueId);
+
+            // 设置标题
+            document.getElementById('venueDetailTitle').innerHTML = `
+                <i class="fas ${venue.icon} text-${venue.color}-500 mr-2"></i> ${venue.name}
+            `;
+
+            // 生成内容
+            const content = generateVenueDetailContent(venue);
+            document.getElementById('venueDetailContent').innerHTML = content;
+
+            // 显示模态框
+            closeVenueModal();
+            document.getElementById('venueDetailModal').style.display = 'flex';
+        }
+
+        /**
+         * 关闭场馆详情模态框
+         */
+        function closeVenueDetailModal() {
+            document.getElementById('venueDetailModal').style.display = 'none';
+            console.log('[场馆模块] 关闭场馆详情模态框');
+        }
+
+        /**
+         * 生成场馆详情内容
+         */
+        function generateVenueDetailContent(venue) {
+            return `
+                <div class="space-y-6">
+                    <!-- 基本信息 -->
+                    <div class="bg-${venue.color}-50 rounded-xl p-6">
+                        <div class="flex items-start justify-between">
+                            <div class="flex-1">
+                                <div class="flex items-center space-x-3 mb-3">
+                                    <span class="text-4xl">${venue.emoji}</span>
+                                    <div>
+                                        <h2 class="text-2xl font-bold text-gray-900">${venue.name}</h2>
+                                        <div class="flex items-center space-x-2 mt-1">
+                                            <span class="inline-block px-3 py-1 rounded-full text-sm font-medium ${
+                                                venue.status === 'open'
+                                                    ? 'bg-green-100 text-green-700'
+                                                    : 'bg-red-100 text-red-700'
+                                            }">
+                                                ${venue.status === 'open' ? '● 营业中' : '● 暂停营业'}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <p class="text-gray-700 leading-relaxed">${venue.description}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 开放时间和价格 -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-white rounded-xl p-5 border border-gray-200">
+                            <h4 class="font-semibold text-gray-900 mb-3 flex items-center">
+                                <i class="fas fa-clock text-${venue.color}-500 mr-2"></i> 开放时间
+                            </h4>
+                            <div class="space-y-2">
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">工作日</span>
+                                    <span class="font-medium text-gray-900">${venue.openingHours.weekdays}</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">周末及节假日</span>
+                                    <span class="font-medium text-gray-900">${venue.openingHours.weekends}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-xl p-5 border border-gray-200">
+                            <h4 class="font-semibold text-gray-900 mb-3 flex items-center">
+                                <i class="fas fa-tag text-${venue.color}-500 mr-2"></i> 收费标准
+                            </h4>
+                            <p class="text-gray-900 font-medium">${venue.price}</p>
+                        </div>
+                    </div>
+
+                    <!-- 位置信息 -->
+                    <div class="bg-white rounded-xl p-5 border border-gray-200">
+                        <h4 class="font-semibold text-gray-900 mb-3 flex items-center">
+                            <i class="fas fa-map-marker-alt text-${venue.color}-500 mr-2"></i> 位置信息
+                        </h4>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div>
+                                <p class="text-sm text-gray-600 mb-1">位置</p>
+                                <p class="font-medium text-gray-900">${venue.location}</p>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-600 mb-1">联系电话</p>
+                                <p class="font-medium text-gray-900">${venue.phone}</p>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-600 mb-1">容纳人数</p>
+                                <p class="font-medium text-gray-900">${venue.capacity}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 特色功能 -->
+                    <div class="bg-white rounded-xl p-5 border border-gray-200">
+                        <h4 class="font-semibold text-gray-900 mb-3 flex items-center">
+                            <i class="fas fa-star text-${venue.color}-500 mr-2"></i> 特色功能
+                        </h4>
+                        <div class="flex flex-wrap gap-2">
+                            ${venue.features.map(feature => `
+                                <span class="px-3 py-1 bg-${venue.color}-100 text-${venue.color}-700 rounded-full text-sm">
+                                    ${feature}
+                                </span>
+                            `).join('')}
+                        </div>
+                    </div>
+
+                    <!-- 场馆设施 -->
+                    <div class="bg-white rounded-xl p-5 border border-gray-200">
+                        <h4 class="font-semibold text-gray-900 mb-4 flex items-center">
+                            <i class="fas fa-building text-${venue.color}-500 mr-2"></i> 场馆设施
+                        </h4>
+                        <div class="grid grid-cols-1 md:grid-cols-${venue.facilities.length > 2 ? '3' : '2'} gap-4">
+                            ${venue.facilities.map(facility => `
+                                <div class="bg-gray-50 rounded-lg p-4">
+                                    <h5 class="font-medium text-gray-900 mb-2">${facility.name}</h5>
+                                    <p class="text-sm text-gray-600 mb-2">面积：${facility.area}</p>
+                                    <p class="text-sm text-gray-600">${facility.description}</p>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+
+                    <!-- 注意事项 -->
+                    <div class="bg-orange-50 rounded-xl p-5 border border-orange-200">
+                        <h4 class="font-semibold text-orange-900 mb-3 flex items-center">
+                            <i class="fas fa-exclamation-triangle text-orange-500 mr-2"></i> 注意事项
+                        </h4>
+                        <ul class="space-y-2">
+                            ${venue.rules.map(rule => `
+                                <li class="text-orange-800 flex items-start">
+                                    <span class="mr-2">•</span>
+                                    <span>${rule}</span>
+                                </li>
+                            `).join('')}
+                        </ul>
+                    </div>
+                </div>
+            `;
+        }
+
+        // 点击模态框外部关闭
+        document.addEventListener('click', function(event) {
+            const venueModal = document.getElementById('venueModal');
+            const venueDetailModal = document.getElementById('venueDetailModal');
+            const weatherModal = document.getElementById('weatherModal');
+            
+            if (event.target === venueModal) {
+                closeVenueModal();
+            }
+            if (event.target === venueDetailModal) {
+                closeVenueDetailModal();
+            }
+            if (event.target === weatherModal) {
+                closeWeatherModal();
+            }
+        });
+
+        // ========== 天气模块（AI生成部分）==========
+
+        /**
+         * 模拟天气数据
+         */
+        const WEATHER_DATA = {
+            current: {
+                temperature: 23,
+                condition: 'sunny',
+                humidity: 65,
+                wind: '东南风 3级',
+                pm25: 45,
+                aqi: '良'
+            },
+            forecast: [
+                { day: '今天', date: '12月27日 周五', high: 25, low: 18, condition: 'sunny', weather: '晴' },
+                { day: '明天', date: '12月28日 周六', high: 24, low: 16, condition: 'cloudy', weather: '多云' },
+                { day: '后天', date: '12月29日 周日', high: 22, low: 15, condition: 'cloudy', weather: '多云' },
+                { day: '周一', date: '12月30日', high: 20, low: 14, condition: 'rainy', weather: '小雨' },
+                { day: '周二', date: '12月31日', high: 19, low: 13, condition: 'cloudy', weather: '阴' },
+                { day: '周三', date: '1月1日', high: 21, low: 14, condition: 'sunny', weather: '晴' },
+                { day: '周四', date: '1月2日', high: 23, low: 15, condition: 'sunny', weather: '晴' }
+            ],
+            tips: [
+                '今天天气晴朗，适合户外运动',
+                '早晚温差较大，注意添衣保暖',
+                '空气湿度适中，出行舒适',
+                '紫外线较强，做好防晒措施',
+                '适合晾晒衣物，阳光充足'
+            ]
+        };
+
+        // 天气图标映射
+        const WEATHER_ICONS = {
+            sunny: { icon: 'fa-sun', color: 'text-yellow-500', emoji: '☀️' },
+            cloudy: { icon: 'fa-cloud', color: 'text-gray-400', emoji: '☁️' },
+            rainy: { icon: 'fa-cloud-rain', color: 'text-blue-500', emoji: '🌧️' },
+            snowy: { icon: 'fa-snowflake', color: 'text-blue-300', emoji: '❄️' }
+        };
+
+        /**
+         * 显示天气模态框
+         */
+        function showWeatherModal() {
+            const modal = document.getElementById('weatherModal');
+            modal.style.display = 'flex';
+            
+            // 生成天气内容
+            generateWeatherContent();
+            
+            console.log('[天气模块] 打开天气模态框');
+        }
+
+        /**
+         * 关闭天气模态框
+         */
+        function closeWeatherModal() {
+            document.getElementById('weatherModal').style.display = 'none';
+            console.log('[天气模块] 关闭天气模态框');
+        }
+
+        /**
+         * 生成天气内容
+         */
+        function generateWeatherContent() {
+            const container = document.getElementById('weatherContent');
+            const current = WEATHER_DATA.current;
+            const weatherInfo = WEATHER_ICONS[current.condition];
+            
+            // 随机选择温馨提醒
+            const randomTip = WEATHER_DATA.tips[Math.floor(Math.random() * WEATHER_DATA.tips.length)];
+            
+            container.innerHTML = `
+                <!-- 当前天气 -->
+                <div class="bg-gradient-to-br from-cyan-50 to-blue-100 rounded-2xl p-6 mb-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-600 mb-1">今天 ${new Date().toLocaleDateString('zh-CN', { month: 'long', day: 'numeric' })}</p>
+                            <div class="flex items-baseline">
+                                <span class="text-6xl font-bold text-gray-900">${current.temperature}</span>
+                                <span class="text-2xl text-gray-600 ml-1">°C</span>
+                            </div>
+                            <p class="text-lg text-gray-700 mt-2 flex items-center">
+                                <i class="fas ${weatherInfo.icon} ${weatherInfo.color} mr-2"></i>
+                                ${weatherInfo.emoji} ${current.condition === 'sunny' ? '晴朗' : current.condition === 'cloudy' ? '多云' : current.condition === 'rainy' ? '有雨' : '其他'}
+                            </p>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-4xl mb-2">${weatherInfo.emoji}</div>
+                            <div class="space-y-1 text-sm text-gray-600">
+                                <p>湿度: ${current.humidity}%</p>
+                                <p>${current.wind}</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 空气质量 -->
+                    <div class="mt-4 pt-4 border-t border-cyan-200">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center">
+                                <i class="fas fa-wind text-cyan-500 mr-2"></i>
+                                <span class="text-gray-600">PM2.5: ${current.pm25}</span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fas fa-leaf text-green-500 mr-2"></i>
+                                <span class="text-gray-600">空气质量: ${current.aqi}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 温馨提醒 -->
+                <div class="bg-gradient-to-r from-yellow-50 to-orange-50 rounded-xl p-4 mb-6 border border-yellow-200">
+                    <div class="flex items-center">
+                        <div class="text-2xl mr-3">💡</div>
+                        <div class="flex-1">
+                            <p class="font-semibold text-orange-700 mb-1">温馨提醒</p>
+                            <p class="text-sm text-orange-800">${randomTip}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 未来7天预报 -->
+                <div>
+                    <h4 class="font-semibold text-gray-900 mb-4 flex items-center">
+                        <i class="fas fa-calendar-alt text-cyan-500 mr-2"></i> 未来7天预报
+                    </h4>
+                    <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3">
+                        ${WEATHER_DATA.forecast.map((day, index) => {
+                            const dayWeather = WEATHER_ICONS[day.condition];
+                            return `
+                                <div class="bg-white rounded-xl p-3 text-center border border-gray-200 hover:shadow-md transition-all ${index === 0 ? 'ring-2 ring-cyan-500' : ''}">
+                                    <p class="text-xs text-gray-600 mb-1">${day.day}</p>
+                                    <p class="text-xs text-gray-400 mb-2">${day.date.split(' ')[1] + ' ' + day.date.split(' ')[2]}</p>
+                                    <div class="text-2xl mb-2">${dayWeather.emoji}</div>
+                                    <p class="text-sm font-semibold text-gray-900">${day.high}°</p>
+                                    <p class="text-xs text-gray-500">${day.low}°</p>
+                                    <p class="text-xs text-gray-600 mt-1">${day.weather}</p>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                </div>
+
+                <!-- 生活指数 -->
+                <div class="mt-6">
+                    <h4 class="font-semibold text-gray-900 mb-4 flex items-center">
+                        <i class="fas fa-life-ring text-cyan-500 mr-2"></i> 生活指数
+                    </h4>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                        <div class="bg-white rounded-lg p-3 text-center border border-gray-200">
+                            <i class="fas fa-tshirt text-blue-500 text-xl mb-1"></i>
+                            <p class="text-xs text-gray-600">穿衣指数</p>
+                            <p class="text-sm font-medium text-gray-900 mt-1">舒适</p>
+                        </div>
+                        <div class="bg-white rounded-lg p-3 text-center border border-gray-200">
+                            <i class="fas fa-running text-green-500 text-xl mb-1"></i>
+                            <p class="text-xs text-gray-600">运动指数</p>
+                            <p class="text-sm font-medium text-gray-900 mt-1">适合</p>
+                        </div>
+                        <div class="bg-white rounded-lg p-3 text-center border border-gray-200">
+                            <i class="fas fa-car text-purple-500 text-xl mb-1"></i>
+                            <p class="text-xs text-gray-600">洗车指数</p>
+                            <p class="text-sm font-medium text-gray-900 mt-1">适宜</p>
+                        </div>
+                        <div class="bg-white rounded-lg p-3 text-center border border-gray-200">
+                            <i class="fas fa-umbrella text-orange-500 text-xl mb-1"></i>
+                            <p class="text-xs text-gray-600">雨伞指数</p>
+                            <p class="text-sm font-medium text-gray-900 mt-1">不带</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // ========== 好友社交功能（AI生成部分）==========
+
+        /**
+         * 当前打开的聊天好友ID
+         */
+        let currentChatFriendId = null;
+
+        /**
+         * 所有好友聊天记录
+         */
+        const friendChatHistory = {};
+
+        /**
+         * 显示好友列表模态框
+         */
+        function showFriendsList() {
+            const modal = document.getElementById('friendsListModal');
+            modal.style.display = 'flex';
+            
+            // 加载好友列表
+            loadFriendsList();
+            
+            console.log('[好友系统] 打开好友列表');
+        }
+
+        /**
+         * 关闭好友列表模态框
+         */
+        function closeFriendsListModal() {
+            document.getElementById('friendsListModal').style.display = 'none';
+            console.log('[好友系统] 关闭好友列表');
+        }
+
+        /**
+         * 加载好友列表
+         */
+        function loadFriendsList() {
+            const container = document.getElementById('friendsListContent');
+            const friends = campusData.social.friends || [];
+            const friendsCount = document.getElementById('friendsCount');
+            const sidebarCount = document.getElementById('friendCountInSidebar');
+            
+            friendsCount.textContent = friends.length;
+            sidebarCount.textContent = friends.length;
+            
+            if (friends.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-12">
+                        <div class="w-24 h-24 bg-pink-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                            <i class="fas fa-user-plus text-4xl text-pink-400"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-700 mb-3">还没有好友</h3>
+                        <p class="text-gray-500 mb-6">去"发现朋友"模块找到志同道合的朋友吧！</p>
+                        <button onclick="closeFriendsListModal(); setTimeout(() => openSocialDiscoverModal(), 300)"
+                                class="px-6 py-3 bg-gradient-to-r from-pink-500 to-purple-600 text-white rounded-full hover:shadow-lg transition-all">
+                            <i class="fas fa-search mr-2"></i>去发现朋友
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = friends.map(friendId => {
+                const friend = campusData.simulatingUsers[friendId];
+                if (!friend) return '';
+                
+                // 获取最后一条消息
+                const lastMsg = friendChatHistory[friendId]?.[friendChatHistory[friendId].length - 1] || null;
+                const lastMsgText = lastMsg ? (lastMsg.content.length > 20 ? lastMsg.content.substring(0, 20) + '...' : lastMsg.content) : '暂无消息';
+                const lastMsgTime = lastMsg ? formatTime(lastMsg.timestamp) : '';
+                const lastMsgPrefix = lastMsg ? (lastMsg.from === 'me' ? '我: ' : lastMsg.from === 'friend' ? 'TA: ' : '') : '';
+                
+                return `
+                    <div onclick="openChat('${friendId}')" class="flex items-center p-4 bg-white bg-opacity-10 rounded-xl hover:bg-white hover:bg-opacity-20 cursor-pointer transition-all">
+                        <div class="w-12 h-12 rounded-full bg-gradient-to-r from-pink-500 to-purple-600 flex items-center justify-center text-white font-bold text-lg mr-4">
+                            ${friend.avatar}
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center justify-between mb-1">
+                                <h5 class="font-semibold text-white">${friend.name}</h5>
+                                ${lastMsgTime ? `<span class="text-xs text-gray-400">${lastMsgTime}</span>` : ''}
+                            </div>
+                            <p class="text-sm text-gray-400 truncate">${lastMsgPrefix}${lastMsgText}</p>
+                        </div>
+                        <div class="w-2 h-2 bg-green-500 rounded-full ml-2"></div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        /**
+         * 打开与好友的私聊窗口
+         */
+        function openChat(friendId) {
+            const friend = campusData.simulatingUsers[friendId];
+            if (!friend) {
+                console.error('[好友系统] 未找到好友:', friendId);
+                return;
+            }
+
+            currentChatFriendId = friendId;
+
+            // 更新聊天头部信息
+            document.getElementById('chatUserName').textContent = friend.name;
+            document.getElementById('chatUserAvatar').textContent = friend.avatar;
+            document.getElementById('chatUserStatus').textContent = '在线';
+
+            // 加载聊天记录
+            loadChatMessages(friendId);
+
+            // 显示聊天模态框
+            closeFriendsListModal();
+            document.getElementById('chatModal').style.display = 'flex';
+            
+            console.log('[好友系统] 打开私聊:', friendId, friend.name);
+        }
+
+        /**
+         * 关闭私聊模态框
+         */
+        function closeChatModal() {
+            document.getElementById('chatModal').style.display = 'none';
+            currentChatFriendId = null;
+            console.log('[好友系统] 关闭私聊');
+        }
+
+        /**
+         * 加载聊天记录
+         */
+        function loadChatMessages(friendId) {
+            const container = document.getElementById('chatMessages');
+            const messages = friendChatHistory[friendId] || [];
+
+            if (messages.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-8 text-gray-500">
+                        <i class="fas fa-comments text-4xl mb-4 text-gray-300"></i>
+                        <p>暂无消息</p>
+                        <p class="text-sm mt-2">发送第一条消息开始聊天吧</p>
+                    </div>
+                `;
+            } else {
+                container.innerHTML = messages.map(msg => {
+                    const isMe = msg.from === 'me';
+                    const friend = campusData.simulatingUsers[friendId];
+                    
+                    return `
+                        <div class="flex ${isMe ? 'justify-end' : 'justify-start'}">
+                            ${!isMe ? `
+                                <div class="w-8 h-8 rounded-full bg-gradient-to-r from-pink-500 to-purple-600 flex items-center justify-center text-white font-bold text-sm mr-2 flex-shrink-0">
+                                    ${friend?.avatar || 'U'}
+                                </div>
+                            ` : ''}
+                            <div class="max-w-[70%] ${isMe ? 'bg-gradient-to-r from-pink-500 to-purple-600' : 'bg-white shadow-md'} rounded-2xl px-4 py-2 ${isMe ? 'text-white' : 'text-gray-900'} ${isMe ? 'rounded-tr-sm' : 'rounded-tl-sm'}">
+                                <p class="break-words">${msg.content}</p>
+                                <p class="text-xs ${isMe ? 'text-pink-200' : 'text-gray-500'} mt-1">${formatTime(msg.timestamp)}</p>
+                            </div>
+                            ${isMe ? `
+                                <div class="w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold text-sm ml-2 flex-shrink-0">
+                                    我
+                                </div>
+                            ` : ''}
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            // 滚动到底部
+            container.scrollTop = container.scrollHeight;
+        }
+
+        /**
+         * 发送朋友消息
+         */
+        function sendFriendMessage(friendId, content) {
+            const messages = friendChatHistory[friendId] || [];
+            messages.push({
+                from: 'me',
+                content: content,
+                timestamp: Date.now()
+            });
+            friendChatHistory[friendId] = messages;
+
+            // 保存到localStorage
+            localStorage.setItem('friendChatHistory', JSON.stringify(friendChatHistory));
+
+            // 重新加载聊天记录
+            loadChatMessages(friendId);
+        }
+
+        /**
+         * 发送聊天消息（在聊天窗口中）
+         */
+        function sendChatMessage() {
+            const input = document.getElementById('chatMessageInput');
+            const content = input.value.trim();
+
+            if (!content || !currentChatFriendId) return;
+
+            // 发送我的消息
+            sendFriendMessage(currentChatFriendId, content);
+
+            // 清空输入框
+            input.value = '';
+            autoResizeChatInput(input);
+
+            // 模拟好友自动回复
+            setTimeout(() => {
+                simulateFriendReply(currentChatFriendId, content);
+            }, 1000 + Math.random() * 2000);
+        }
+
+        /**
+         * 模拟好友自动回复
+         */
+        function simulateFriendReply(friendId, userMessage) {
+            const friend = campusData.simulatingUsers[friendId];
+            if (!friend) return;
+
+            let reply = '';
+
+            // 根据用户消息生成回复
+            const userMessageLower = userMessage.toLowerCase();
+            const currentUser = getCurrentUser();
+
+            // 预置开场对话
+            if (userMessageLower.includes('你好') || userMessageLower === 'hello') {
+                const greetings = [
+                    '你好！很高兴认识你！',
+                    '你好啊！很高兴能和你成为朋友！',
+                    '嗨！很高兴认识你这个新朋友！'
+                ];
+                reply = greetings[Math.floor(Math.random() * greetings.length)];
+            } else if (userMessageLower.includes('我是') && userMessageLower.includes('专业的')) {
+                reply = `我是${friend.major}专业的，我们可能有共同话题！以后多交流呀！`;
+            } else if (userMessageLower.includes('学习') || userMessageLower.includes('课程')) {
+                const studyReplies = [
+                    '这学期课程挺多的，你要加油哦！',
+                    '听说图书馆最近人很多，要早点去占座呢',
+                    '我们可以一起学习，互相帮助！'
+                ];
+                reply = studyReplies[Math.floor(Math.random() * studyReplies.length)];
+            } else if (userMessageLower.includes('兴趣爱好') || userMessageLower.includes('兴趣')) {
+                const myInterests = friend.interests || ['学习', '运动'];
+                reply = `我的兴趣爱好有${myInterests.join('、')}，你呢？有什么爱好吗？`;
+            } else {
+                const generalReplies = [
+                    '嗯嗯，我明白你的意思',
+                    '这个想法不错啊！',
+                    '哈哈，有意思！',
+                    '好的，我会记住的',
+                    '下次我们可以一起聊聊这个话题',
+                    '我也这么觉得！'
+                ];
+                reply = generalReplies[Math.floor(Math.random() * generalReplies.length)];
+            }
+
+            // 发送好友回复
+            const messages = friendChatHistory[friendId] || [];
+            messages.push({
+                from: 'friend',
+                content: reply,
+                timestamp: Date.now()
+            });
+            friendChatHistory[friendId] = messages;
+
+            // 保存
+            localStorage.setItem('friendChatHistory', JSON.stringify(friendChatHistory));
+
+            // 重新加载聊天记录
+            if (currentChatFriendId === friendId) {
+                loadChatMessages(friendId);
+            }
+        }
+
+        /**
+         * 处理聊天输入框按键事件
+         */
+        function handleChatKeyPress(event) {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
+                sendChatMessage();
+            }
+        }
+
+        /**
+         * 自动调整聊天输入框高度
+         */
+        function autoResizeChatInput(textarea) {
+            textarea.style.height = 'auto';
+            textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px';
+        }
+
+        /**
+         * 修改发送好友请求函数（修复版）
+         */
+        function sendFriendRequest(userId) {
+            const currentUser = getCurrentUser();
+            const friend = campusData.simulatingUsers[userId];
+
+            // 检查是否已经是好友
+            if (campusData.social.friends.includes(userId)) {
+                showInfo('你们已经是好友了，可以直接聊天！');
+                openChat(userId);
+                return;
+            }
+
+            closeUserDetailModal();
+
+            // 模拟对方立即接受好友请求（简化流程）
+            console.log('[好友系统] 发送好友请求:', userId, friend?.name);
+
+            // 将对方添加到好友列表
+            campusData.social.friends.push(userId);
+
+            // 保存好友列表
+            localStorage.setItem('socialFriends', JSON.stringify(campusData.social.friends));
+
+            // 初始化聊天记录
+            if (!friendChatHistory[userId]) {
+                friendChatHistory[userId] = [];
+                
+                // 预置欢迎对话
+                addInitialChatMessages(userId, currentUser, friend);
+            }
+
+            // 添加通知
+            campusData.notifications.all.push({
+                id: 'notify_' + Date.now(),
+                type: 'friend_request',
+                title: '好友添加成功',
+                message: `${friend?.name || '对方'}已同意你的好友请求`,
+                icon: 'fa-user-plus',
+                read: false,
+                timestamp: new Date().toISOString(),
+                time: new Date().toISOString()
+            });
+
+            // 更新未读计数
+            campusData.notifications.unreadCount++;
+            updateNotificationBadge();
+            saveAllData();
+
+            // 更新侧边栏好友数量
+            const sidebarCount = document.getElementById('friendCountInSidebar');
+            if (sidebarCount) {
+                sidebarCount.textContent = campusData.social.friends.length;
+            }
+
+            showSuccess(`添加好友成功！你们现在可以开始聊天了！`);
+
+            // 自动打开聊天窗口并发送欢迎消息
+            setTimeout(() => {
+                openChat(userId);
+            }, 1500);
+        }
+
+        /**
+         * 添加初始聊天消息（自动化交互流程）
+         */
+        function addInitialChatMessages(friendId, currentUser, friend) {
+            const messages = friendChatHistory[friendId];
+            const now = Date.now();
+
+            // 系统欢迎消息
+            messages.push({
+                from: 'system',
+                content: '你们已经是朋友了，开始聊天吧！',
+                timestamp: now
+            });
+
+            // 预置开场对话
+            setTimeout(() => {
+                setTimeout(() => {
+                    messages.push({
+                        from: 'me',
+                        content: '你好',
+                        timestamp: now + 2000
+                    });
+                    localStorage.setItem('friendChatHistory', JSON.stringify(friendChatHistory));
+                    if (currentChatFriendId === friendId) {
+                        loadChatMessages(friendId);
+                    }
+
+                    // 好友回复
+                    setTimeout(() => {
+                        messages.push({
+                            from: 'friend',
+                            content: '你好！很高兴认识你！',
+                            timestamp: now + 3500
+                        });
+                        localStorage.setItem('friendChatHistory', JSON.stringify(friendChatHistory));
+                        if (currentChatFriendId === friendId) {
+                            loadChatMessages(friendId);
+                        }
+
+                        // 用户再次发送
+                        setTimeout(() => {
+                            messages.push({
+                                from: 'me',
+                                content: `我是${currentUser.major}专业的，你呢？`,
+                                timestamp: now + 6000
+                            });
+                            localStorage.setItem('friendChatHistory', JSON.stringify(friendChatHistory));
+                            if (currentChatFriendId === friendId) {
+                                loadChatMessages(friendId);
+                            }
+
+                            // 好友回复
+                            setTimeout(() => {
+                                messages.push({
+                                    from: 'friend',
+                                    content: `我是${friend.major}专业的，我们可能有共同话题！`,
+                                    timestamp: now + 8500
+                                });
+                                localStorage.setItem('friendChatHistory', JSON.stringify(friendChatHistory));
+                                if (currentChatFriendId === friendId) {
+                                    loadChatMessages(friendId);
+                                }
+                            }, 2000);
+                        }, 2000);
+                    }, 1500);
+                }, 1000);
+            }, 500);
+        }
+
+        /**
+         * 显示聊天用户资料
+         */
+        function showChatUserProfile() {
+            if (!currentChatFriendId) return;
+
+            const friend = campusData.simulatingUsers[currentChatFriendId];
+            if (!friend) return;
+
+            const modal = document.getElementById('chatUserProfileModal');
+            const content = document.getElementById('chatUserProfileContent');
+
+            content.innerHTML = `
+                <div class="text-center mb-6">
+                    <div class="w-20 h-20 rounded-full bg-gradient-to-r from-pink-500 to-purple-600 flex items-center justify-center text-white font-bold text-3xl mx-auto mb-3">
+                        ${friend.avatar}
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900">${friend.name}</h3>
+                    <p class="text-gray-600">${friend.major} · ${friend.grade}</p>
+                </div>
+
+                <div class="space-y-4">
+                    <div class="bg-gray-50 rounded-lg p-4">
+                        <p class="text-sm text-gray-600 mb-2">个人简介</p>
+                        <p class="text-gray-900">${friend.bio || '暂无简介'}</p>
+                    </div>
+
+                    <div class="bg-gray-50 rounded-lg p-4">
+                        <p class="text-sm text-gray-600 mb-2">性格</p>
+                        <p class="text-gray-900">${friend.personality}</p>
+                    </div>
+
+                    <div class="bg-purple-50 rounded-lg p-4">
+                        <p class="text-sm text-gray-600 mb-2">兴趣爱好</p>
+                        <div class="flex flex-wrap gap-2">
+                            ${(friend.interests || []).map(interest => `
+                                <span class="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm">${interest}</span>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            modal.style.display = 'flex';
+        }
+
+        /**
+         * 关闭聊天用户资料模态框
+         */
+        function closeChatUserProfileModal() {
+            document.getElementById('chatUserProfileModal').style.display = 'none';
+        }
+
+        // ========== 校车预约系统（AI生成部分）==========
+
+        /**
+         * 校车线路数据
+         */
+        const SHUTTLE_ROUTES = [
+            {
+                id: 'route-main-east',
+                name: '校本部 → 东校区',
+                direction: 'to-east',
+                color: 'blue',
+                stops: [
+                    { id: 'stop_library', name: '图书馆站', position: { lat: 0, lng: 0 }, timeOffset: 0 },
+                    { id: 'stop_science', name: '理科楼站', position: { lat: 1, lng: 1 }, timeOffset: 5 },
+                    { id: 'stop_student', name: '学生宿舍站', position: { lat: 2, lng: 2 }, timeOffset: 10 },
+                    { id: 'stop_gym', name: '体育馆站', position: { lat: 3, lng: 3 }, timeOffset: 15 },
+                    { id: 'Stop_east_main', name: '东校区主楼站', position: { lat: 4, lng: 4 }, timeOffset: 20 }
+                ],
+                duration: '20分钟',
+                capacity: 40
+            },
+            {
+                id: 'route-main-west',
+                name: '校本部 → 西校区',
+                direction: 'to-west',
+                color: 'green',
+                stops: [
+                    { id: 'stop_main_gate', name: '主校门站', position: { lat: 0, lng: 0 }, timeOffset: 0 },
+                    { id: 'stop_teaching', name: '教学楼站', position: { lat: 1, lng: 1 }, timeOffset: 8 },
+                    { id: 'stop_canteen', name: '食堂站', position: { lat: 2, lng: 2 }, timeOffset: 12 },
+                    { id: 'stop_west', name: '西校区站', position: { lat: 3, lng: 3 }, timeOffset: 18 }
+                ],
+                duration: '18分钟',
+                capacity: 30
+            },
+            {
+                id: 'route-campus',
+                name: '环校线',
+                direction: 'loop',
+                color: 'purple',
+                stops: [
+                    { id: 'stop_lib', name: '图书馆', position: { lat: 0, lng: 0 }, timeOffset: 0 },
+                    { id: 'stop_gym', name: '体育馆', position: { lat: 1, lng: 1 }, timeOffset: 5 },
+                    { id: 'stop_dorm', name: '宿舍区', position: { lat: 2, lng: 2 }, timeOffset: 8 },
+                    { id: 'stop_canteen', name: '食堂', position: { lat: 3, lng: 3 }, timeOffset: 12 },
+                    { id: 'stop_teaching', name: '教学区', position: { lat: 4, lng: 4 }, timeOffset: 16 }
+                ],
+                duration: '16分钟',
+                capacity: 35
+            }
+        ];
+
+        /**
+         * 校车班次数据（模拟）
+         */
+        const SHUTTLE_SCHEDULES = {
+            'route-main-east': [
+                { id: 'bus_001', time: '08:00', status: 'running', currentStopIndex: 1, usedSeats: 28, statusText: '运行中' },
+                { id: 'bus_002', time: '08:30', status: 'waiting', currentStopIndex: 0, usedSeats: 37, statusText: '首发站' },
+                { id: 'bus_003', time: '09:00', status: 'waiting', currentStopIndex: 0, usedSeats: 12, statusText: '首发站' },
+                { id: 'bus_004', time: '09:30', status: 'waiting', currentStopIndex: 0, usedSeats: 5, statusText: '首发站' },
+                { id: 'bus_005', time: '10:00', status: 'pending', currentStopIndex: 0, usedSeats: 0, statusText: '即将发车' }
+            ],
+            'route-main-west': [
+                { id: 'bus_011', time: '07:45', status: 'running', currentStopIndex: 2, usedSeats: 25, statusText: '运行中' },
+                { id: 'bus_012', time: '08:15', status: 'waiting', currentStopIndex: 0, usedSeats: 30, statusText: '首发站' },
+                { id: 'bus_013', time: '09:00', status: 'waiting', currentStopIndex: 0, usedSeats: 8, statusText: '首发站' }
+            ],
+            'route-campus': [
+                { id: 'bus_021', time: '07:30', status: 'running', currentStopIndex: 3, usedSeats: 20, statusText: '运行中' },
+                { id: 'bus_022', time: '08:00', status: 'waiting', currentStopIndex: 0, usedSeats: 32, statusText: '首发站' },
+                { id: 'bus_023', time: '08:30', status: 'waiting', currentStopIndex: 0, usedSeats: 15, statusText: '首发站' }
+            ]
+        };
+
+        /**
+         * 校车预约数据
+         */
+        campusData.shuttleReservations = campusData.shuttleReservations || {
+            reservations: [],
+            favorites: [],
+            history: []
+        };
+
+        /**
+         * 显示校车预约系统模态框
+         */
+        function showShuttleReservation() {
+            const modal = document.getElementById('shuttleReservationModal');
+            modal.style.display = 'flex';
+            
+            // 加载校车首页
+            loadShuttleHomePage();
+            
+            console.log('[校车系统] 打开校车预约系统');
+        }
+
+        /**
+         * 关闭校车预约系统模态框
+         */
+        function closeShuttleReservationModal() {
+            document.getElementById('shuttleReservationModal').style.display = 'none';
+            console.log('[校车系统] 关闭校车预约系统');
+        }
+
+        /**
+         * 加载校车主页
+         */
+        function loadShuttleHomePage() {
+            // 选择第一条线路作为默认
+            const defaultRoute = SHUTTLE_ROUTES[0];
+            loadRouteSchedules(defaultRoute.id);
+        }
+
+        /**
+         * 加载指定线路的班次
+         */
+        function loadRouteSchedules(routeId) {
+            const route = SHUTTLE_ROUTES.find(r => r.id === routeId);
+            const schedules = SHUTTLE_SCHEDULES[routeId] || [];
+
+            // 更新线路选择按钮
+            updateRouteButtons(routeId);
+
+            // 渲染班次列表
+            renderBusSchedules(route, schedules);
+
+            // 渲染当前选中的班次详情
+            if (schedules.length > 0) {
+                renderBusDetail(route, schedules[0]);
+            }
+        }
+
+        /**
+         * 更新线路选择按钮状态
+         */
+        function updateRouteButtons(selectedRouteId) {
+            SHUTTLE_ROUTES.forEach(route => {
+                const btn = document.getElementById(`routeBtn_${route.id}`);
+                if (btn) {
+                    if (route.id === selectedRouteId) {
+                        btn.className = `px-4 py-2 bg-${route.color}-500 text-white rounded-lg text-sm font-medium flex-1`;
+                    } else {
+                        btn.className = `px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm flex-1 hover:bg-gray-200`;
+                    }
+                }
+            });
+        }
+
+        /**
+         * 渲染班次列表
+         */
+        function renderBusSchedules(route, schedules) {
+            const container = document.getElementById('busSchedulesList');
+            
+            container.innerHTML = schedules.map((bus, index) => {
+                const currentStop = route.stops[bus.currentStopIndex];
+                const remainingSeats = route.capacity - bus.usedSeats;
+                const capacityClass = remainingSeats > 10 ? 'text-green-500' : remainingSeats > 5 ? 'text-orange-500' : 'text-red-500';
+                const capacityText = remainingSeats > 10 ? '较空' : remainingSeats > 5 ? '紧张' : '拥挤';
+                
+                return `
+                    <div onclick="selectBus('${bus.id}')"
+                         class="bus-schedule-item p-4 rounded-xl cursor-pointer transition-all ${selectedBusId === bus.id ? 'bg-blue-50 border-2 border-blue-500' : 'bg-gray-50 hover:bg-gray-100'}"
+                         data-bus-id="${bus.id}">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 rounded-full bg-${bus.status === 'running' ? 'green' : bus.status === 'waiting' ? 'blue' : 'gray'}-100 flex items-center justify-center mr-3">
+                                    <span class="text-${bus.status === 'running' ? 'green' : bus.status === 'waiting' ? 'blue' : 'gray'}-500 font-bold text-xs">${bus.time}</span>
+                                </div>
+                                <div>
+                                    <p class="font-semibold text-gray-900">${bus.time}班次</p>
+                                    <p class="text-xs text-gray-500">${bus.statusText}</p>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-sm font-bold ${capacityClass}">${remainingSeats}/${route.capacity}</p>
+                                <p class="text-xs text-gray-500">${capacityText}</p>
+                            </div>
+                        </div>
+                        ${bus.status === 'running' ? `
+                            <div class="mt-2 text-xs text-gray-500">
+                                📍 当前位置：${currentStop?.name || '未知'}
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        /**
+         * 当前选中的班次ID
+         */
+        let selectedBusId = null;
+
+        /**
+         * 选择班次
+         */
+        function selectBus(busId) {
+            selectedBusId = busId;
+            const routeId = SHUTTLE_ROUTES.find(r =>
+                SHUTTLE_SCHEDULES[r.id]?.some(b => b.id === busId)
+            )?.id;
+
+            if (routeId) {
+                const route = SHUTTLE_ROUTES.find(r => r.id === routeId);
+                const schedules = SHUTTLE_SCHEDULES[routeId] || [];
+                const bus = schedules.find(b => b.id === busId);
+                
+                if (bus) {
+                    renderBusSchedules(route, schedules);
+                    renderBusDetail(route, bus);
+                }
+            }
+        }
+
+        /**
+         * 渲染班次详情
+         */
+        function renderBusDetail(route, bus) {
+            const container = document.getElementById('busDetailContent');
+            const currentStop = route.stops[bus.currentStopIndex];
+            const remainingSeats = route.capacity - bus.usedSeats;
+            const capacityClass = remainingSeats > 10 ? 'text-green-500 bg-green-50' : remainingSeats > 5 ? 'text-orange-500 bg-orange-50' : 'text-red-500 bg-red-50';
+
+            container.innerHTML = `
+                <div class="space-y-4">
+                    <!-- 班次信息 -->
+                    <div class="bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl p-6 text-white">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h3 class="text-xl font-bold">${route.name}</h3>
+                                <p class="text-sm opacity-90 mt-1">${bus.time}班次 · 预计行程${route.duration}</p>
+                            </div>
+                            <div class="text-4xl">🚌</div>
+                        </div>
+                        
+                        <div class="mt-4 grid grid-cols-2 gap-4">
+                            <div class="bg-white bg-opacity-20 rounded-lg p-3 text-center">
+                                <p class="text-xs opacity-80">当前状态</p>
+                                <p class="font-bold">${bus.statusText}</p>
+                            </div>
+                            <div class="bg-white bg-opacity-20 rounded-lg p-3 text-center">
+                                <p class="text-xs opacity-80">剩余座位</p>
+                                <p class="font-bold">${remainingSeats}/${route.capacity}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 实时位置 -->
+                    ${bus.status === 'running' ? `
+                        <div class="bg-green-50 rounded-xl p-4 border border-green-200">
+                            <div class="flex items-center">
+                                <i class="fas fa-map-marker-alt text-green-500 text-xl mr-3"></i>
+                                <div>
+                                    <p class="text-sm text-gray-500">当前位置</p>
+                                    <p class="font-semibold text-gray-900">${currentStop?.name || '未知站点'}</p>
+                                    <p class="text-xs text-green-600 mt-1">🚗 正在前往下一站</p>
+                                </div>
+                            </div>
+                        </div>
+                    ` : ''}
+
+                    <!-- 座位情况 -->
+                    <div class="bg-gray-50 rounded-xl p-4">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-gray-500">座位情况</p>
+                                <p class="font-semibold text-gray-900">${remainingSeats}个空座</p>
+                            </div>
+                            <div class="px-3 py-1 rounded-full text-sm font-medium ${capacityClass}">
+                                ${remainingSeats > 10 ? '较空' : remainingSeats > 5 ? '紧张' : '拥挤'}
+                            </div>
+                        </div>
+                        <div class="mt-3 w-full bg-gray-200 rounded-full h-2">
+                            <div class="bg-blue-500 h-2 rounded-full transition-all"
+                                 style="width: ${Math.round((remainingSeats / route.capacity) * 100)}%"></div>
+                        </div>
+                    </div>
+
+                    <!-- 预约按钮 -->
+                    ${remainingSeats > 0 ? `
+                        <button onclick="openReservationModal('${route.id}', '${bus.id}')"
+                                class="w-full py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-xl font-semibold hover:shadow-lg transition-all">
+                            <i class="fas fa-ticket-alt mr-2"></i>立即预约
+                        </button>
+                    ` : `
+                        <button disabled
+                                class="w-full py-3 bg-gray-300 text-gray-500 rounded-xl font-semibold cursor-not-allowed">
+                            <i class="fas fa-times-circle mr-2"></i>已满员
+                        </button>
+                    `}
+                </div>
+            `;
+        }
+
+        /**
+         * 打开预约模态框
+         */
+        function openReservationModal(routeId, busId) {
+            const route = SHUTTLE_ROUTES.find(r => r.id === routeId);
+            const bus = SHUTTLE_SCHEDULES[routeId]?.find(b => b.id === busId);
+            
+            if (!route || !bus) return;
+
+            // 渲染站点选择
+            const stopsHtml = route.stops.map((stop, index) => `
+                <div class="stop-option" data-stop-index="${index}">
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-blue-50 transition-colors"
+                         onclick="selectBoardingStop('${routeId}', '${busId}', ${index})">
+                        <div class="flex items-center">
+                            <div class="w-8 h-8 rounded-full bg-blue-500 text-white flex items-center justify-center font-bold text-sm mr-3">
+                                ${index + 1}
+                            </div>
+                            <span class="font-medium">${stop.name}</span>
+                        </div>
+                        <span class="text-sm text-gray-500">${index === 0 ? '首站' : index === route.stops.length - 1 ? '终点' : ''}</span>
+                    </div>
+                    ${index < route.stops.length - 1 ? `<div class="ml-4 border-l-2 border-dashed border-gray-300 h-3"></div>` : ''}
+                </div>
+            `).join('');
+
+            document.getElementById('reservationRouteInfo').innerHTML = `
+                <h4 class="font-bold text-gray-900">${route.name}</h4>
+                <p class="text-sm text-gray-500">${bus.time}班次 · 预计行程${route.duration}</p>
+            `;
+
+            document.getElementById('boardingStopsContent').innerHTML = stopsHtml;
+            document.getElementById('selectedStopId').value = '';
+            document.getElementById('seatPreference').value = 'any';
+            
+            document.getElementById('shuttleReservationContent').style.display = 'none';
+            document.getElementById('reservationModal').style.display = 'flex';
+        }
+
+        /**
+         * 选择上车站点
+         */
+        function selectBoardingStop(routeId, busId, stopIndex) {
+            const route = SHUTTLE_ROUTES.find(r => r.id === routeId);
+            const stop = route.stops[stopIndex];
+
+            // 更新选中状态
+            document.querySelectorAll('.stop-option').forEach((el, idx) => {
+                if (idx === stopIndex) {
+                    el.querySelector('.flex').classList.add('bg-blue-100', 'border-2', 'border-blue-500');
+                    el.querySelector('.flex').classList.remove('bg-gray-50');
+                } else {
+                    el.querySelector('.flex').classList.remove('bg-blue-100', 'border-2', 'border-blue-500');
+                    el.querySelector('.flex').classList.add('bg-gray-50');
+                }
+            });
+
+            document.getElementById('selectedStopId').value = stopIndex;
+            document.getElementById('selectedStopName').textContent = stop.name;
+            document.getElementById('selectedStopRoute').value = routeId;
+            document.getElementById('selectedStopBus').value = busId;
+        }
+
+        /**
+         * 关闭预约模态框
+         */
+        function closeReservationModal() {
+            document.getElementById('reservationModal').style.display = 'none';
+            document.getElementById('shuttleReservationContent').style.display = 'block';
+        }
+
+        /**
+         * 确认预约
+         */
+        function confirmReservation() {
+            const routeId = document.getElementById('selectedStopRoute').value;
+            const busId = document.getElementById('selectedStopBus').value;
+            const stopIndex = document.getElementById('selectedStopId').value;
+            const seatPreference = document.getElementById('seatPreference').value;
+
+            if (!stopIndex) {
+                showError('请选择上车站点');
+                return;
+            }
+
+            const route = SHUTTLE_ROUTES.find(r => r.id === routeId);
+            const bus = SHUTTLE_SCHEDULES[routeId]?.find(b => b.id === busId);
+            const stop = route.stops[stopIndex];
+            
+            // 生成预约记录
+            const reservation = {
+                id: 'res_' + Date.now(),
+                userId: localStorage.getItem('studentId') || 'user_1000',
+                routeId: routeId,
+                busId: busId,
+                routeName: route.name,
+                date: new Date().toISOString().split('T')[0],
+                time: bus.time,
+                boardingStop: stop.name,
+                stopIndex: parseInt(stopIndex),
+                seatPreference: seatPreference,
+                status: 'confirmed',
+                ticketCode: generateTicketCode(),
+                createdAt: new Date().toISOString()
+            };
+
+            // 保存预约
+            campusData.shuttleReservations.reservations.unshift(reservation);
+            localStorage.setItem('shuttleReservations', JSON.stringify(campusData.shuttleReservations));
+
+            // 更新班次座位
+            if (bus) {
+                bus.usedSeats++;
+            }
+
+            // 添加预约成功通知
+            campusData.notifications.all.push({
+                id: 'notify_' + Date.now(),
+                type: 'system',
+                title: '校车预约成功',
+                message: `${route.name} ${bus.time}班次 ${stop.name} 上车`,
+                icon: 'fa-bus',
+                read: false,
+                timestamp: new Date().toISOString(),
+                time: new Date().toISOString()
+            });
+
+            campusData.notifications.unreadCount++;
+            updateNotificationBadge();
+            saveAllData();
+
+            closeReservationModal();
+            showSuccess(`预约成功！车票：${reservation.ticketCode}`);
+            
+            // 打开我的预约页面
+            showMyReservations();
+        }
+
+        /**
+         * 生成车票号码
+         */
+        function generateTicketCode() {
+            const prefix = String.fromCharCode(65 + Math.floor(Math.random() * 6)); // A-F
+            const row = String(Math.floor(Math.random() * 5) + 1); // 1-5
+            const seat = String(Math.floor(Math.random() * 8) + 1).padStart(2, '0'); // 01-08
+            return `${prefix}${row}-${seat}`;
+        }
+
+        /**
+         * 显示我的预约页面
+         */
+        function showMyReservations() {
+            document.getElementById('shuttleTabHome').classList.remove('tab-active');
+            document.getElementById('shuttleTabReservations').classList.add('tab-active');
+            
+            document.getElementById('shuttleHomePage').style.display = 'none';
+            document.getElementById('shuttleMyReservationsPage').style.display = 'block';
+            
+            renderMyReservations();
+        }
+
+        /**
+         * 显示校车主页
+         */
+        function showShuttleHome() {
+            document.getElementById('shuttleTabHome').classList.add('tab-active');
+            document.getElementById('shuttleTabReservations').classList.remove('tab-active');
+            
+            document.getElementById('shuttleHomePage').style.display = 'block';
+            document.getElementById('shuttleMyReservationsPage').style.display = 'none';
+            
+            loadShuttleHomePage();
+        }
+
+        /**
+         * 渲染我的预约列表
+         */
+        function renderMyReservations() {
+            const container = document.getElementById('myReservationsList');
+            const reservations = campusData.shuttleReservations.reservations || [];
+            
+            // 区分待乘车和历史记录
+            const now = new Date();
+            const today = now.toISOString().split('T')[0];
+            
+            const pending = reservations.filter(r => r.date === today && r.status === 'confirmed');
+            const history = reservations.filter(r => r.date !== today || r.status !== 'confirmed').slice(0, 10);
+
+            if (pending.length === 0 && history.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-12 text-gray-500">
+                        <i class="fas fa-ticket-alt text-4xl mb-4 text-gray-300"></i>
+                        <p class="text-lg">暂无预约记录</p>
+                        <p class="text-sm mt-2">去首页预约校车吧</p>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = '';
+
+            // 待乘车
+            if (pending.length > 0) {
+                html += `
+                    <div class="mb-6">
+                        <h4 class="font-bold text-gray-900 mb-3 flex items-center">
+                            <i class="fas fa-clock text-orange-500 mr-2"></i>待乘车 (${pending.length})
+                        </h4>
+                        ${pending.map(res => renderReservationCard(res)).join('')}
+                    </div>
+                `;
+            }
+
+            // 历史记录
+            if (history.length > 0) {
+                html += `
+                    <div>
+                        <h4 class="font-bold text-gray-900 mb-3 flex items-center">
+                            <i class="fas fa-history text-gray-500 mr-2"></i>乘车历史
+                        </h4>
+                        ${history.map(res => renderReservationCard(res)).join('')}
+                    </div>
+                `;
+            }
+
+            container.innerHTML = html;
+        }
+
+        /**
+         * 渲染预约卡片
+         */
+        function renderReservationCard(reservation) {
+            const isActive = reservation.status === 'confirmed';
+            const statusClass = isActive ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700';
+            const statusText = isActive ? '待乘车' : reservation.status === 'used' ? '已乘车' : '已取消';
+
+            return `
+                <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-100 mb-3">
+                    <div class="flex items-start justify-between mb-3">
+                        <div>
+                            <h4 class="font-semibold text-gray-900">${reservation.routeName}</h4>
+                            <p class="text-sm text-gray-500">${reservation.date} ${reservation.time}</p>
+                        </div>
+                        <span class="px-3 py-1 rounded-full text-xs font-medium ${statusClass}">
+                            ${statusText}
+                        </span>
+                    </div>
+                    <div class="space-y-2 text-sm">
+                        <div class="flex items-center text-gray-600">
+                            <i class="fas fa-map-marker-alt text-blue-500 w-5 mr-2"></i>
+                            <span>上车站：${reservation.boardingStop}</span>
+                        </div>
+                        <div class="flex items-center text-gray-600">
+                            <i class="fas fa-ticket-alt text-purple-500 w-5 mr-2"></i>
+                            <span>车票：${reservation.ticketCode}</span>
+                        </div>
+                    </div>
+                    ${isActive ? `
+                        <div class="mt-4 flex space-x-2">
+                            <button onclick="cancelReservation('${reservation.id}')"
+                                    class="flex-1 py-2 border border-gray-300 text-gray-700 rounded-lg text-sm hover:bg-gray-50">
+                                取消预约
+                            </button>
+                            <button onclick="showReservationQR('${reservation.id}')"
+                                    class="flex-1 py-2 bg-blue-500 text-white rounded-lg text-sm hover:bg-blue-600">
+                                查看车票
+                            </button>
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+        }
+
+        /**
+         * 取消预约
+         */
+        function cancelReservation(reservationId) {
+            if (!confirm('确定要取消这个预约吗？')) return;
+
+            const index = campusData.shuttleReservations.reservations.findIndex(r => r.id === reservationId);
+            if (index > -1) {
+                campusData.shuttleReservations.reservations[index].status = 'cancelled';
+                localStorage.setItem('shuttleReservations', JSON.stringify(campusData.shuttleReservations));
+                
+                showSuccess('预约已取消');
+                renderMyReservations();
+            }
+        }
+
+        /**
+         * 显示车票二维码
+         */
+        function showReservationQR(reservationId) {
+            const reservation = campusData.shuttleReservations.reservations.find(r => r.id === reservationId);
+            if (!reservation) return;
+
+            const modal = document.getElementById('ticketQRModal');
+            const qrContent = document.getElementById('qrCodeContent');
+
+            // 生成模拟二维码（使用文字图案代替）
+            const qrPattern = generateQRPattern(reservation.ticketCode);
+
+            qrContent.innerHTML = `
+                <div class="text-center">
+                    <div class="bg-white p-4 rounded-xl inline-block mb-4">
+                        ${qrPattern}
+                    </div>
+                    <div class="space-y-2 text-left">
+                        <div class="flex justify-between py-2 border-b border-gray-200">
+                            <span class="text-gray-500">线路</span>
+                            <span class="font-medium">${reservation.routeName}</span>
+                        </div>
+                        <div class="flex justify-between py-2 border-b border-gray-200">
+                            <span class="text-gray-500">班次</span>
+                            <span class="font-medium">${reservation.time}</span>
+                        </div>
+                        <div class="flex justify-between py-2 border-b border-gray-200">
+                            <span class="text-gray-500">上车站</span>
+                            <span class="font-medium">${reservation.boardingStop}</span>
+                        </div>
+                        <div class="flex justify-between py-2 border-b border-gray-200">
+                            <span class="text-gray-500">车票号</span>
+                            <span class="font-medium text-blue-600">${reservation.ticketCode}</span>
+                        </div>
+                        <div class="flex justify-between py-2">
+                            <span class="text-gray-500">座位偏好</span>
+                            <span class="font-medium">${reservation.seatPreference === 'window' ? '靠窗' : reservation.seatPreference === 'aisle' ? '过道' : '无所谓'}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            modal.style.display = 'flex';
+        }
+
+        /**
+         * 生成模拟二维码图案
+         */
+        function generateQRPattern(code) {
+            const size = 15;
+            let pattern = '<div class="inline-block" style="font-family: monospace; font-size: 10px; line-height: 10px; letter-spacing: 2px;">';
+            for (let i = 0; i < size; i++) {
+                for (let j = 0; j < size; j++) {
+                    const isCorner = (i < 3 && j < 3) || (i < 3 && j >= size - 3) || (i >= size - 3 && j < 3);
+                    const dot = isCorner ? '█' : Math.random() > 0.5 ? '█' : '░';
+                    pattern += dot;
+                }
+                pattern += '<br>';
+            }
+            pattern += '</div>';
+            pattern += `<p class="text-xs text-gray-500 mt-2">${code}</p>`;
+            return pattern;
+        }
+
+        /**
+         * 关闭二维码模态框
+         */
+        function closeTicketQRModal() {
+            document.getElementById('ticketQRModal').style.display = 'none';
+        }
+
         // ========== 校园墙模块 - 数据生成和核心功能（AI生成部分）==========
         
         /**
@@ -6992,6 +9226,203 @@
                 location.reload();
             }
         });
+
+        // ========== 校车预约系统智能提醒功能（AI生成部分）==========
+        
+        // 启动智能提醒系统 - 每30秒检查一次
+        let reminderInterval = setInterval(checkShuttleReminders, 30000);
+
+        /**
+         * 检查并处理校车预约提醒
+         * 实现多层提醒机制：
+         * 1. 发车前30分钟：推送准备提醒
+         * 2. 发车前10分钟：推送最后提醒
+         * 3. 发车前2分钟：推送"请准备上车"
+         * 4. 超时未乘车：自动取消并释放座位
+         */
+        function checkShuttleReminders() {
+            const studentId = localStorage.getItem('studentId');
+            if (!studentId || !campusData.shuttleReservations) return;
+
+            const currentTime = new Date();
+            const reservations = campusData.shuttleReservations.filter(r =>
+                r.studentId === studentId &&
+                r.status === 'active' &&
+                new Date(r.departureTime) > new Date(currentTime.getTime() - 5 * 60 * 1000)
+            );
+
+            if (reservations.length === 0) return;
+
+            reservations.forEach(reservation => {
+                const departureTime = new Date(reservation.departureTime);
+                const minutesUntilDeparture = Math.floor((departureTime - currentTime) / (1000 * 60));
+                const ticketId = reservation.ticketId;
+
+                // 转换为本地时间字符串（北京时间 UTC+8）
+                const departureTimeStr = departureTime.toLocaleString('zh-CN', {
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    hour12: false
+                });
+
+                // 检查是否已经发送过该提醒（避免重复提醒）
+                const reminderKey = `reminder_${ticketId}_${minutesUntilDeparture}`;
+                const isReminderSent = localStorage.getItem(reminderKey);
+
+                if (isReminderSent) return;
+
+                // 发车前30分钟提醒
+                if (minutesUntilDeparture === 30) {
+                    sendShuttleNotification(
+                        '🚌 校车预约提醒',
+                        `您的校车将在30分钟后发车！\n\n📅 发车时间：${departureTimeStr}\n🚏 上车站点：${reservation.boardingStop}\n路线：${reservation.routeName}`,
+                        ticketId,
+                        minutesUntilDeparture
+                    );
+                    localStorage.setItem(reminderKey, 'true');
+                }
+                // 发车前10分钟提醒
+                else if (minutesUntilDeparture === 10) {
+                    sendShuttleNotification(
+                        '⏰ 最后提醒',
+                        `您的校车将在10分钟后发车！\n\n📅 发车时间：${departureTimeStr}\n🚏 上车站点：${reservation.boardingStop}\n\n请尽快前往站点！`,
+                        ticketId,
+                        minutesUntilDeparture
+                    );
+                    localStorage.setItem(reminderKey, 'true');
+                }
+                // 发车前2分钟提醒
+                else if (minutesUntilDeparture === 2) {
+                    sendShuttleNotification(
+                        '🏃 请准备上车',
+                        `您的校车即将到站！\n\n📅 发车时间：${departureTimeStr}\n🚏 上车站点：${reservation.boardingStop}\n\n请出示车票二维码！`,
+                        ticketId,
+                        minutesUntilDeparture
+                    );
+                    localStorage.setItem(reminderKey, 'true');
+                }
+                // 超时未乘车（发车时间已过5分钟）
+                else if (minutesUntilDeparture < -5) {
+                    autoCancelReservation(reservation);
+                }
+            });
+        }
+
+        /**
+         * 发送校车预约通知
+         * @param {string} title - 通知标题
+         * @param {string} message - 通知内容
+         * @param {string} ticketId - 车票ID
+         * @param {number} minutes - 提前分钟数
+         */
+        function sendShuttleNotification(title, message, ticketId, minutes) {
+            // 添加到通知中心
+            if (!campusData.notifications) {
+                campusData.notifications = [];
+            }
+
+            // 获取当前时间
+            const now = new Date();
+            const timeString = now.toLocaleString('zh-CN', {
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false
+            });
+
+            campusData.notifications.unshift({
+                id: Date.now(),
+                type: 'shuttle',
+                title: title,
+                content: message,
+                ticketId: ticketId,
+                time: timeString,
+                timestamp: now.getTime(),
+                read: false,
+                reminderMinutes: minutes
+            });
+
+            // 最多保留50条通知
+            if (campusData.notifications.length > 50) {
+                campusData.notifications = campusData.notifications.slice(0, 50);
+            }
+
+            // 更新通知小红点
+            updateNotificationBadge();
+        }
+
+        /**
+         * 自动取消逾期未乘车的预约
+         * @param {object} reservation - 预约对象
+         */
+        function autoCancelReservation(reservation) {
+            const index = campusData.shuttleReservations.findIndex(r => r.ticketId === reservation.ticketId);
+            if (index !== -1) {
+                campusData.shuttleReservations[index].status = 'cancelled';
+                campusData.shuttleReservations[index].cancelReason = 'auto_cancelled';
+                campusData.shuttleReservations[index].cancelTime = new Date().toISOString();
+
+                // 发送取消通知
+                sendShuttleNotification(
+                    '⚠️ 预约已取消',
+                    `由于发车时间已过且未及时乘车，您的校车预约已自动取消。\n\n车票号：${reservation.ticketId}\n路线：${reservation.routeName}\n发车时间：${new Date(reservation.departureTime).toLocaleString('zh-CN')}`,
+                    reservation.ticketId,
+                    -5
+                );
+
+                saveCampusData();
+            }
+        }
+
+        /**
+         * 获取预约提醒历史
+         * @returns {Array} 提醒历史数组
+         */
+        function getShuttleReminderHistory() {
+            const studentId = localStorage.getItem('studentId');
+            if (!studentId || !campusData.notifications) return [];
+
+            return campusData.notifications
+                .filter(n => n.type === 'shuttle' && n.ticketId)
+                .sort((a, b) => b.timestamp - a.timestamp);
+        }
+
+        /**
+         * 清理过期的提醒记录
+         * 清理7天前的提醒记录，避免localStorage膨胀
+         */
+        function cleanupOldReminders() {
+            const now = Date.now();
+            const sevenDaysAgo = now - 7 * 24 * 60 * 60 * 1000;
+
+            // 查找所有以 reminder_ 开头的localStorage键
+            for (let key in localStorage) {
+                if (localStorage.hasOwnProperty(key) && key.startsWith('reminder_')) {
+                    try {
+                        // 从key中提取时间戳
+                        const parts = key.split('_');
+                        if (parts.length >= 3) {
+                            const ticketId = parts[1];
+                            const reservation = campusData.shuttleReservations?.find(r => r.ticketId === ticketId);
+                            if (reservation) {
+                                const departureTime = new Date(reservation.departureTime).getTime();
+                                if (departureTime < sevenDaysAgo) {
+                                    localStorage.removeItem(key);
+                                }
+                            }
+                        }
+                    } catch (e) {
+                        // 忽略解析错误
+                    }
+                }
+            }
+        }
+
+        // 每天清理一次过期提醒
+        setInterval(cleanupOldReminders, 24 * 60 * 60 * 1000);
     </script>
 </body>
 </html>
