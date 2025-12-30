@@ -429,6 +429,14 @@
             background: var(--btn-bg-profile);
             border-color: var(--btn-border-profile);
         }
+        .quick-action-btn[data-type="growth"] {
+            background: var(--btn-bg-growth);
+            border-color: var(--btn-border-growth);
+        }
+        .quick-action-btn[data-type="consumption"] {
+            background: var(--btn-bg-consumption);
+            border-color: var(--btn-border-consumption);
+        }
         .quick-action-btn[data-type="data"] {
             background: var(--btn-bg-data);
             border-color: var(--btn-border-data);
@@ -1946,6 +1954,18 @@
                     <span class="sidebar-content">个人资料</span>
                 </button>
                 
+                <button onclick="showGrowthDashboard()" class="quick-action-btn w-full flex items-center space-x-3 mt-2 relative" data-type="growth">
+                    <i class="fas fa-chart-line text-yellow-400"></i>
+                    <span class="sidebar-content">我的成长</span>
+                    <span class="ml-auto px-2 py-0.5 bg-yellow-600 text-white text-xs rounded-full font-semibold">New</span>
+                </button>
+                
+                <button onclick="showConsumptionAnalysis()" class="quick-action-btn w-full flex items-center space-x-3 mt-2 relative" data-type="consumption">
+                    <i class="fas fa-wallet text-teal-400"></i>
+                    <span class="sidebar-content">消费分析</span>
+                    <span class="ml-auto px-2 py-0.5 bg-teal-600 text-white text-xs rounded-full font-semibold">New</span>
+                </button>
+                
                 <button onclick="showDataManagement()" class="quick-action-btn w-full flex items-center space-x-3 mt-2" data-type="data">
                     <i class="fas fa-database text-green-400"></i>
                     <span class="sidebar-content">数据管理</span>
@@ -2302,6 +2322,500 @@
                         <div id="storageBar" class="bg-blue-500 rounded-full h-2" style="width: 25%"></div>
                     </div>
                     <p class="text-sm text-gray-600">已使用 <span id="storageUsed">25%</span></p>
+                </div>
+            </div>
+        </div>
+    
+        <!-- 个人成长仪表盘模态框 -->
+        <div id="growthDashboardModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+            <div class="glass-card rounded-2xl p-6 max-w-6xl w-full mx-4 slide-in-up max-h-[90vh] overflow-hidden">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-2xl font-bold text-gray-900 flex items-center">
+                        <i class="fas fa-chart-line text-yellow-500 mr-3"></i> 我的成长
+                    </h3>
+                    <div class="flex items-center space-x-2">
+                        <button onclick="exportGrowthReport()" class="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg text-sm">
+                            <i class="fas fa-file-download mr-1"></i> 导出报告
+                        </button>
+                        <button onclick="closeGrowthDashboardModal()" class="text-gray-400 hover:text-gray-600">
+                            <i class="fas fa-times text-xl"></i>
+                        </button>
+                    </div>
+                </div>
+    
+                <div class="overflow-y-auto max-h-[80vh] space-y-6">
+                    <!-- 学习概览卡片 -->
+                    <div class="bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl p-6 text-white">
+                        <div class="flex items-center justify-between mb-4">
+                            <h4 class="text-xl font-bold">📊 本月学习报告</h4>
+                            <span class="text-sm opacity-80">2024年1月</span>
+                        </div>
+                        <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+                            <div class="bg-white bg-opacity-20 rounded-lg p-3">
+                                <p class="text-sm opacity-80">总学习时长</p>
+                                <p class="text-2xl font-bold" id="totalStudyHours">52小时</p>
+                            </div>
+                            <div class="bg-white bg-opacity-20 rounded-lg p-3">
+                                <p class="text-sm opacity-80">较上月增长</p>
+                                <p class="text-2xl font-bold text-green-300">+15%</p>
+                            </div>
+                            <div class="bg-white bg-opacity-20 rounded-lg p-3">
+                                <p class="text-sm opacity-80">平均成绩</p>
+                                <p class="text-2xl font-bold" id="avgGrade">88.5分</p>
+                            </div>
+                            <div class="bg-white bg-opacity-20 rounded-lg p-3">
+                                <p class="text-sm opacity-80">班级排名</p>
+                                <p class="text-2xl font-bold" id="classRank">12/45</p>
+                            </div>
+                            <div class="bg-white bg-opacity-20 rounded-lg p-3">
+                                <p class="text-sm opacity-80">最佳学习时段</p>
+                                <p class="text-2xl font-bold">19:00</p>
+                            </div>
+                        </div>
+                    </div>
+    
+                    <!-- 技能雷达图 -->
+                    <div class="bg-gray-50 rounded-xl p-6">
+                        <h4 class="text-lg font-bold text-gray-900 mb-4">🎯 技能能力评估</h4>
+                        <div class="flex items-center justify-center">
+                            <div class="relative w-80 h-80">
+                                <!-- 雷达图背景 -->
+                                <svg viewBox="0 0 300 300" class="w-full h-full">
+                                    <!-- 背景同心多边形 -->
+                                    <polygon points="150,20 270,90 270,210 150,280 30,210 30,90"
+                                        fill="none" stroke="#e5e7eb" stroke-width="1"/>
+                                    <polygon points="150,50 240,100 240,200 150,250 60,200 60,100"
+                                        fill="none" stroke="#e5e7eb" stroke-width="1"/>
+                                    <polygon points="150,80 210,110 210,190 150,220 90,190 90,110"
+                                        fill="none" stroke="#e5e7eb" stroke-width="1"/>
+                                    <polygon points="150,110 180,120 180,180 150,190 120,180 120,120"
+                                        fill="none" stroke="#e5e7eb" stroke-width="1"/>
+                                    
+                                    <!-- 轴线 -->
+                                    <line x1="150" y1="150" x2="150" y2="20" stroke="#e5e7eb" stroke-width="1"/>
+                                    <line x1="150" y1="150" x2="270" y2="90" stroke="#e5e7eb" stroke-width="1"/>
+                                    <line x1="150" y1="150" x2="270" y2="210" stroke="#e5e7eb" stroke-width="1"/>
+                                    <line x1="150" y1="150" x2="150" y2="280" stroke="#e5e7eb" stroke-width="1"/>
+                                    <line x1="150" y1="150" x2="30" y2="210" stroke="#e5e7eb" stroke-width="1"/>
+                                    <line x1="150" y1="150" x2="30" y2="90" stroke="#e5e7eb" stroke-width="1"/>
+                                    
+                                    <!-- 当前技能 -->
+                                    <polygon points="150,50 240,100 240,200 150,250 60,200 60,100"
+                                        fill="rgba(59, 130, 246, 0.3)" stroke="#3b82f6" stroke-width="2"
+                                        class="radar-polygon"/>
+                                    
+                                    <!-- 上月技能 -->
+                                    <polygon points="150,70 220,110 220,190 150,230 70,190 70,110"
+                                        fill="rgba(239, 68, 68, 0.2)" stroke="#ef4444" stroke-width="2" stroke-dasharray="5,5"
+                                        class="radar-polygon-previous"/>
+                                    
+                                    <!-- 标签 -->
+                                    <text x="150" y="15" text-anchor="middle" class="text-xs fill-gray-700">学习能力</text>
+                                    <text x="275" y="90" text-anchor="start" class="text-xs fill-gray-700">实践能力</text>
+                                    <text x="275" y="215" text-anchor="start" class="text-xs fill-gray-700">创新能力</text>
+                                    <text x="150" y="290" text-anchor="middle" class="text-xs fill-gray-700">健康管理</text>
+                                    <text x="25" y="215" text-anchor="end" class="text-xs fill-gray-700">团队协作</text>
+                                    <text x="25" y="90" text-anchor="end" class="text-xs fill-gray-700">社交能力</text>
+                                </svg>
+                            </div>
+                            
+                            <!-- 图例 -->
+                            <div class="ml-6 space-y-3">
+                                <div class="flex items-center">
+                                    <div class="w-4 h-1 bg-blue-500 mr-2"></div>
+                                    <span class="text-sm text-gray-700">当前水平</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <div class="w-4 h-1 bg-red-500 border-dashed border-red-500 border-t-2 mr-2"></div>
+                                    <span class="text-sm text-gray-700">上月水平</span>
+                                </div>
+                                <div class="mt-4 space-y-2 text-sm">
+                                    <div class="flex justify-between w-32">
+                                        <span class="text-gray-600">学习能力</span>
+                                        <span class="font-semibold text-blue-600">75/100</span>
+                                    </div>
+                                    <div class="flex justify-between w-32">
+                                        <span class="text-gray-600">实践能力</span>
+                                        <span class="font-semibold text-blue-600">85/100</span>
+                                    </div>
+                                    <div class="flex justify-between w-32">
+                                        <span class="text-gray-600">创新能力</span>
+                                        <span class="font-semibold text-blue-600">70/100</span>
+                                    </div>
+                                    <div class="flex justify-between w-32">
+                                        <span class="text-gray-600">健康管理</span>
+                                        <span class="font-semibold text-blue-600">65/100</span>
+                                    </div>
+                                    <div class="flex justify-between w-32">
+                                        <span class="text-gray-600">团队协作</span>
+                                        <span class="font-semibold text-blue-600">85/100</span>
+                                    </div>
+                                    <div class="flex justify-between w-32">
+                                        <span class="text-gray-600">社交能力</span>
+                                        <span class="font-semibold text-blue-600">60/100</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+    
+                    <!-- 成长时间线 -->
+                    <div class="bg-gray-50 rounded-xl p-6">
+                        <h4 class="text-lg font-bold text-gray-900 mb-4">📅 本周成长记录</h4>
+                        <div class="space-y-4">
+                            <div class="flex items-start">
+                                <div class="w-12 h-12 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold flex-shrink-0">
+                                    一
+                                </div>
+                                <div class="ml-4 flex-1">
+                                    <div class="flex items-center space-x-2">
+                                        <span class="font-semibold text-gray-900">图书馆学习</span>
+                                        <span class="text-sm text-blue-600">3小时</span>
+                                    </div>
+                                    <p class="text-sm text-gray-600 mt-1">完成了高等数学第三章习题</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-start">
+                                <div class="w-12 h-12 rounded-full bg-green-500 flex items-center justify-center text-white font-bold flex-shrink-0">
+                                    二
+                                </div>
+                                <div class="ml-4 flex-1">
+                                    <div class="flex items-center space-x-2">
+                                        <span class="font-semibold text-gray-900">完成高数作业</span>
+                                        <span class="text-sm text-green-600">95分</span>
+                                    </div>
+                                    <p class="text-sm text-gray-600 mt-1">期中作业，排名班级前5</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-start">
+                                <div class="w-12 h-12 rounded-full bg-purple-500 flex items-center justify-center text-white font-bold flex-shrink-0">
+                                    三
+                                </div>
+                                <div class="ml-4 flex-1">
+                                    <div class="flex items-center space-x-2">
+                                        <span class="font-semibold text-gray-900">参加编程社团活动</span>
+                                        <span class="text-sm text-purple-600">2小时</span>
+                                    </div>
+                                    <p class="text-sm text-gray-600 mt-1">学习了Python Web开发，认识了新朋友</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-start">
+                                <div class="w-12 h-12 rounded-full bg-orange-500 flex items-center justify-center text-white font-bold flex-shrink-0">
+                                    四
+                                </div>
+                                <div class="ml-4 flex-1">
+                                    <div class="flex items-center space-x-2">
+                                        <span class="font-semibold text-gray-900">帮助同学解决问题</span>
+                                        <span class="text-sm text-orange-600">社交+1</span>
+                                    </div>
+                                    <p class="text-sm text-gray-600 mt-1">解答了数据结构作业难题</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-start">
+                                <div class="w-12 h-12 rounded-full bg-cyan-500 flex items-center justify-center text-white font-bold flex-shrink-0">
+                                    五
+                                </div>
+                                <div class="ml-4 flex-1">
+                                    <div class="flex items-center space-x-2">
+                                        <span class="font-semibold text-gray-900">发布校园墙互助帖</span>
+                                        <span class="text-sm text-cyan-600">互动+5</span>
+                                    </div>
+                                    <p class="text-sm text-gray-600 mt-1">分享学习笔记，获得10个点赞</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-start">
+                                <div class="w-12 h-12 rounded-full bg-pink-500 flex items-center justify-center text-white font-bold flex-shrink-0">
+                                    周末
+                                </div>
+                                <div class="ml-4 flex-1">
+                                    <div class="flex items-center space-x-2">
+                                        <span class="font-semibold text-gray-900">运动锻炼</span>
+                                        <span class="text-sm text-pink-600">健康+2</span>
+                                    </div>
+                                    <p class="text-sm text-gray-600 mt-1">篮球运动2小时，保持健康作息</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+    
+                    <!-- 成就进度条 -->
+                    <div class="bg-gray-50 rounded-xl p-6">
+                        <h4 class="text-lg font-bold text-gray-900 mb-4">🎯 学期目标进度</h4>
+                        <div class="space-y-6">
+                            <div>
+                                <div class="flex justify-between mb-2">
+                                    <span class="font-medium text-gray-700">📚 阅读目标</span>
+                                    <span class="text-sm text-blue-600">12/20本 (60%)</span>
+                                </div>
+                                <div class="h-3 bg-gray-200 rounded-full overflow-hidden">
+                                    <div class="h-full bg-gradient-to-r from-blue-400 to-blue-600 rounded-full progress-bar" style="width: 60%"></div>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <div class="flex justify-between mb-2">
+                                    <span class="font-medium text-gray-700">👥 社交目标</span>
+                                    <span class="text-sm text-green-600">2/5次 (40%)</span>
+                                </div>
+                                <div class="h-3 bg-gray-200 rounded-full overflow-hidden">
+                                    <div class="h-full bg-gradient-to-r from-green-400 to-green-600 rounded-full progress-bar" style="width: 40%"></div>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <div class="flex justify-between mb-2">
+                                    <span class="font-medium text-gray-700">🏃 健康目标</span>
+                                    <span class="text-sm text-purple-600">12/15次 (80%)</span>
+                                </div>
+                                <div class="h-3 bg-gray-200 rounded-full overflow-hidden">
+                                    <div class="h-full bg-gradient-to-r from-purple-400 to-purple-600 rounded-full progress-bar" style="width: 80%"></div>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <div class="flex justify-between mb-2">
+                                    <span class="font-medium text-gray-700">💡 技能目标</span>
+                                    <span class="text-sm text-orange-600">7/10项 (70%)</span>
+                                </div>
+                                <div class="h-3 bg-gray-200 rounded-full overflow-hidden">
+                                    <div class="h-full bg-gradient-to-r from-orange-400 to-orange-600 rounded-full progress-bar" style="width: 70%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+        <!-- 智能消费分析模态框 -->
+        <div id="consumptionAnalysisModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+            <div class="glass-card rounded-2xl p-6 max-w-6xl w-full mx-4 slide-in-up max-h-[90vh] overflow-hidden">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-2xl font-bold text-gray-900 flex items-center">
+                        <i class="fas fa-wallet text-teal-500 mr-3"></i> 消费分析
+                    </h3>
+                    <div class="flex items-center space-x-2">
+                        <button onclick="openAddConsumptionForm()" class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-sm">
+                            <i class="fas fa-plus mr-1"></i> 记录消费
+                        </button>
+                        <button onclick="exportConsumptionReport()" class="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg text-sm">
+                            <i class="fas fa-file-download mr-1"></i> 导出
+                        </button>
+                        <button onclick="closeConsumptionAnalysisModal()" class="text-gray-400 hover:text-gray-600">
+                            <i class="fas fa-times text-xl"></i>
+                        </button>
+                    </div>
+                </div>
+    
+                <div class="overflow-y-auto max-h-[80vh] space-y-6">
+                    <!-- 月度概览 -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="bg-gradient-to-r from-teal-500 to-green-500 rounded-xl p-6 text-white">
+                            <p class="text-sm opacity-80">💰 1月总支出</p>
+                            <p class="text-3xl font-bold mt-2" id="monthlyTotal">¥1,245</p>
+                            <p class="text-sm mt-1 text-green-200">预算剩余 ¥255</p>
+                        </div>
+                        <div class="bg-gradient-to-r from-blue-500 to-indigo-500 rounded-xl p-6 text-white">
+                            <p class="text-sm opacity-80">📊 日均消费</p>
+                            <p class="text-3xl font-bold mt-2" id="dailyAverage">¥41.5</p>
+                            <p class="text-sm mt-1 text-blue-200">较上月 +8%</p>
+                        </div>
+                        <div class="bg-gradient-to-r from-orange-500 to-red-500 rounded-xl p-6 text-white">
+                            <p class="text-sm opacity-80">🍽️ 最大支出</p>
+                            <p class="text-3xl font-bold mt-2">餐饮</p>
+                            <p class="text-sm mt-1 text-orange-200">65% 的预算</p>
+                        </div>
+                    </div>
+    
+                    <!-- 消费分类饼图 -->
+                    <div class="bg-gray-50 rounded-xl p-6">
+                        <h4 class="text-lg font-bold text-gray-900 mb-4">📊 消费分类</h4>
+                        <div class="flex items-center justify-center">
+                            <div class="w-64 h-64">
+                                <svg viewBox="0 0 100 100" class="w-full h-full">
+                                    <!-- 餐饮 65% -->
+                                    <circle cx="50" cy="50" r="40"
+                                        fill="none" stroke="#FF6B6B" stroke-width="20"
+                                        stroke-dasharray="163.36 251.33"
+                                        stroke-dashoffset="0"
+                                        transform="rotate(-90 50 50)"
+                                        class="pie-slice"/>
+                                    
+                                    <!-- 购物 15% -->
+                                    <circle cx="50" cy="50" r="40"
+                                        fill="none" stroke="#4ECDC4" stroke-width="20"
+                                        stroke-dasharray="37.7 251.33"
+                                        stroke-dashoffset="-163.36"
+                                        transform="rotate(-90 50 50)"
+                                        class="pie-slice"/>
+                                    
+                                    <!-- 学习 10% -->
+                                    <circle cx="50" cy="50" r="40"
+                                        fill="none" stroke="#45B7D1" stroke-width="20"
+                                        stroke-dasharray="25.13 251.33"
+                                        stroke-dashoffset="-201.06"
+                                        transform="rotate(-90 50 50)"
+                                        class="pie-slice"/>
+                                    
+                                    <!-- 交通 5% -->
+                                    <circle cx="50" cy="50" r="40"
+                                        fill="none" stroke="#96CEB4" stroke-width="20"
+                                        stroke-dasharray="12.57 251.33"
+                                        stroke-dashoffset="-226.19"
+                                        transform="rotate(-90 50 50)"
+                                        class="pie-slice"/>
+                                    
+                                    <!-- 娱乐 5% -->
+                                    <circle cx="50" cy="50" r="40"
+                                        fill="none" stroke="#FFEAA7" stroke-width="20"
+                                        stroke-dasharray="12.57 251.33"
+                                        stroke-dashoffset="-238.76"
+                                        transform="rotate(-90 50 50)"
+                                        class="pie-slice"/>
+                                </svg>
+                            </div>
+                            <div class="ml-8 space-y-3">
+                                <div class="flex items-center">
+                                    <div class="w-4 h-4 rounded-full bg-red-400 mr-3"></div>
+                                    <span class="text-sm text-gray-700">餐饮 (65%) - ¥809</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <div class="w-4 h-4 rounded-full bg-teal-400 mr-3"></div>
+                                    <span class="text-sm text-gray-700">购物 (15%) - ¥187</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <div class="w-4 h-4 rounded-full bg-blue-400 mr-3"></div>
+                                    <span class="text-sm text-gray-700">学习 (10%) - ¥124</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <div class="w-4 h-4 rounded-full bg-green-400 mr-3"></div>
+                                    <span class="text-sm text-gray-700">交通 (5%) - ¥62</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <div class="w-4 h-4 rounded-full bg-yellow-400 mr-3"></div>
+                                    <span class="text-sm text-gray-700">娱乐 (5%) - ¥62</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+    
+                    <!-- 预算进度 -->
+                    <div class="bg-gray-50 rounded-xl p-6">
+                        <h4 class="text-lg font-bold text-gray-900 mb-4">📊 预算进度</h4>
+                        <div class="space-y-4">
+                            <div>
+                                <div class="flex justify-between mb-2">
+                                    <span class="font-medium text-gray-700">🍽️ 餐饮预算</span>
+                                    <span class="text-sm text-red-600">¥809/¥800 (101%)</span>
+                                </div>
+                                <div class="h-3 bg-gray-200 rounded-full overflow-hidden">
+                                    <div class="h-full bg-gradient-to-r from-red-400 to-red-600 rounded-full" style="width: 100%"></div>
+                                </div>
+                                <p class="text-xs text-red-600 mt-1">⚠️ 已超预算 ¥9</p>
+                            </div>
+                            
+                            <div>
+                                <div class="flex justify-between mb-2">
+                                    <span class="font-medium text-gray-700">🛍️ 购物预算</span>
+                                    <span class="text-sm text-green-600">¥187/¥300 (62%)</span>
+                                </div>
+                                <div class="h-3 bg-gray-200 rounded-full overflow-hidden">
+                                    <div class="h-full bg-gradient-to-r from-teal-400 to-teal-600 rounded-full" style="width: 62%"></div>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <div class="flex justify-between mb-2">
+                                    <span class="font-medium text-gray-700">📚 学习预算</span>
+                                    <span class="text-sm text-orange-600">¥124/¥200 (62%)</span>
+                                </div>
+                                <div class="h-3 bg-gray-200 rounded-full overflow-hidden">
+                                    <div class="h-full bg-gradient-to-r from-blue-400 to-blue-600 rounded-full" style="width: 62%"></div>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <div class="flex justify-between mb-2">
+                                    <span class="font-medium text-gray-700">🚌 交通预算</span>
+                                    <span class="text-sm text-green-600">¥62/¥100 (62%)</span>
+                                </div>
+                                <div class="h-3 bg-gray-200 rounded-full overflow-hidden">
+                                    <div class="h-full bg-gradient-to-r from-green-400 to-green-600 rounded-full" style="width: 62%"></div>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <div class="flex justify-between mb-2">
+                                    <span class="font-medium text-gray-700">🎮 娱乐预算</span>
+                                    <span class="text-sm text-green-600">¥62/¥100 (62%)</span>
+                                </div>
+                                <div class="h-3 bg-gray-200 rounded-full overflow-hidden">
+                                    <div class="h-full bg-gradient-to-r from-yellow-400 to-yellow-600 rounded-full" style="width: 62%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+    
+                    <!-- 智能建议 -->
+                    <div class="bg-gradient-to-r from-yellow-50 to-orange-50 rounded-xl p-6 border-l-4 border-yellow-500">
+                        <h4 class="text-lg font-bold text-gray-900 mb-3 flex items-center">
+                            <i class="fas fa-lightbulb text-yellow-500 mr-2"></i> 消费建议
+                        </h4>
+                        <div class="space-y-3 text-sm">
+                            <div class="flex items-start">
+                                <span class="text-red-500 mr-2">⚠️</span>
+                                <p class="text-gray-700">餐饮支出较高，建议尝试二食堂或食堂套餐，可节省约¥100/月</p>
+                            </div>
+                            <div class="flex items-start">
+                                <span class="text-orange-500 mr-2">💡</span>
+                                <p class="text-gray-700">本月有3天超预算，建议关注每日消费，避免冲动消费</p>
+                            </div>
+                            <div class="flex items-start">
+                                <span class="text-green-500 mr-2">✅</span>
+                                <p class="text-gray-700">学习用品消费在合理范围，继续保持</p>
+                            </div>
+                            <div class="flex items-start">
+                                <span class="text-blue-500 mr-2">📅</span>
+                                <p class="text-gray-700">下周预计需要购买教材，建议预留¥200预算</p>
+                            </div>
+                        </div>
+                    </div>
+    
+                    <!-- 快速记录 -->
+                    <div class="bg-gray-50 rounded-xl p-6">
+                        <h4 class="text-lg font-bold text-gray-900 mb-4">⚡ 快速记录</h4>
+                        <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+                            <button onclick="quickRecordConsumption('餐饮', 15)" class="p-3 bg-white rounded-lg shadow-md hover:shadow-lg transition-all text-left">
+                                <span class="text-lg">🍽️</span>
+                                <span class="ml-2">早餐 ¥15</span>
+                            </button>
+                            <button onclick="quickRecordConsumption('餐饮', 25)" class="p-3 bg-white rounded-lg shadow-md hover:shadow-lg transition-all text-left">
+                                <span class="text-lg">🍱</span>
+                                <span class="ml-2">午餐 ¥25</span>
+                            </button>
+                            <button onclick="quickRecordConsumption('餐饮', 20)" class="p-3 bg-white rounded-lg shadow-md hover:shadow-lg transition-all text-left">
+                                <span class="text-lg">🍛️</span>
+                                <span class="ml-2">晚餐 ¥20</span>
+                            </button>
+                            <button onclick="quickRecordConsumption('餐饮', 12)" class="p-3 bg-white rounded-lg shadow-md hover:shadow-lg transition-all text-left">
+                                <span class="text-lg">☕</span>
+                                <span class="ml-2">咖啡 ¥12</span>
+                            </button>
+                            <button onclick="quickRecordConsumption('学习', 5)" class="p-3 bg-white rounded-lg shadow-md hover:shadow-lg transition-all text-left">
+                                <span class="text-lg">🖨️</span>
+                                <span class="ml-2">打印 ¥5</span>
+                            </button>
+                            <button onclick="quickRecordConsumption('交通', 2)" class="p-3 bg-white rounded-lg shadow-md hover:shadow-lg transition-all text-left">
+                                <span class="text-lg">🚌</span>
+                                <span class="ml-2">公交 ¥2</span>
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -8540,6 +9054,309 @@
          */
         function closeCampusWallModal() {
             document.getElementById('campusWallModal').style.display = 'none';
+        }
+
+        /**
+         * 显示个人成长仪表盘模态框
+         */
+        function showGrowthDashboard() {
+            const modal = document.getElementById('growthDashboardModal');
+            modal.style.display = 'flex';
+            
+            // 加载成长数据
+            loadGrowthData();
+        }
+
+        /**
+         * 关闭个人成长仪表盘模态框
+         */
+        function closeGrowthDashboardModal() {
+            document.getElementById('growthDashboardModal').style.display = 'none';
+        }
+
+        /**
+         * 加载成长数据
+         */
+        function loadGrowthData() {
+            // 获取存储的学习数据
+            const studyRecords = JSON.parse(localStorage.getItem('studyRecords') || '[]');
+            
+            // 计算本月学习时长
+            const currentMonth = new Date().toISOString().slice(0, 7); // "2024-01"
+            const thisMonthRecords = studyRecords.filter(r => r.date.startsWith(currentMonth));
+            const totalHours = thisMonthRecords.reduce((sum, r) => sum + r.duration, 0);
+            
+            // 更新UI
+            document.getElementById('totalStudyHours').textContent = `${totalHours}小时`;
+            
+            // 计算增长率（模拟）
+            document.querySelector('#growthDashboardModal .text-green-300').textContent = `+${Math.floor(Math.random() * 20 + 5)}%`;
+            
+            // 更新成绩和排名
+            const avgGrade = calculateAverageGrade();
+            document.getElementById('avgGrade').textContent = `${avgGrade}分`;
+            document.getElementById('classRank').textContent = `${Math.floor(Math.random() * 30 + 1)}/45`;
+            
+            // 根据数据更新技能雷达图
+            updateSkillRadar();
+            
+            // 更新时间线
+            updateGrowthTimeline();
+            
+            // 更新成就进度
+            updateAchievementProgress();
+        }
+
+        /**
+         * 计算平均成绩
+         */
+        function calculateAverageGrade() {
+            const grades = JSON.parse(localStorage.getItem('courseGrades') || '{"高等数学":85,"大学英语":92,"数据结构":78,"操作系统":82}');
+            const values = Object.values(grades);
+            return (values.reduce((a, b) => a + b, 0) / values.length).toFixed(1);
+        }
+
+        /**
+         * 更新技能雷达图（动态计算多边形顶点）
+         */
+        function updateSkillRadar() {
+            // 获取存储的技能数据
+            const skills = JSON.parse(localStorage.getItem('userSkills') || JSON.stringify({
+                learning: { current: 75, previous: 70, label: '学习能力' },
+                practice: { current: 85, previous: 80, label: '实践能力' },
+                innovation: { current: 70, previous: 65, label: '创新能力' },
+                health: { current: 65, previous: 60, label: '健康管理' },
+                teamwork: { current: 85, previous: 75, label: '团队协作' },
+                social: { current: 60, previous: 55, label: '社交能力' }
+            }));
+            
+            // 计算雷达图的点位置
+            const centerX = 150;
+            const centerY = 150;
+            const maxRadius = 130;
+            const skillKeys = ['learning', 'practice', 'innovation', 'health', 'teamwork', 'social'];
+            const angles = [-90, -30, 30, 90, 150, 210]; // 6个角度
+            
+            // 构造当前技能多边形
+            const currentPoints = skillKeys.map((key, i) => {
+                const skill = skills[key];
+                const radius = (skill.current / 100) * maxRadius;
+                const angle = angles[i] * Math.PI / 180;
+                const x = centerX + radius * Math.cos(angle);
+                const y = centerY + radius * Math.sin(angle);
+                return `${x},${y}`;
+            }).join(' ');
+            
+            // 构造上月技能多边形
+            const previousPoints = skillKeys.map((key, i) => {
+                const skill = skills[key];
+                const radius = (skill.previous / 100) * maxRadius;
+                const angle = angles[i] * Math.PI / 180;
+                const x = centerX + radius * Math.cos(angle);
+                const y = centerY + radius * Math.sin(angle);
+                return `${x},${y}`;
+            }).join(' ');
+            
+            // 更新SVG多边形
+            const currentPolygon = document.querySelector('.radar-polygon');
+            const previousPolygon = document.querySelector('.radar-polygon-previous');
+            
+            if (currentPolygon) {
+                currentPolygon.setAttribute('points', currentPoints);
+            }
+            if (previousPolygon) {
+                previousPolygon.setAttribute('points', previousPoints);
+            }
+        }
+
+        /**
+         * 更新成长时间线
+         */
+        function updateGrowthTimeline() {
+            // 获取存储的成长记录
+            const records = JSON.parse(localStorage.getItem('growthRecords') || JSON.stringify([
+                { day: '一', type: 'study', title: '图书馆学习', detail: '完成了高等数学第三章习题', value: '3小时', color: 'blue' },
+                { day: '二', type: 'grade', title: '完成高数作业', detail: '期中作业，排名班级前5', value: '95分', color: 'green' },
+                { day: '三', type: 'activity', title: '参加编程社团活动', detail: '学习了Python Web开发，认识了新朋友', value: '2小时', color: 'purple' },
+                { day: '四', type: 'help', title: '帮助同学解决问题', detail: '解答了数据结构作业难题', value: '社交+1', color: 'orange' },
+                { day: '五', type: 'post', title: '发布校园墙互助帖', detail: '分享学习笔记，获得10个点赞', value: '互动+5', color: 'cyan' },
+                { day: '周末', type: 'exercise', title: '运动锻炼', detail: '篮球运动2小时，保持健康作息', value: '健康+2', color: 'pink' }
+            ]));
+            
+            // 这里可以动态更新时间线内容
+            // 暂时使用静态内容展示
+        }
+
+        /**
+         * 更新成就进度
+         */
+        function updateAchievementProgress() {
+            const goals = JSON.parse(localStorage.getItem('semesterGoals') || JSON.stringify([
+                { type: 'reading', current: 12, target: 20, label: '📚 阅读目标', color: 'blue' },
+                { type: 'social', current: 2, target: 5, label: '👥 社交目标', color: 'green' },
+                { type: 'health', current: 12, target: 15, label: '🏃 健康目标', color: 'purple' },
+                { type: 'skill', current: 7, target: 10, label: '💡 技能目标', color: 'orange' }
+            ]));
+            
+            // 动态更新进度条（如需）
+        }
+
+        /**
+         * 导出成长报告
+         */
+        function exportGrowthReport() {
+            const reportData = {
+                date: new Date().toISOString(),
+                totalStudyHours: document.getElementById('totalStudyHours').textContent,
+                avgGrade: document.getElementById('avgGrade').textContent,
+                classRank: document.getElementById('classRank').textContent,
+                skills: JSON.parse(localStorage.getItem('userSkills') || '{}'),
+                goals: JSON.parse(localStorage.getItem('semesterGoals') || '{}')
+            };
+            
+            const reportText = `
+===== 个人成长报告 =====
+生成时间: ${new Date().toLocaleString()}
+
+【学习概览】
+总学习时长: ${reportData.totalStudyHours}
+平均成绩: ${reportData.avgGrade}
+班级排名: ${reportData.classRank}
+
+【技能评估】
+${Object.entries(reportData.skills).map(([key, val]) =>
+    `${val.label}: ${val.current}/100 (上月: ${val.previous})`
+).join('\n')}
+
+【学期目标进度】
+${Object.entries(reportData.goals).map(([key, val]) =>
+    `${val.label}: ${val.current}/${val.target} (${Math.round(val.current/val.target*100)}%)`
+).join('\n')}
+            `.trim();
+            
+            const blob = new Blob([reportText], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `成长报告_${new Date().toISOString().slice(0,10)}.txt`;
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            alert('成长报告导出成功！');
+        }
+
+        /**
+         * 显示智能消费分析模态框
+         */
+        function showConsumptionAnalysis() {
+            const modal = document.getElementById('consumptionAnalysisModal');
+            modal.style.display = 'flex';
+            
+            // 加载消费数据
+            loadConsumptionData();
+        }
+
+        /**
+         * 关闭智能消费分析模态框
+         */
+        function closeConsumptionAnalysisModal() {
+            document.getElementById('consumptionAnalysisModal').style.display = 'none';
+        }
+
+        /**
+         * 加载消费数据
+         */
+        function loadConsumptionData() {
+            const currentMonth = new Date().toISOString().slice(0, 7);
+            const records = JSON.parse(localStorage.getItem('consumptionRecords') || '[]');
+            const monthRecords = records.filter(r => r.date.startsWith(currentMonth));
+            
+            // 计算分类消费
+            const categoryTotals = {
+                '餐饮': 0, '购物': 0, '学习': 0, '交通': 0, '娱乐': 0
+            };
+            
+            monthRecords.forEach(r => {
+                if (categoryTotals.hasOwnProperty(r.category)) {
+                    categoryTotals[r.category] += r.amount;
+                }
+            });
+            
+            // 如果没有数据，使用模拟数据
+            if (monthRecords.length === 0) {
+                categoryTotals['餐饮'] = 809;
+                categoryTotals['购物'] = 187;
+                categoryTotals['学习'] = 124;
+                categoryTotals['交通'] = 62;
+                categoryTotals['娱乐'] = 62;
+            }
+            
+            const total = Object.values(categoryTotals).reduce((a, b) => a + b, 0);
+            const dailyAverage = (total / 30).toFixed(1);
+            
+            // 更新UI
+            document.getElementById('monthlyTotal').textContent = `¥${total.toLocaleString()}`;
+            document.getElementById('dailyAverage').textContent = `¥${dailyAverage}`;
+        }
+
+        /**
+         * 快速记录消费
+         */
+        function quickRecordConsumption(category, amount) {
+            const record = {
+                id: Date.now(),
+                date: new Date().toISOString(),
+                category: category,
+                amount: amount,
+                description: `${category}消费`
+            };
+            
+            const records = JSON.parse(localStorage.getItem('consumptionRecords') || '[]');
+            records.push(record);
+            localStorage.setItem('consumptionRecords', JSON.stringify(records));
+            
+            // 刷新数据
+            loadConsumptionData();
+            
+            // 显示提示
+            alert(`成功记录: ${category} ¥${amount}`);
+        }
+
+        /**
+         * 打开添加消费表单（扩展功能）
+         */
+        function openAddConsumptionForm() {
+            // 可以创建一个新的模态框来详细记录消费
+            alert('详细消费记录功能开发中...');
+        }
+
+        /**
+         * 导出消费报告
+         */
+        function exportConsumptionReport() {
+            const currentMonth = new Date().toISOString().slice(0, 7);
+            const records = JSON.parse(localStorage.getItem('consumptionRecords') || '[]');
+            
+            const reportText = `
+===== 消费分析报告 =====
+生成时间: ${new Date().toLocaleString()}
+月份: ${currentMonth}
+
+【消费统计】
+${records.map(r =>
+    `${r.date.slice(5,10)} - ${r.category} - ¥${r.amount}\n  注释: ${r.description}`
+).join('\n\n')}
+            `.trim();
+            
+            const blob = new Blob([reportText], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `消费报告_${currentMonth}.txt`;
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            alert('消费报告导出成功！');
         }
         
         /**
