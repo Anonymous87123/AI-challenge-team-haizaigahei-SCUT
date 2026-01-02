@@ -1,9 +1,8 @@
-This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2025) (preloaded format=xelatex 2025.8.30)  2 JAN 2026 18:34
+This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2025) (preloaded format=xelatex 2025.8.30)  2 JAN 2026 18:33
 entering extended mode
  restricted \write18 enabled.
- file:line:error style messages enabled.
  %&-line parsing enabled.
-**应用介绍
+**应用介绍.tex
 (./应用介绍.tex
 LaTeX2e <2024-11-01> patch level 2
 L3 programming layer <2025-01-18>
@@ -23,9 +22,13 @@ File: size12.clo 2024/06/29 v1.4n Standard LaTeX file (size option)
 \abovecaptionskip=\skip49
 \belowcaptionskip=\skip50
 \bibindent=\dimen141
-) (e:/Program Files/LateX/texlive/2025/texmf-dist/tex/latex/ctex/ctex.sty (e:/Program Files/LateX/texlive/2025/texmf-dist/tex/latex/l3kernel/expl3.sty
+)
+(e:/Program Files/LateX/texlive/2025/texmf-dist/tex/latex/ctex/ctex.sty
+(e:/Program Files/LateX/texlive/2025/texmf-dist/tex/latex/l3kernel/expl3.sty
 Package: expl3 2025-01-18 L3 programming layer (loader) 
- (e:/Program Files/LateX/texlive/2025/texmf-dist/tex/latex/l3backend/l3backend-xetex.def
+
+(e:/Program Files/LateX/texlive/2025/texmf-dist/tex/latex/l3backend/l3backend-x
+etex.def
 File: l3backend-xetex.def 2024-05-08 L3 backend support: XeTeX
 \g__graphics_track_int=\count266
 \l__pdf_internal_box=\box52
@@ -33,13 +36,17 @@ File: l3backend-xetex.def 2024-05-08 L3 backend support: XeTeX
 \g__pdf_backend_link_int=\count268
 ))
 Package: ctex 2022/07/14 v2.5.10 Chinese adapter in LaTeX (CTEX)
- (e:/Program Files/LateX/texlive/2025/texmf-dist/tex/latex/ctex/ctexhook.sty
+
+(e:/Program Files/LateX/texlive/2025/texmf-dist/tex/latex/ctex/ctexhook.sty
 Package: ctexhook 2022/07/14 v2.5.10 Document and package hooks (CTEX)
-) (e:/Program Files/LateX/texlive/2025/texmf-dist/tex/latex/ctex/ctexpatch.sty
+)
+(e:/Program Files/LateX/texlive/2025/texmf-dist/tex/latex/ctex/ctexpatch.sty
 Package: ctexpatch 2022/07/14 v2.5.10 Patching commands (CTEX)
-) (e:/Program Files/LateX/texlive/2025/texmf-dist/tex/latex/base/fix-cm.sty
+)
+(e:/Program Files/LateX/texlive/2025/texmf-dist/tex/latex/base/fix-cm.sty
 Package: fix-cm 2020/11/24 v1.1t fixes to LaTeX
- (e:/Program Files/LateX/texlive/2025/texmf-dist/tex/latex/base/ts1enc.def
+
+(e:/Program Files/LateX/texlive/2025/texmf-dist/tex/latex/base/ts1enc.def
 File: ts1enc.def 2001/06/05 v3.0e (jk/car/fm) Standard LaTeX file
 LaTeX Font Info:    Redeclaring font encoding TS1 on input line 47.
 ))
@@ -48,13 +55,20 @@ LaTeX Font Info:    Redeclaring font encoding TS1 on input line 47.
 \l__ctex_tmp_dim=\dimen142
 \g__ctex_section_depth_int=\count270
 \g__ctex_font_size_int=\count271
- (e:/Program Files/LateX/texlive/2025/texmf-dist/tex/latex/ctex/config/ctexopts.cfg
+
+(e:/Program Files/LateX/texlive/2025/texmf-dist/tex/latex/ctex/config/ctexopts.
+cfg
 File: ctexopts.cfg 2022/07/14 v2.5.10 Option configuration file (CTEX)
-) (e:/Program Files/LateX/texlive/2025/texmf-dist/tex/latex/ctex/engine/ctex-engine-xetex.def
+)
+(e:/Program Files/LateX/texlive/2025/texmf-dist/tex/latex/ctex/engine/ctex-engi
+ne-xetex.def
 File: ctex-engine-xetex.def 2022/07/14 v2.5.10 XeLaTeX adapter (CTEX)
- (e:/Program Files/LateX/texlive/2025/texmf-dist/tex/xelatex/xecjk/xeCJK.sty
+
+(e:/Program Files/LateX/texlive/2025/texmf-dist/tex/xelatex/xecjk/xeCJK.sty
 Package: xeCJK 2022/08/05 v3.9.1 Typesetting CJK scripts with XeLaTeX
- (e:/Program Files/LateX/texlive/2025/texmf-dist/tex/latex/l3packages/xtemplate/xtemplate.sty
+
+(e:/Program Files/LateX/texlive/2025/texmf-dist/tex/latex/l3packages/xtemplate/
+xtemplate.sty
 Package: xtemplate 2024-08-16 L3 Experimental prototype document functions
 )
 \l__xeCJK_tmp_int=\count272
@@ -117,12 +131,19 @@ LaTeX template Info: Declaring template type 'xeCJK/punctuation' taking 0
 \g__xeCJK_fam_allocation_int=\count282
 \l__xeCJK_verb_case_int=\count283
 \l__xeCJK_verb_exspace_skip=\skip57
- (e:/Program Files/LateX/texlive/2025/texmf-dist/tex/latex/fontspec/fontspec.sty (e:/Program Files/LateX/texlive/2025/texmf-dist/tex/latex/l3packages/xparse/xparse.sty
+
+(e:/Program Files/LateX/texlive/2025/texmf-dist/tex/latex/fontspec/fontspec.sty
+
+(e:/Program Files/LateX/texlive/2025/texmf-dist/tex/latex/l3packages/xparse/xpa
+rse.sty
 Package: xparse 2024-08-16 L3 Experimental document command parser
 )
 Package: fontspec 2024/05/11 v2.9e Font selection for XeLaTeX and LuaLaTeX
- (e:/Program Files/LateX/texlive/2025/texmf-dist/tex/latex/fontspec/fontspec-xetex.sty
-Package: fontspec-xetex 2024/05/11 v2.9e Font selection for XeLaTeX and LuaLaTeX
+
+(e:/Program Files/LateX/texlive/2025/texmf-dist/tex/latex/fontspec/fontspec-xet
+ex.sty
+Package: fontspec-xetex 2024/05/11 v2.9e Font selection for XeLaTeX and LuaLaTe
+X
 \l__fontspec_script_int=\count284
 \l__fontspec_language_int=\count285
 \l__fontspec_strnum_int=\count286
@@ -137,29 +158,44 @@ Package: fontspec-xetex 2024/05/11 v2.9e Font selection for XeLaTeX and LuaLaTeX
 \l__fontspec_tmpa_dim=\dimen170
 \l__fontspec_tmpb_dim=\dimen171
 \l__fontspec_tmpc_dim=\dimen172
- (e:/Program Files/LateX/texlive/2025/texmf-dist/tex/latex/base/fontenc.sty
+
+(e:/Program Files/LateX/texlive/2025/texmf-dist/tex/latex/base/fontenc.sty
 Package: fontenc 2021/04/29 v2.0v Standard LaTeX package
-) (e:/Program Files/LateX/texlive/2025/texmf-dist/tex/latex/fontspec/fontspec.cfg))) (e:/Program Files/LateX/texlive/2025/texmf-dist/tex/xelatex/xecjk/xeCJK.cfg
+)
+(e:/Program Files/LateX/texlive/2025/texmf-dist/tex/latex/fontspec/fontspec.cfg
+))) (e:/Program Files/LateX/texlive/2025/texmf-dist/tex/xelatex/xecjk/xeCJK.cfg
 File: xeCJK.cfg 2022/08/05 v3.9.1 Configuration file for xeCJK package
 ))
 \ccwd=\dimen173
 \l__ctex_ccglue_skip=\skip58
 )
 \l__ctex_ziju_dim=\dimen174
- (e:/Program Files/LateX/texlive/2025/texmf-dist/tex/latex/zhnumber/zhnumber.sty
+
+(e:/Program Files/LateX/texlive/2025/texmf-dist/tex/latex/zhnumber/zhnumber.sty
 Package: zhnumber 2022/07/14 v3.0 Typesetting numbers with Chinese glyphs
 \l__zhnum_scale_int=\count295
 \l__zhnum_tmp_int=\count296
- (e:/Program Files/LateX/texlive/2025/texmf-dist/tex/latex/zhnumber/zhnumber-utf8.cfg
+
+(e:/Program Files/LateX/texlive/2025/texmf-dist/tex/latex/zhnumber/zhnumber-utf
+8.cfg
 File: zhnumber-utf8.cfg 2022/07/14 v3.0 Chinese numerals with UTF8 encoding
-)) (e:/Program Files/LateX/texlive/2025/texmf-dist/tex/latex/ctex/scheme/ctex-scheme-chinese.def
-File: ctex-scheme-chinese.def 2022/07/14 v2.5.10 Chinese scheme for generic (CTEX)
- (e:/Program Files/LateX/texlive/2025/texmf-dist/tex/latex/ctex/config/ctex-name-utf8.cfg
+))
+(e:/Program Files/LateX/texlive/2025/texmf-dist/tex/latex/ctex/scheme/ctex-sche
+me-chinese.def
+File: ctex-scheme-chinese.def 2022/07/14 v2.5.10 Chinese scheme for generic (CT
+EX)
+
+(e:/Program Files/LateX/texlive/2025/texmf-dist/tex/latex/ctex/config/ctex-name
+-utf8.cfg
 File: ctex-name-utf8.cfg 2022/07/14 v2.5.10 Caption with encoding UTF-8 (CTEX)
-)) (e:/Program Files/LateX/texlive/2025/texmf-dist/tex/latex/tools/indentfirst.sty
+))
+(e:/Program Files/LateX/texlive/2025/texmf-dist/tex/latex/tools/indentfirst.sty
 Package: indentfirst 2023/07/02 v1.03 Indent first paragraph (DPC)
-) (e:/Program Files/LateX/texlive/2025/texmf-dist/tex/latex/ctex/fontset/ctex-fontset-windows.def
-File: ctex-fontset-windows.def 2022/07/14 v2.5.10 Windows fonts definition (CTEX)
+)
+(e:/Program Files/LateX/texlive/2025/texmf-dist/tex/latex/ctex/fontset/ctex-fon
+tset-windows.def
+File: ctex-fontset-windows.def 2022/07/14 v2.5.10 Windows fonts definition (CTE
+X)
 
 Package fontspec Info: 
 (fontspec)             Could not resolve font "KaiTi/B" (it probably doesn't
@@ -191,16 +227,20 @@ Package fontspec Info:
 (fontspec)             - 'italic' (m/it) with NFSS spec.:
 (fontspec)             <->"KaiTi/OT:script=hani;language=dflt;"
 
-)) (e:/Program Files/LateX/texlive/2025/texmf-dist/tex/latex/ctex/config/ctex.cfg
+))
+(e:/Program Files/LateX/texlive/2025/texmf-dist/tex/latex/ctex/config/ctex.cfg
 File: ctex.cfg 2022/07/14 v2.5.10 Configuration file (CTEX)
-) (e:/Program Files/LateX/texlive/2025/texmf-dist/tex/latex/geometry/geometry.sty
+)
+(e:/Program Files/LateX/texlive/2025/texmf-dist/tex/latex/geometry/geometry.sty
 Package: geometry 2020/01/02 v5.9 Page Geometry
- (e:/Program Files/LateX/texlive/2025/texmf-dist/tex/latex/graphics/keyval.sty
+(e:/Program Files/LateX/texlive/2025/texmf-dist/tex/latex/graphics/keyval.sty
 Package: keyval 2022/05/29 v1.15 key=value parser (DPC)
 \KV@toks@=\toks17
-) (e:/Program Files/LateX/texlive/2025/texmf-dist/tex/generic/iftex/ifvtex.sty
+)
+(e:/Program Files/LateX/texlive/2025/texmf-dist/tex/generic/iftex/ifvtex.sty
 Package: ifvtex 2019/10/25 v1.7 ifvtex legacy package. Use iftex instead.
- (e:/Program Files/LateX/texlive/2025/texmf-dist/tex/generic/iftex/iftex.sty
+
+(e:/Program Files/LateX/texlive/2025/texmf-dist/tex/generic/iftex/iftex.sty
 Package: iftex 2024/12/12 v1.0g TeX engine tests
 ))
 \Gm@cnth=\count297
@@ -215,63 +255,95 @@ Package: iftex 2024/12/12 v1.0g TeX engine tests
 \Gm@layouthoffset=\dimen181
 \Gm@layoutvoffset=\dimen182
 \Gm@dimlist=\toks18
-) (e:/Program Files/LateX/texlive/2025/texmf-dist/tex/latex/graphics/graphicx.sty
+)
+(e:/Program Files/LateX/texlive/2025/texmf-dist/tex/latex/graphics/graphicx.sty
 Package: graphicx 2021/09/16 v1.2d Enhanced LaTeX Graphics (DPC,SPQR)
- (e:/Program Files/LateX/texlive/2025/texmf-dist/tex/latex/graphics/graphics.sty
+
+(e:/Program Files/LateX/texlive/2025/texmf-dist/tex/latex/graphics/graphics.sty
 Package: graphics 2024/08/06 v1.4g Standard LaTeX Graphics (DPC,SPQR)
- (e:/Program Files/LateX/texlive/2025/texmf-dist/tex/latex/graphics/trig.sty
+(e:/Program Files/LateX/texlive/2025/texmf-dist/tex/latex/graphics/trig.sty
 Package: trig 2023/12/02 v1.11 sin cos tan (DPC)
-) (e:/Program Files/LateX/texlive/2025/texmf-dist/tex/latex/graphics-cfg/graphics.cfg
+)
+(e:/Program Files/LateX/texlive/2025/texmf-dist/tex/latex/graphics-cfg/graphics
+.cfg
 File: graphics.cfg 2016/06/04 v1.11 sample graphics configuration
 )
 Package graphics Info: Driver file: xetex.def on input line 106.
- (e:/Program Files/LateX/texlive/2025/texmf-dist/tex/latex/graphics-def/xetex.def
+
+(e:/Program Files/LateX/texlive/2025/texmf-dist/tex/latex/graphics-def/xetex.de
+f
 File: xetex.def 2022/09/22 v5.0n Graphics/color driver for xetex
 ))
 \Gin@req@height=\dimen183
 \Gin@req@width=\dimen184
-) (e:/Program Files/LateX/texlive/2025/texmf-dist/tex/latex/hyperref/hyperref.sty
+)
+(e:/Program Files/LateX/texlive/2025/texmf-dist/tex/latex/hyperref/hyperref.sty
 Package: hyperref 2024-11-05 v7.01l Hypertext links for LaTeX
- (e:/Program Files/LateX/texlive/2025/texmf-dist/tex/latex/kvsetkeys/kvsetkeys.sty
+
+(e:/Program Files/LateX/texlive/2025/texmf-dist/tex/latex/kvsetkeys/kvsetkeys.s
+ty
 Package: kvsetkeys 2022-10-05 v1.19 Key value parser (HO)
-) (e:/Program Files/LateX/texlive/2025/texmf-dist/tex/generic/kvdefinekeys/kvdefinekeys.sty
+)
+(e:/Program Files/LateX/texlive/2025/texmf-dist/tex/generic/kvdefinekeys/kvdefi
+nekeys.sty
 Package: kvdefinekeys 2019-12-19 v1.6 Define keys (HO)
-) (e:/Program Files/LateX/texlive/2025/texmf-dist/tex/generic/pdfescape/pdfescape.sty
+)
+(e:/Program Files/LateX/texlive/2025/texmf-dist/tex/generic/pdfescape/pdfescape
+.sty
 Package: pdfescape 2019/12/09 v1.15 Implements pdfTeX's escape features (HO)
- (e:/Program Files/LateX/texlive/2025/texmf-dist/tex/generic/ltxcmds/ltxcmds.sty
+
+(e:/Program Files/LateX/texlive/2025/texmf-dist/tex/generic/ltxcmds/ltxcmds.sty
 Package: ltxcmds 2023-12-04 v1.26 LaTeX kernel commands for general use (HO)
-) (e:/Program Files/LateX/texlive/2025/texmf-dist/tex/generic/pdftexcmds/pdftexcmds.sty
-Package: pdftexcmds 2020-06-27 v0.33 Utility functions of pdfTeX for LuaTeX (HO)
- (e:/Program Files/LateX/texlive/2025/texmf-dist/tex/generic/infwarerr/infwarerr.sty
+)
+(e:/Program Files/LateX/texlive/2025/texmf-dist/tex/generic/pdftexcmds/pdftexcm
+ds.sty
+Package: pdftexcmds 2020-06-27 v0.33 Utility functions of pdfTeX for LuaTeX (HO
+)
+
+(e:/Program Files/LateX/texlive/2025/texmf-dist/tex/generic/infwarerr/infwarerr
+.sty
 Package: infwarerr 2019/12/03 v1.5 Providing info/warning/error messages (HO)
 )
 Package pdftexcmds Info: \pdf@primitive is available.
 Package pdftexcmds Info: \pdf@ifprimitive is available.
 Package pdftexcmds Info: \pdfdraftmode not found.
-)) (e:/Program Files/LateX/texlive/2025/texmf-dist/tex/latex/hycolor/hycolor.sty
+))
+(e:/Program Files/LateX/texlive/2025/texmf-dist/tex/latex/hycolor/hycolor.sty
 Package: hycolor 2020-01-27 v1.10 Color options for hyperref/bookmark (HO)
-) (e:/Program Files/LateX/texlive/2025/texmf-dist/tex/latex/hyperref/nameref.sty
+)
+(e:/Program Files/LateX/texlive/2025/texmf-dist/tex/latex/hyperref/nameref.sty
 Package: nameref 2023-11-26 v2.56 Cross-referencing by name of section
- (e:/Program Files/LateX/texlive/2025/texmf-dist/tex/latex/refcount/refcount.sty
+
+(e:/Program Files/LateX/texlive/2025/texmf-dist/tex/latex/refcount/refcount.sty
 Package: refcount 2019/12/15 v3.6 Data extraction from label references (HO)
-) (e:/Program Files/LateX/texlive/2025/texmf-dist/tex/generic/gettitlestring/gettitlestring.sty
+)
+(e:/Program Files/LateX/texlive/2025/texmf-dist/tex/generic/gettitlestring/gett
+itlestring.sty
 Package: gettitlestring 2019/12/15 v1.6 Cleanup title references (HO)
- (e:/Program Files/LateX/texlive/2025/texmf-dist/tex/latex/kvoptions/kvoptions.sty
+
+(e:/Program Files/LateX/texlive/2025/texmf-dist/tex/latex/kvoptions/kvoptions.s
+ty
 Package: kvoptions 2022-06-15 v3.15 Key value format for package options (HO)
 ))
 \c@section@level=\count300
-) (e:/Program Files/LateX/texlive/2025/texmf-dist/tex/latex/etoolbox/etoolbox.sty
+)
+(e:/Program Files/LateX/texlive/2025/texmf-dist/tex/latex/etoolbox/etoolbox.sty
 Package: etoolbox 2025/02/11 v2.5l e-TeX tools for LaTeX (JAW)
 \etb@tempcnta=\count301
-) (e:/Program Files/LateX/texlive/2025/texmf-dist/tex/generic/stringenc/stringenc.sty
-Package: stringenc 2019/11/29 v1.12 Convert strings between diff. encodings (HO)
+)
+(e:/Program Files/LateX/texlive/2025/texmf-dist/tex/generic/stringenc/stringenc
+.sty
+Package: stringenc 2019/11/29 v1.12 Convert strings between diff. encodings (HO
+)
 )
 \@linkdim=\dimen185
 \Hy@linkcounter=\count302
 \Hy@pagecounter=\count303
- (e:/Program Files/LateX/texlive/2025/texmf-dist/tex/latex/hyperref/pd1enc.def
+
+(e:/Program Files/LateX/texlive/2025/texmf-dist/tex/latex/hyperref/pd1enc.def
 File: pd1enc.def 2024-11-05 v7.01l Hyperref: PDFDocEncoding definition (HO)
-) (e:/Program Files/LateX/texlive/2025/texmf-dist/tex/generic/intcalc/intcalc.sty
+)
+(e:/Program Files/LateX/texlive/2025/texmf-dist/tex/generic/intcalc/intcalc.sty
 Package: intcalc 2019/12/15 v1.3 Expandable calculations with integers (HO)
 )
 \Hy@SavedSpaceFactor=\count304
@@ -287,16 +359,20 @@ Package hyperref Info: Backreferencing OFF on input line 4177.
 Package hyperref Info: Implicit mode ON; LaTeX internals redefined.
 Package hyperref Info: Bookmarks ON on input line 4424.
 \c@Hy@tempcnt=\count305
- (e:/Program Files/LateX/texlive/2025/texmf-dist/tex/latex/url/url.sty
+(e:/Program Files/LateX/texlive/2025/texmf-dist/tex/latex/url/url.sty
 \Urlmuskip=\muskip17
 Package: url 2013/09/16  ver 3.4  Verb mode for urls, etc.
 )
 LaTeX Info: Redefining \url on input line 4763.
 \XeTeXLinkMargin=\dimen186
- (e:/Program Files/LateX/texlive/2025/texmf-dist/tex/generic/bitset/bitset.sty
+
+(e:/Program Files/LateX/texlive/2025/texmf-dist/tex/generic/bitset/bitset.sty
 Package: bitset 2019/12/09 v1.3 Handle bit-vector datatype (HO)
- (e:/Program Files/LateX/texlive/2025/texmf-dist/tex/generic/bigintcalc/bigintcalc.sty
-Package: bigintcalc 2019/12/15 v1.5 Expandable calculations on big integers (HO)
+
+(e:/Program Files/LateX/texlive/2025/texmf-dist/tex/generic/bigintcalc/bigintca
+lc.sty
+Package: bigintcalc 2019/12/15 v1.5 Expandable calculations on big integers (HO
+)
 ))
 \Fld@menulength=\count306
 \Field@Width=\dimen187
@@ -308,7 +384,8 @@ Package hyperref Info: backreferencing OFF on input line 6057.
 Package hyperref Info: Link coloring OFF on input line 6062.
 Package hyperref Info: Link coloring with OCG OFF on input line 6067.
 Package hyperref Info: PDF/A mode OFF on input line 6072.
- (e:/Program Files/LateX/texlive/2025/texmf-dist/tex/latex/base/atbegshi-ltx.sty
+
+(e:/Program Files/LateX/texlive/2025/texmf-dist/tex/latex/base/atbegshi-ltx.sty
 Package: atbegshi-ltx 2021/01/10 v1.0c Emulation of the original atbegshi
 package with kernel methods
 )
@@ -317,25 +394,35 @@ package with kernel methods
 \c@Hfootnote=\count309
 )
 Package hyperref Info: Driver (autodetected): hxetex.
- (e:/Program Files/LateX/texlive/2025/texmf-dist/tex/latex/hyperref/hxetex.def
+
+(e:/Program Files/LateX/texlive/2025/texmf-dist/tex/latex/hyperref/hxetex.def
 File: hxetex.def 2024-11-05 v7.01l Hyperref driver for XeTeX
 \pdfm@box=\box56
 \c@Hy@AnnotLevel=\count310
 \HyField@AnnotCount=\count311
 \Fld@listcount=\count312
 \c@bookmark@seq@number=\count313
- (e:/Program Files/LateX/texlive/2025/texmf-dist/tex/latex/rerunfilecheck/rerunfilecheck.sty
+
+(e:/Program Files/LateX/texlive/2025/texmf-dist/tex/latex/rerunfilecheck/rerunf
+ilecheck.sty
 Package: rerunfilecheck 2022-07-10 v1.10 Rerun checks for auxiliary files (HO)
- (e:/Program Files/LateX/texlive/2025/texmf-dist/tex/latex/base/atveryend-ltx.sty
-Package: atveryend-ltx 2020/08/19 v1.0a Emulation of the original atveryend package
+
+(e:/Program Files/LateX/texlive/2025/texmf-dist/tex/latex/base/atveryend-ltx.st
+y
+Package: atveryend-ltx 2020/08/19 v1.0a Emulation of the original atveryend pac
+kage
 with kernel methods
-) (e:/Program Files/LateX/texlive/2025/texmf-dist/tex/generic/uniquecounter/uniquecounter.sty
+)
+(e:/Program Files/LateX/texlive/2025/texmf-dist/tex/generic/uniquecounter/uniqu
+ecounter.sty
 Package: uniquecounter 2019/12/15 v1.4 Provide unlimited unique counter (HO)
 )
-Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 285.
+Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 2
+85.
 )
 \Hy@SectionHShift=\skip59
-) (e:/Program Files/LateX/texlive/2025/texmf-dist/tex/latex/listings/listings.sty
+)
+(e:/Program Files/LateX/texlive/2025/texmf-dist/tex/latex/listings/listings.sty
 \lst@mode=\count314
 \lst@gtempboxa=\box57
 \lst@token=\toks19
@@ -348,28 +435,38 @@ Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 28
 \lst@newlines=\count318
 \lst@lineno=\count319
 \lst@maxwidth=\dimen192
- (e:/Program Files/LateX/texlive/2025/texmf-dist/tex/latex/listings/lstpatch.sty
+
+(e:/Program Files/LateX/texlive/2025/texmf-dist/tex/latex/listings/lstpatch.sty
 File: lstpatch.sty 2024/09/23 1.10c (Carsten Heinz)
-) (e:/Program Files/LateX/texlive/2025/texmf-dist/tex/latex/listings/lstmisc.sty
+)
+(e:/Program Files/LateX/texlive/2025/texmf-dist/tex/latex/listings/lstmisc.sty
 File: lstmisc.sty 2024/09/23 1.10c (Carsten Heinz)
 \c@lstnumber=\count320
 \lst@skipnumbers=\count321
 \lst@framebox=\box58
-) (e:/Program Files/LateX/texlive/2025/texmf-dist/tex/latex/listings/listings.cfg
+)
+(e:/Program Files/LateX/texlive/2025/texmf-dist/tex/latex/listings/listings.cfg
 File: listings.cfg 2024/09/23 1.10c listings configuration
 ))
 Package: listings 2024/09/23 1.10c (Carsten Heinz)
- (e:/Program Files/LateX/texlive/2025/texmf-dist/tex/xelatex/xecjk/xeCJK-listings.sty
+
+(e:/Program Files/LateX/texlive/2025/texmf-dist/tex/xelatex/xecjk/xeCJK-listing
+s.sty
 Package: xeCJK-listings 2022/08/05 v3.9.1 xeCJK patch file for listings
 \l__xeCJK_listings_max_char_int=\count322
 \l__xeCJK_listings_flag_int=\count323
-) (e:/Program Files/LateX/texlive/2025/texmf-dist/tex/latex/xcolor/xcolor.sty
+)
+(e:/Program Files/LateX/texlive/2025/texmf-dist/tex/latex/xcolor/xcolor.sty
 Package: xcolor 2024/09/29 v3.02 LaTeX color extensions (UK)
- (e:/Program Files/LateX/texlive/2025/texmf-dist/tex/latex/graphics-cfg/color.cfg
+
+(e:/Program Files/LateX/texlive/2025/texmf-dist/tex/latex/graphics-cfg/color.cf
+g
 File: color.cfg 2016/01/02 v1.6 sample color configuration
 )
 Package xcolor Info: Driver file: xetex.def on input line 274.
- (e:/Program Files/LateX/texlive/2025/texmf-dist/tex/latex/graphics/mathcolor.ltx)
+
+(e:/Program Files/LateX/texlive/2025/texmf-dist/tex/latex/graphics/mathcolor.lt
+x)
 Package xcolor Info: Model `cmy' substituted by `cmy0' on input line 1349.
 Package xcolor Info: Model `RGB' extended on input line 1365.
 Package xcolor Info: Model `HTML' substituted by `rgb' on input line 1367.
@@ -378,7 +475,8 @@ Package xcolor Info: Model `tHsb' substituted by `hsb' on input line 1369.
 Package xcolor Info: Model `HSB' substituted by `hsb' on input line 1370.
 Package xcolor Info: Model `Gray' substituted by `gray' on input line 1371.
 Package xcolor Info: Model `wave' substituted by `hsb' on input line 1372.
-) (e:/Program Files/LateX/texlive/2025/texmf-dist/tex/latex/booktabs/booktabs.sty
+)
+(e:/Program Files/LateX/texlive/2025/texmf-dist/tex/latex/booktabs/booktabs.sty
 Package: booktabs 2020/01/12 v1.61803398 Publication quality tables
 \heavyrulewidth=\dimen193
 \lightrulewidth=\dimen194
@@ -397,7 +495,8 @@ Package: booktabs 2020/01/12 v1.61803398 Publication quality tables
 \@thisruleclass=\count326
 \@lastruleclass=\count327
 \@thisrulewidth=\dimen261
-) (e:/Program Files/LateX/texlive/2025/texmf-dist/tex/latex/enumitem/enumitem.sty
+)
+(e:/Program Files/LateX/texlive/2025/texmf-dist/tex/latex/enumitem/enumitem.sty
 Package: enumitem 2025/02/06 v3.11 Customized lists
 \labelindent=\skip60
 \enit@outerparindent=\dimen262
@@ -405,7 +504,8 @@ Package: enumitem 2025/02/06 v3.11 Customized lists
 \enit@inbox=\box59
 \enit@count@id=\count328
 \enitdp@description=\count329
-) (e:/Program Files/LateX/texlive/2025/texmf-dist/tex/latex/fancyvrb/fancyvrb.sty
+)
+(e:/Program Files/LateX/texlive/2025/texmf-dist/tex/latex/fancyvrb/fancyvrb.sty
 Package: fancyvrb 2024/01/20 4.5c verbatim text (tvz,hv)
 \FV@CodeLineNo=\count330
 \FV@InFile=\read2
@@ -413,7 +513,7 @@ Package: fancyvrb 2024/01/20 4.5c verbatim text (tvz,hv)
 \c@FancyVerbLine=\count331
 \FV@StepNumber=\count332
 \FV@OutFile=\write3
-) (./build/应用介绍.aux)
+) (./应用介绍.aux)
 \openout1 = `应用介绍.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 56.
@@ -530,7 +630,7 @@ LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `bold'
 * (1in=72.27pt=25.4mm, 1cm=28.453pt)
 
 Package hyperref Info: Link coloring OFF on input line 56.
-(./build/应用介绍.out) (./build/应用介绍.out)
+(./应用介绍.out) (./应用介绍.out)
 \@outlinefile=\write4
 \openout4 = `应用介绍.out'.
 
@@ -1190,7 +1290,7 @@ LaTeX Font Warning: Font shape `TU/FangSong(0)/m/it' undefined
 
 [18]
 
-[19] (./build/应用介绍.aux)
+[19] (./应用介绍.aux)
  ***********
 LaTeX2e <2024-11-01> patch level 2
 L3 programming layer <2022/08/05>
@@ -1203,12 +1303,12 @@ Package rerunfilecheck Info: File `应用介绍.out' has not changed.
 (rerunfilecheck)             Checksum: 518599A35E60C9A859CE75E2304C40B4;6647.
  ) 
 Here is how much of TeX's memory you used:
- 16645 strings out of 473832
- 361098 string characters out of 5723978
+ 16644 strings out of 473832
+ 361018 string characters out of 5723978
  793104 words of memory out of 5000000
  39487 multiletter control sequences out of 15000+600000
  564776 words of font info for 87 fonts, out of 8000000 for 9000
  1348 hyphenation exceptions out of 8191
- 93i,8n,111p,339b,879s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 93i,8n,111p,343b,879s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
-Output written on ./build/应用介绍.pdf (19 pages).
+Output written on 应用介绍.pdf (19 pages).
