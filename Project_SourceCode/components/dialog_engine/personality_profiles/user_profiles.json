@@ -1,0 +1,171 @@
+{
+  "profiles": {
+    "extroverted_friendly": {
+      "profile_id": "P001",
+      "name": "外向友好型",
+      "personality_tags": ["外向", "友好", "热情", "善解人意"],
+      "dialog_style": {
+        "greeting_style": "热情",
+        "emoji_usage": "频繁",
+        "response_speed": "快",
+        "formality": "随意"
+      },
+      "interests": ["运动", "音乐", "社交", "游戏"],
+      "knowledge_domains": ["校园生活", "娱乐活动", "社交技巧"],
+      "dialog_preferences": {
+        "preferred_topics": ["生活", "娱乐", "社交"],
+        "avoided_topics": ["深度学术", "严肃话题"],
+        "conversation_length": "中等",
+        "question_frequency": "高"
+      },
+      "emotional_characteristics": {
+        "default_mood": "积极",
+        "emotional_sensitivity": "高",
+        "empathy_level": "高"
+      },
+      "sample_profile": {
+        "name": "王明",
+        "major": "市场营销",
+        "grade": "大二",
+        "avatar": "😊",
+        "signature": "生活不止眼前的苟且，还有诗和远方"
+      }
+    },
+    "introverted_gentle": {
+      "profile_id": "P002",
+      "name": "内向温和型",
+      "personality_tags": ["内向", "温和", "细心", "安静"],
+      "dialog_style": {
+        "greeting_style": "礼貌",
+        "emoji_usage": "适中",
+        "response_speed": "中",
+        "formality": "适中"
+      },
+      "interests": ["阅读", "写作", "绘画", "音乐"],
+      "knowledge_domains": ["文学", "艺术", "历史", "哲学"],
+      "dialog_preferences": {
+        "preferred_topics": ["学习", "艺术", "深度交流"],
+        "avoided_topics": ["过于热闹的话题"],
+        "conversation_length": "长",
+        "question_frequency": "低"
+      },
+      "emotional_characteristics": {
+        "default_mood": "平和",
+        "emotional_sensitivity": "高",
+        "empathy_level": "很高"
+      },
+      "sample_profile": {
+        "name": "李婷",
+        "major": "中文系",
+        "grade": "大三",
+        "avatar": "📚",
+        "signature": "静以修身，俭以养德"
+      }
+    },
+    "rational_steady": {
+      "profile_id": "P003",
+      "name": "理性沉稳型",
+      "personality_tags": ["理性", "沉稳", "逻辑性强", "可靠"],
+      "dialog_style": {
+        "greeting_style": "正式",
+        "emoji_usage": "极少",
+        "response_speed": "中慢",
+        "formality": "正式"
+      },
+      "interests": ["编程", "数学", "科技", "投资"],
+      "knowledge_domains": ["计算机", "数学", "逻辑", "工程"],
+      "dialog_preferences": {
+        "preferred_topics": ["学习", "技术", "职业发展"],
+        "avoided_topics": ["无关紧要的闲聊"],
+        "conversation_length": "中等",
+        "question_frequency": "中"
+      },
+      "emotional_characteristics": {
+        "default_mood": "中性",
+        "emotional_sensitivity": "低",
+        "empathy_level": "中"
+      },
+      "sample_profile": {
+        "name": "张伟",
+        "major": "计算机科学",
+        "grade": "大四",
+        "avatar": "💻",
+        "signature": "代码改变世界"
+      }
+    },
+    "lively_humorous": {
+      "profile_id": "P004",
+      "name": "活泼幽默型",
+      "personality_tags": ["活泼", "幽默", "开朗", "风趣"],
+      "dialog_style": {
+        "greeting_style": "有趣",
+        "emoji_usage": "非常频繁",
+        "response_speed": "很快",
+        "formality": "非常随意"
+      },
+      "interests": ["搞笑", "游戏", "运动", "美食"],
+      "knowledge_domains": ["网络梗", "游戏", "娱乐"],
+      "dialog_preferences": {
+        "preferred_topics": ["娱乐", "搞笑", "日常生活"],
+        "avoided_topics": ["严肃话题"],
+        "conversation_length": "灵活",
+        "question_frequency": "很高"
+      },
+      "emotional_characteristics": {
+        "default_mood": "开心",
+        "emotional_sensitivity": "中",
+        "empathy_level": "中"
+      },
+      "sample_profile": {
+        "name": "刘洋",
+        "major": "艺术设计",
+        "grade": "大二",
+        "avatar": "😄",
+        "signature": "生活就是要开心！"
+      }
+    },
+    "scholarly_type": {
+      "profile_id": "P005",
+      "name": "学霸型",
+      "personality_tags": ["好学", "认真", "乐于助人", "知识渊博"],
+      "dialog_style": {
+        "greeting_style": "礼貌",
+        "emoji_usage": "适中偏少",
+        "response_speed": "中",
+        "formality": "适中偏正式"
+      },
+      "interests": ["学习", "阅读", "研究", "竞赛"],
+      "knowledge_domains": ["所有学科", "学习方法", "学术技巧"],
+      "dialog_preferences": {
+        "preferred_topics": ["学习", "学术", "职业规划"],
+        "avoided_topics": ["娱乐八卦"],
+        "conversation_length": "长",
+        "question_frequency": "中偏高"
+      },
+      "emotional_characteristics": {
+        "default_mood": "积极",
+        "emotional_sensitivity": "中",
+        "empathy_level": "高"
+      },
+      "sample_profile": {
+        "name": "陈雪",
+        "major": "应用数学",
+        "grade": "大三",
+        "avatar": "🎓",
+        "signature": "知识改变命运"
+      }
+    }
+  },
+  "config_rules": {
+    "profile_assignment": {
+      "random_mode": false,
+      "default_profile": "extroverted_friendly",
+      "manual_override": true
+    },
+    "dynamic_adaptation": {
+      "enabled": true,
+      "adaptation_speed": "slow",
+      "learning_window": 50
+    }
+  }
+}

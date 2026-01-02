@@ -1,0 +1,94 @@
+{
+  "dialog_type": "homework_management",
+  "description": "作业管理对话场景",
+  "version": "3.0",
+  "trigger_keywords": [
+    "作业", "assignment", "task", "项目",
+    "截止", "due", "deadline", "最后期限",
+    "添加作业", "添加", "记录", "写作业", "做作业",
+    "查询作业", "查看作业", "作业查询", "有什么作业",
+    "交作业", "提交", "submit",
+    "作业截止", "什么时候交", "什么时候截止",
+    "高数作业", "数学作业", "英语作业", "作业本",
+    "习题", "练习", "实验报告", "论文", "报告",
+    "presentation", "展示", "演讲", "编程", "代码"
+  ],
+  "intents": {
+    "add_homework": {
+      "description": "添加作业记录",
+      "required_entities": ["homework_name", "due_date"],
+      "optional_entities": ["course_name", "note"],
+      "response_templates": [
+        "好的，我来帮你记录{course_name}作业。{homework_name}截止日期是{due_date}，需要我设置提醒吗？",
+        "收到！{course_name}作业已保存：{homework_name}，截止时间：{due_date}",
+        "✅ 已记录：{course_name} - {homework_name}，截止时间：{due_date}",
+        "了解！{homework_name}截止日期是{due_date}，我已经记下来了~",
+        "好的，已为你添加{course_name}作业：{homework_name}，需要在{due_date}前完成哦"
+      ],
+      "sample_dialogues": [
+        {
+          "user": "帮我记一下高数作业，后天截止",
+          "ai": "好的，请告诉我作业的具体内容是什么？",
+          "follow_up": "完成习题册第5章",
+          "ai_follow_up": "已经记录啦！高数作业（习题册第5章）截止日期是后天。需要我设置提醒吗？"
+        },
+        {
+          "user": "添加英语作文作业，本周五交",
+          "ai": "好的，英语作文作业已记录，截止时间是本周五。需要设置提醒吗？"
+        }
+      ]
+    },
+    "query_homework": {
+      "description": "查询作业",
+      "required_entities": [],
+      "optional_entities": ["course_name", "time_range"],
+      "response_templates": [
+        "正在查询{time_range}{course_name}的作业...",
+        "让我看看{time_range}{course_name}有什么作业要交...",
+        "📚 查询中：{course_name}{time_range}的作业安排",
+        "OK，我来帮你查查{time_range}{course_name}的作业情况"
+      ],
+      "sample_dialogues": [
+        {
+          "user": "我这周有什么作业？",
+          "ai": "你这周有以下作业：\n高数作业：习题册第5章，截止日期：明天\n计算机导论论文：3000字，截止日期：周五"
+        },
+        {
+          "user": "数学作业什么时候截止？",
+          "ai": "高数作业（习题册第5章）是后天截止。"
+        }
+      ]
+    }
+  },
+  "entity_examples": {
+    "homework_name": [
+      "完成习题册第5章",
+      "写3000字论文",
+      "做实验报告",
+      "编程作业",
+      "准备presentation",
+      "完成课程设计"
+    ],
+    "due_date": [
+      "明天",
+      "后天",
+      "本周五",
+      "下周一",
+      "3天后",
+      "12月25日",
+      "下周三前"
+    ],
+    "course_name": [
+      "高数", "数学", "微积分",
+      "英语", "大学英语", "大英",
+      "计算机", "编程", "数据结构",
+      "物理", "化学", "生物"
+    ],
+    "note": [
+      "注意格式要求",
+      "需要提交电子版",
+      "纸质版交到办公室",
+      "小组作业"
+    ]
+  }
+}

@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智能对话系统测试</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .test-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            padding: 30px;
+        }
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border-left: 4px solid #667eea;
+            background: #f8f9ff;
+            border-radius: 4px;
+        }
+        .test-result {
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            max-height: 300px;
+            overflow-y: auto;
+            background: #1a1a2e;
+            color: #00ff88;
+            padding: 15px;
+            border-radius: 4px;
+        }
+        .summary-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .score-display {
+            font-size: 48px;
+            font-weight: bold;
+        }
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: transform 0.2s;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .progress-bar {
+            height: 20px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.5s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="max-w-4xl mx-auto">
+        <div class="test-container">
+            <h1 class="text-3xl font-bold text-center mb-6 text-gray-800">
+                🧪 智能对话系统测试套件
+            </h1>
+            
+            <div class="text-center mb-6">
+                <button id="runTestsBtn" onclick="IntelligentDialogTests.runAllTests()">
+                    <i class="fas fa-play"></i> 运行所有测试
+                </button>
+                <button id="clearBtn" onclick="clearResults()" class="ml-4" style="background: #6c757d;">
+                    <i class="fas fa-trash"></i> 清空结果
+                </button>
+            </div>
+
+            <!-- 总体评分 -->
+            <div class="summary-card">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <div class="text-sm opacity-80">总体评分</div>
+                        <div class="score-display" id="overallScore">--%</div>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-sm opacity-80">通过率</div>
+                        <div class="text-2xl font-bold" id="overallProgress">0/0</div>
+                    </div>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressBar" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <!-- 测试结果 -->
+            <div class="test-section">
+                <h3 class="text-xl font-bold mb-4">📋 测试输出</h3>
+                <div class="test-result" id="testOutput">
+                    <div style="color: #888;">点击"运行所有测试"开始测试...</div>
+                </div>
+            </div>
+
+            <!-- 详细结果 -->
+            <div class="test-section">
+                <h3 class="text-xl font-bold mb-4">📊 详细测试结果</h3>
+                <div id="detailedResults">
+                    <div style="color: #888;">运行测试后显示详细结果...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 加载必要的脚本 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+    
+    <!-- 使用与主页面相同的完整EMBEDDED_DIALOG_DATA -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script>
+    window.EMBEDDED_DIALOG_DATA = {
+        greetings: {
+            dialog_type: "greetings",
+            description: "打招呼与寒暄场景对话",
+            version: "2.0",
+            trigger_keywords: ["你好", "嗨", "hello", "hi", "在吗", "早上好", "下午好", "晚上好", "哈喽", "嘿", "hey", "哈罗", "哈", "打招呼", "您好", "大家好", "早安", "午安", "晚安", "早上好呀", "下午好呀", "晚上好呀", "你好呀", "嗨呀", "hello呀", "嗨嗨", "来啦", "在这个", "来了", "在忙吗", "忙吗", "有空吗", "有时间吗", "在吗在吗", "在不在", "呼叫", "滴滴", "叮咚", "有人吗", "出来聊聊", "聊聊", "最近好吗", "最近怎么样", "怎么样", "还好吗", "还好吧", "好久不见", "好久没聊了", "好久没联系", "好久没见", "想你了", "找你", "想跟你说话", "想聊聊", "找你聊天", "聊聊天", "test", "测试", "test01", "测试01"],
+            response_templates: [
+                {personality: "外向友好", responses: ["嗨！{time_greeting}！你今天怎么样？", "哈喽！见到你真开心~"], usage_patterns: ["初次见面", "日常问候", "重新联系"]},
+                {personality: "内向温和", responses: ["{time_greeting}，你好呀👋", "嗯嗯，{time_greeting}！你还好吗？"], usage_patterns: ["礼貌问候", "熟人打招呼"]},
+                {personality: "理性沉稳", responses: ["{time_greeting}。有什么我可以帮助你的吗？", "你好{time_greeting}。今天有什么安排？"], usage_patterns: ["正式场合", "学业交流"]},
+                {personality: "活泼幽默", responses: ["嘿嘿！{time_greeting}！你又来啦！", "哇！{time_greeting}！今天心情怎么样？"], usage_patterns: ["轻松闲聊", "好朋友互动"]}
+            ],
+            context_requirements: {time_aware: true, relationship_level: ["陌生人", "熟人", "好友"], emotional_tone: ["友好", "中性", "热情"]}
+        },
+        study: {
+            dialog_type: "campus_study",
+            description: "学习相关对话场景",
+            version: "2.0",
+            trigger_keywords: ["学习", "考试", "复习", "作业", "课程", "上课", "成绩", "挂科", "及格", "科目", "专业", "高数", "数学", "英语", "语文", "物理", "化学", "生物", "计算机", "编程", "代码", "数据结构", "算法", "操作系统", "数据库", "网络", "软件工程", "Java", "Python", "C++", "JavaScript", "期末", "期中", "月考", "补考", "重修", "绩点", "GPA", "奖学金", "考研", "保研", "论文", "毕业论文", "答辩"],
+            response_templates: [
+                {personality: "学霸型", responses: ["我最近在复习{subject}，感觉{difficulty}部分比较难，你呢？", "这门课重点在{topic}，我整理了笔记要不要看？"], usage_patterns: ["学习交流", "知识分享"], study_style: "系统化学习", emotional_tone: "积极帮助"},
+                {personality: "普通型", responses: ["啊，又要考试了！我{subject}还完全没看，求学霸带飞😭", "感觉这门课太难了...特别是{topic}部分，完全听不懂"], usage_patterns: ["抱怨困难", "寻求帮助"], study_style: "被动学习", emotional_tone: "焦虑放松"},
+                {personality: "拖延型", responses: ["学习？什么学习？我只知道明天截止日期...😅", "复习？不存在的，考前突击才是王道！"], usage_patterns: ["自我调侃", "拖延情况"], study_style: "临时抱佛脚", emotional_tone: "自我调侃"}
+            ],
+            context_requirements: {exam_season: true, course_related: true, academic_pressure: ["低", "中", "高"]}
+        },
+        profiles: {
+            extroverted_friendly: {profile_id: "P001", name: "外向友好型", personality_tags: ["外向", "友好", "热情", "善解人意"], dialog_style: {greeting_style: "热情", emoji_usage: "频繁", response_speed: "快", formality: "随意"}},
+            introverted_gentle: {profile_id: "P002", name: "内向温和型", personality_tags: ["内向", "温和", "细心", "安静"], dialog_style: {greeting_style: "礼貌", emoji_usage: "适中", response_speed: "中", formality: "适中"}},
+            rational_steady: {profile_id: "P003", name: "理性沉稳型", personality_tags: ["理性", "沉稳", "逻辑性强", "可靠"], dialog_style: {greeting_style: "正式", emoji_usage: "极少", response_speed: "中慢", formality: "正式"}},
+            lively_humorous: {profile_id: "P004", name: "活泼幽默型", personality_tags: ["活泼", "幽默", "开朗", "风趣"], dialog_style: {greeting_style: "有趣", emoji_usage: "非常频繁", response_speed: "很快", formality: "非常随意"}},
+            scholarly_type: {profile_id: "P005", name: "学霸型", personality_tags: ["好学", "认真", "乐于助人", "知识渊博"], dialog_style: {greeting_style: "礼貌", emoji_usage: "适中偏少", response_speed: "中", formality: "适中偏正式"}}
+        },
+        homework_management: {
+            dialog_type: "homework_management",
+            description: "作业管理对话场景",
+            version: "3.0",
+            trigger_keywords: ["作业", "assignment", "task", "项目", "截止", "due", "deadline", "最后期限", "交作业", "提交", "submit", "作业截止", "什么时候交", "什么时候截止", "高数作业", "数学作业", "英语作业", "作业本", "习题", "练习", "实验报告", "论文", "报告", "presentation", "展示", "演讲", "编程", "代码"],
+            intents: {
+                add_homework: {description: "添加作业记录", required_entities: ["homework_name", "due_date"], optional_entities: ["course_name", "note"], response_templates: ["好的，我来帮你记录{course_name}作业。{homework_name}截止日期是{due_date}，需要我设置提醒吗？", "收到！{course_name}作业已保存：{homework_name}，截止时间：{due_date}", "✅ 已记录：{course_name} - {homework_name}，截止时间：{due_date}"]},
+                query_homework: {description: "查询作业", required_entities: [], optional_entities: ["course_name", "time_range"], response_templates: ["正在查询{time_range}{course_name}的作业...", "让我看看{time_range}{course_name}有什么作业要交...", "📚 查询中：{course_name}{time_range}的作业安排"]}
+            }
+        },
+        // 为add_homework意图创建专用触发词
+        add_homework: {
+            dialog_type: "homework_management",
+            description: "添加作业",
+            version: "3.0",
+            trigger_keywords: ["添加作业", "添加", "记录", "写作业", "做作业", "交作业", "提交", "提交作业", "新作业"],
+            intents: {
+                add_homework: {description: "添加作业记录", required_entities: ["homework_name", "due_date"], optional_entities: ["course_name", "note"], response_templates: ["好的，我来帮你记录{course_name}作业。{homework_name}截止日期是{due_date}，需要我设置提醒吗？", "收到！{course_name}作业已保存：{homework_name}，截止时间：{due_date}", "✅ 已记录：{course_name} - {homework_name}，截止时间：{due_date}"]}
+            }
+        },
+        // 为query_homework意图创建专用触发词
+        query_homework: {
+            dialog_type: "homework_management",
+            description: "查询作业",
+            version: "3.0",
+            trigger_keywords: ["查询作业", "查看作业", "作业查询", "有什么作业", "作业列表", "看看作业"],
+            intents: {
+                query_homework: {description: "查询作业", required_entities: [], optional_entities: ["course_name", "time_range"], response_templates: ["正在查询{time_range}{course_name}的作业...", "让我看看{time_range}{course_name}有什么作业要交...", "📚 查询中：{course_name}{time_range}的作业安排"]}
+            }
+        },
+        course_query: {
+            dialog_type: "course_query",
+            description: "课程查询对话场景",
+            version: "3.0",
+            trigger_keywords: ["课程", "上课", "课程信息", "课程详情", "课程介绍", "选课", "退课", "换课", "补课", "调课", "停课", "课程通知", "什么课", "有课吗", "第几节课", "几节课", "几点上课", "在哪里上课"],
+            intents: {
+                ask_schedule: {description: "询问课程表", required_entities: [], optional_entities: ["time_range", "course_name"], response_templates: ["正在查询{time_range}的课程安排...", "📅 让我看看{time_range}有什么课...", "好的，查询{time_range}的课表...", "查询中...{time_range}的课程安排"]},
+                query_course: {description: "查询课程信息", required_entities: [], optional_entities: ["course_name", "location"], response_templates: ["正在查询{course_name}的信息...", "让我查找{course_name}的相关信息...", "🔍 正在搜索{course_name}..."]}
+            }
+        },
+        // 为ask_schedule意图创建专用触发词
+        ask_schedule: {
+            dialog_type: "course_query",
+            description: "询问课程表",
+            version: "3.0",
+            trigger_keywords: ["课程", "课表", "上课", "课程表", "时间表", "今天课", "明天课", "本周课", "下周课", "课程安排", "上课时间", "上课地点", "教室", "教学楼", "理科楼", "文科楼", "工科楼"],
+            intents: {
+                ask_schedule: {description: "询问课程表", required_entities: [], optional_entities: ["time_range", "course_name"], response_templates: ["正在查询{time_range}的课程安排...", "📅 让我看看{time_range}有什么课...", "好的，查询{time_range}的课表...", "查询中...{time_range}的课程安排"]}
+            }
+        },
+        // 为query_course意图创建专用触发词
+        query_course: {
+            dialog_type: "course_query",
+            description: "查询课程信息",
+            version: "3.0",
+            trigger_keywords: ["查询课程", "查看课程", "课程信息", "课程详情", "课程介绍"],
+            intents: {
+                query_course: {description: "查询课程信息", required_entities: [], optional_entities: ["course_name", "location"], response_templates: ["正在查询{course_name}的信息...", "让我查找{course_name}的相关信息...", "🔍 正在搜索{course_name}..."]}
+            }
+        },
+        reminder: {
+            dialog_type: "reminder",
+            description: "提醒设置对话场景",
+            version: "3.0",
+            trigger_keywords: ["提醒", "remind", "reminder", "alarm", "时间", "deadline", "截止", "别忘了", "记得提醒", "记得做", "提前通知", "提前告知", "考前提醒"],
+            intents: {
+                set_reminder: {description: "设置提醒", required_entities: ["reminder_time"], optional_entities: ["homework_name", "course_name"], response_templates: ["好的，已设置提醒：{homework_name}将在{reminder_time}提醒你", "✅ 提醒已设置！{homework_name} - {reminder_time}", "没问题，我会提前{reminder_time}提醒你{homework_name}的截止"]}
+            }
+        },
+        // 为set_reminder意图创建专用触发词
+        set_reminder: {
+            dialog_type: "reminder",
+            description: "设置提醒",
+            version: "3.0",
+            trigger_keywords: ["提醒", "设置提醒", "添加提醒", "创建提醒", "提前提醒", "提醒我", "别忘了提醒", "时间提醒", "作业提醒", "课程提醒", "闹钟"],
+            intents: {
+                set_reminder: {description: "设置提醒", required_entities: ["reminder_time"], optional_entities: ["homework_name", "course_name"], response_templates: ["好的，已设置提醒：{homework_name}将在{reminder_time}提醒你", "✅ 提醒已设置！{homework_name} - {reminder_time}", "没问题，我会提前{reminder_time}提醒你{homework_name}的截止"]}
+            }
+        },
+        campus_life: {
+            dialog_type: "campus_life",
+            description: "校园生活服务对话场景",
+            version: "3.0",
+            trigger_keywords: ["打印", "复印", "打印店", "文印"],
+            intents: {
+                ask_canteen: {description: "询问食堂菜单", required_entities: [], optional_entities: ["location"], response_templates: ["正在查询{location}的今日菜单...", "🍽 今日{location}推荐菜品：", "好的，让我看看{location}今天有什么好吃的..."]},
+                ask_library: {description: "查询图书馆信息", required_entities: [], optional_entities: ["location"], response_templates: ["正在查询图书馆信息...", "📚 图书馆信息：", "好的，图书馆相关信息如下："]},
+                ask_shuttle: {description: "查询校车时刻", required_entities: [], optional_entities: ["location"], response_templates: ["正在查询校车时刻表...", "🚌 校车时刻表：", "好的，校车时刻安排如下："]},
+                ask_express: {description: "查询快递信息", required_entities: [], optional_entities: ["location"], response_templates: ["正在查询快递站点信息...", "📦 快递站点信息：", "好的，快递相关信息如下："]},
+                ask_facility: {description: "查询场馆设施", required_entities: [], optional_entities: ["activity_type"], response_templates: ["正在查询场馆信息...", "🏟️ 场馆开放信息：", "好的，场馆相关信息如下："]}
+            }
+        },
+        // 为ask_canteen意图创建专用触发词
+        ask_canteen: {
+            dialog_type: "campus_life",
+            description: "询问食堂菜单",
+            version: "3.0",
+            trigger_keywords: ["食堂", "餐厅", "吃饭", "用餐", "菜单", "菜谱", "今天吃什么", "有什么菜", "推荐菜", "一食堂", "二食堂", "三食堂"],
+            intents: {
+                ask_canteen: {description: "询问食堂菜单", required_entities: [], optional_entities: ["location"], response_templates: ["正在查询{location}的今日菜单...", "🍽 今日{location}推荐菜品：", "好的，让我看看{location}今天有什么好吃的..."]}
+            }
+        },
+        // 为ask_library意图创建专用触发词
+        ask_library: {
+            dialog_type: "campus_life",
+            description: "查询图书馆信息",
+            version: "3.0",
+            trigger_keywords: ["图书馆", "自习", "座位", "开放时间", "借书"],
+            intents: {
+                ask_library: {description: "查询图书馆信息", required_entities: [], optional_entities: ["location"], response_templates: ["正在查询图书馆信息...", "📚 图书馆信息：", "好的，图书馆相关信息如下："]}
+            }
+        },
+        // 为ask_shuttle意图创建专用触发词
+        ask_shuttle: {
+            dialog_type: "campus_life",
+            description: "查询校车时刻",
+            version: "3.0",
+            trigger_keywords: ["校车", "班车", "交通", "时刻表", "发车"],
+            intents: {
+                ask_shuttle: {description: "查询校车时刻", required_entities: [], optional_entities: ["location"], response_templates: ["正在查询校车时刻表...", "🚌 校车时刻表：", "好的，校车时刻安排如下："]}
+            }
+        },
+        // 为ask_express意图创建专用触发词
+        ask_express: {
+            dialog_type: "campus_life",
+            description: "查询快递信息",
+            version: "3.0",
+            trigger_keywords: ["快递", "取件", "菜鸟驿站", "快递站", "包裹", "快递点"],
+            intents: {
+                ask_express: {description: "查询快递信息", required_entities: [], optional_entities: ["location"], response_templates: ["正在查询快递站点信息...", "📦 快递站点信息：", "好的，快递相关信息如下："]}
+            }
+        },
+        // 为ask_facility意图创建专用触发词
+        ask_facility: {
+            dialog_type: "campus_life",
+            description: "查询场馆设施",
+            version: "3.0",
+            trigger_keywords: ["体育馆", "运动", "健身房", "游泳馆", "球场", "场地", "场馆"],
+            intents: {
+                ask_facility: {description: "查询场馆设施", required_entities: [], optional_entities: ["activity_type"], response_templates: ["正在查询场馆信息...", "🏟️ 场馆开放信息：", "好的，场馆相关信息如下："]}
+            }
+        }
+    };
+    </script>
+
+    <!-- 模拟Utils工具 -->
+    <script>
+    const Utils = {
+        Storage: {
+            get: (key, defaultValue) => defaultValue,
+            set: (key, value) => {}
+        }
+    };
+    </script>
+
+    <!-- 加载测试脚本 -->
+    <script src="components/dialog_engine/entity_extractor.js"></script>
+    <script src="components/dialog_engine/dialog_state_machine.js"></script>
+    <script src="components/dialog_engine/response_generator.js"></script>
+    <script src="components/dialog_engine/dialog_engine.js"></script>
+    <script src="components/dialog_engine/intelligent_dialog_tests.js"></script>
+
+    <script>
+        // 修改测试运行器以显示结果
+        const originalGenerateTestReport = IntelligentDialogTests.generateTestReport;
+        
+        IntelligentDialogTests.generateTestReport = function(results) {
+            const report = originalGenerateTestReport.call(this, results);
+            displayResults(report);
+            return report;
+        };
+
+        function displayResults(report) {
+            // 更新总体评分
+            document.getElementById('overallScore').textContent = report.overall.score + '%';
+            document.getElementById('overallProgress').textContent = `${report.overall.passed}/${report.overall.total}`;
+            document.getElementById('progressBar').style.width = report.overall.score + '%';
+            
+            // 根据分数设置颜色
+            const progressBar = document.getElementById('progressBar');
+            if (report.overall.score >= 80) {
+                progressBar.style.background = 'linear-gradient(90deg, #10b981 0%, #059669 100%)';
+            } else if (report.overall.score >= 60) {
+                progressBar.style.background = 'linear-gradient(90deg, #f59e0b 0%, #d97706 100%)';
+            } else {
+                progressBar.style.background = 'linear-gradient(90deg, #ef4444 0%, #dc2626 100%)';
+            }
+
+            // 显示详细结果
+            const detailedResults = document.getElementById('detailedResults');
+            let html = `
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="bg-white p-4 rounded-lg shadow">
+                        <h4 class="font-bold mb-2">🏷️ 实体抽取</h4>
+                        <div class="text-2xl font-bold ${report.entityExtraction.score >= 80 ? 'text-green-600' : report.entityExtraction.score >= 60 ? 'text-yellow-600' : 'text-red-600'}">
+                            ${report.entityExtraction.score}%
+                        </div>
+                        <div class="text-sm text-gray-600">${report.entityExtraction.passed}/${report.entityExtraction.total} 通过</div>
+                    </div>
+                    <div class="bg-white p-4 rounded-lg shadow">
+                        <h4 class="font-bold mb-2">🎯 意图识别</h4>
+                        <div class="text-2xl font-bold ${report.intentRecognition.score >= 80 ? 'text-green-600' : report.intentRecognition.score >= 60 ? 'text-yellow-600' : 'text-red-600'}">
+                            ${report.intentRecognition.score}%
+                        </div>
+                        <div class="text-sm text-gray-600">${report.intentRecognition.passed}/${report.intentRecognition.total} 通过</div>
+                    </div>
+                    <div class="bg-white p-4 rounded-lg shadow">
+                        <h4 class="font-bold mb-2">💬 多轮对话</h4>
+                        <div class="text-2xl font-bold ${report.multiTurnDialog.score >= 80 ? 'text-green-600' : report.multiTurnDialog.score >= 60 ? 'text-yellow-600' : 'text-red-600'}">
+                            ${report.multiTurnDialog.score}%
+                        </div>
+                        <div class="text-sm text-gray-600">${report.multiTurnDialog.passed}/${report.multiTurnDialog.total} 通过</div>
+                    </div>
+                    <div class="bg-white p-4 rounded-lg shadow">
+                        <h4 class="font-bold mb-2">⚡ 性能测试</h4>
+                        <div class="text-2xl font-bold ${report.performance.score >= 80 ? 'text-green-600' : report.performance.score >= 60 ? 'text-yellow-600' : 'text-red-600'}">
+                            ${report.performance.score}%
+                        </div>
+                        <div class="text-sm text-gray-600">平均 ${report.performance.avgTime}ms</div>
+                    </div>
+                </div>
+            `;
+            
+            detailedResults.innerHTML = html;
+        }
+
+        function clearResults() {
+            document.getElementById('testOutput').innerHTML = '<div style="color: #888;">点击"运行所有测试"开始测试...</div>';
+            document.getElementById('detailedResults').innerHTML = '<div style="color: #888;">运行测试后显示详细结果...</div>';
+            document.getElementById('overallScore').textContent = '--%';
+            document.getElementById('overallProgress').textContent = '0/0';
+            document.getElementById('progressBar').style.width = '0%';
+            document.getElementById('progressBar').style.background = 'linear-gradient(90deg, #667eea 0%, #764ba2 100%)';
+        }
+
+        // 重定向console.log到页面
+        const originalConsoleLog = console.log;
+        console.log = function(...args) {
+            originalConsoleLog.apply(console, args);
+            
+            const output = document.getElementById('testOutput');
+            const text = args.map(arg => 
+                typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
+            ).join(' ');
+            
+            // 添加颜色
+            let coloredText = text;
+            if (text.includes('✅')) {
+                coloredText = `<span style="color: #00ff88;">${text}</span>`;
+            } else if (text.includes('❌')) {
+                coloredText = `<span style="color: #ff6b6b;">${text}</span>`;
+            } else if (text.includes('⚠️')) {
+                coloredText = `<span style="color: #ffd93d;">${text}</span>`;
+            } else if (text.includes('📋') || text.includes('🎯') || text.includes('💬') || text.includes('⚠️') || text.includes('⚡')) {
+                coloredText = `<span style="color: #667eea; font-weight: bold;">${text}</span>`;
+            }
+            
+            output.innerHTML += coloredText + '\n';
+            output.scrollTop = output.scrollHeight;
+        };
+
+        const originalConsoleError = console.error;
+        console.error = function(...args) {
+            originalConsoleError.apply(console, args);
+            const output = document.getElementById('testOutput');
+            const text = args.map(arg => 
+                typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
+            ).join(' ');
+            output.innerHTML += `<span style="color: #ff6b6b;">${text}</span>\n`;
+            output.scrollTop = output.scrollHeight;
+        };
+    </script>
+</body>
+</html>

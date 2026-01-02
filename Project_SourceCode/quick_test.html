@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>快速测试 - 对话系统</title>
+    <style>
+        body {
+            font-family: 'Microsoft YaHei', sans-serif;
+            background: #f0f0f0;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .test-section {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .test-item {
+            padding: 10px;
+            margin: 10px 0;
+            border-left: 3px solid #ddd;
+            background: #f9f9f9;
+        }
+        .test-item.pass {
+            border-left-color: #10b981;
+            background: #d1fae5;
+        }
+        .test-item.fail {
+            border-left-color: #ef4444;
+            background: #fee2e2;
+        }
+        .btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-right: 10px;
+        }
+        .btn:hover {
+            background: #5568d3;
+        }
+        #output {
+            font-family: monospace;
+            font-size: 13px;
+            background: #1a1a2e;
+            color: #00ff88;
+            padding: 15px;
+            border-radius: 4px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 智能对话系统快速测试</h1>
+    
+    <div class="test-section">
+        <h2>测试控制</h2>
+        <button class="btn" onclick="runQuickTests()">运行快速测试</button>
+        <button class="btn" onclick="runEntityTests()">测试实体抽取</button>
+        <button class="btn" onclick="runIntentTests()">测试意图识别</button>
+        <button class="btn" onclick="clearOutput()" style="background: #6c757d;">清空</button>
+    </div>
+
+    <div class="test-section">
+        <h2>输出</h2>
+        <div id="output">点击按钮开始测试...</div>
+    </div>
+
+    <!-- 加载对话数据 -->
+    <script>
+    window.EMBEDDED_DIALOG_DATA = {
+        greetings: {
+            dialog_type: "greetings",
+            description: "打招呼与寒暄场景对话",
+            version: "2.0",
+            trigger_keywords: ["你好", "嗨", "hello", "hi", "在吗", "早上好", "下午好", "晚上好", "哈喽", "嘿", "hey"],
+            response_templates: [
+                {personality: "外向友好", responses: ["嗨！{time_greeting}！你今天怎么样？", "哈喽！见到你真开心~"]},
+                {personality: "内向温和", responses: ["{time_greeting}，你好呀👋", "嗯嗯，{time_greeting}！你还好吗？"]},
+                {personality: "理性沉稳", responses: ["{time_greeting}。有什么我可以帮助你的吗？", "你好{time_greeting}。今天有什么安排？"]}
+            ]
+        },
+        profiles: {
+            extroverted_friendly: {profile_id: "P001", name: "外向友好型", personality_tags: ["外向", "友好"], dialog_style: {greeting_style: "热情", emoji_usage: "频繁"}},
+            introverted_gentle: {profile_id: "P002", name: "内向温和型", personality_tags: ["内向", "温和"], dialog_style: {greeting_style: "礼貌", emoji_usage: "适中"}},
+            rational_steady: {profile_id: "P003", name: "理性沉稳型", personality_tags: ["理性", "沉稳"], dialog_style: {greeting_style: "正式", emoji_usage: "极少"}}
+        },
+        homework_management: {
+            dialog_type: "homework_management",
+            version: "3.0",
+            trigger_keywords: ["作业", "assignment", "task", "截止", "due", "添加作业", "查询作业", "交作业"],
+            intents: {
+                add_homework: {description: "添加作业记录", required_entities: ["homework_name", "due_date"], optional_entities: ["course_name", "note"], response_templates: ["好的，我来帮你记录{course_name}作业。{homework_name}截止日期是{due_date}，需要我设置提醒吗？", "收到！{course_name}作业已保存：{homework_name}，截止时间：{due_date}", "✅ 已记录：{course_name} - {homework_name}，截止时间：{due_date}"]},
+                query_homework: {description: "查询作业", required_entities: [], optional_entities: ["course_name", "time_range"], response_templates: ["正在查询{time_range}{course_name}的作业...", "让我看看{time_range}{course_name}有什么作业要交...", "📚 查询中：{course_name}{time_range}的作业安排"]}
+            }
+        },
+        course_query: {
+            dialog_type: "course_query",
+            version: "3.0",
+            trigger_keywords: ["课程", "课表", "上课", "今天课", "明天课", "本周课"],
+            intents: {
+                ask_schedule: {description: "询问课程表", required_entities: [], optional_entities: ["time_range", "course_name"], response_templates: ["正在查询{time_range}的课程安排...", "📅 让我看看{time_range}有什么课...", "好的，查询{time_range}的课表..."]},
+                query_course: {description: "查询课程信息", required_entities: [], optional_entities: ["course_name", "location"], response_templates: ["正在查询{course_name}的信息...", "让我查找{course_name}的相关信息...", "🔍 正在搜索{course_name}..."]}
+            }
+        },
+        reminder: {
+            dialog_type: "reminder",
+            version: "3.0",
+            trigger_keywords: ["提醒", "remind", "reminder", "设置提醒"],
+            intents: {
+                set_reminder: {description: "设置提醒", required_entities: ["reminder_time"], optional_entities: ["homework_name", "course_name"], response_templates: ["好的，已设置提醒：{homework_name}将在{reminder_time}提醒你", "✅ 提醒已设置！{homework_name} - {reminder_time}"]}
+            }
+        },
+        campus_life: {
+            dialog_type: "campus_life",
+            version: "3.0",
+            trigger_keywords: ["食堂", "图书馆", "校车", "快递", "体育馆"],
+            intents: {
+                ask_canteen: {description: "询问食堂菜单", required_entities: [], optional_entities: ["location"], response_templates: ["正在查询{location}的今日菜单...", "🍽 今日{location}推荐菜品："]},
+                ask_library: {description: "查询图书馆信息", required_entities: [], optional_entities: ["location"], response_templates: ["正在查询图书馆信息...", "📚 图书馆信息："]},
+                ask_shuttle: {description: "查询校车时刻", required_entities: [], optional_entities: ["location"], response_templates: ["正在查询校车时刻表...", "🚌 校车时刻表："]},
+                ask_express: {description: "查询快递信息", required_entities: [], optional_entities: ["location"], response_templates: ["正在查询快递站点信息...", "📦 快递站点信息："]},
+                ask_facility: {description: "查询场馆设施", required_entities: [], optional_entities: ["activity_type"], response_templates: ["正在查询场馆信息...", "🏟️ 场馆开放信息："]}
+            }
+        },
+        thanks: {
+            dialog_type: "thanks",
+            trigger_keywords: ["谢谢", "感谢", "多谢", "thank", "thanks"],
+            response_templates: ["不客气！还有什么需要帮助的吗？", "没问题~ 随时为你效劳！"]
+        },
+        goodbye: {
+            dialog_type: "goodbye",
+            trigger_keywords: ["再见", "拜拜", "bye", "goodbye"],
+            response_templates: ["再见！下次见~", "拜拜！祝你有美好的一天！"]
+        }
+    };
+
+    const Utils = {
+        Storage: {get: (k,d)=>d, set: (k,v)=>{}}
+    };
+    </script>
+
+    <!-- 加载测试模块 -->
+    <script src="components/dialog_engine/entity_extractor.js"></script>
+    <script src="components/dialog_engine/dialog_state_machine.js"></script>
+    <script src="components/dialog_engine/response_generator.js"></script>
+    <script src="components/dialog_engine/dialog_engine.js"></script>
+
+    <script>
+        let testResults = [];
+
+        function log(message) {
+            const output = document.getElementById('output');
+            output.innerHTML += message + '\n';
+            output.scrollTop = output.scrollHeight;
+        }
+
+        function clearOutput() {
+            document.getElementById('output').innerHTML = '';
+            testResults = [];
+        }
+
+        async function runQuickTests() {
+            clearOutput();
+            log('<span style="color: #667eea; font-weight: bold;">=== 开始快速测试 ===</span>');
+            
+            log('\n📊 测试1：实体抽取');
+            const entityTests = [
+                {input: '帮我记一下高数作业，后天截止', expected: {course_name: '高等数学', due_date: '后天'}},
+                {input: '添加英语作文作业，本周五交', expected: {course_name: '英语', due_date: '本周五'}},
+                {input: '查询我这周的作业', expected: {time_range: '本周'}}
+            ];
+            
+            let passed = 0;
+            for (const test of entityTests) {
+                const entities = EntityExtractor.extract(test.input);
+                const entityPass = checkEntities(entities, test.expected);
+                if (entityPass) {
+                    passed++;
+                    log('✅ <span style="color: #10b981;">通过</span>: ' + test.input);
+                } else {
+                    log('❌ <span style="color: #ef4444;">失败</span>: ' + test.input);
+                    log('   期望: ' + JSON.stringify(test.expected));
+                    log('   实际: ' + JSON.stringify(entities));
+                }
+            }
+            log(`\n实体抽取: ${passed}/${entityTests.length} 通过 (${Math.round(passed/entityTests.length*100)}%)`);
+
+            log('\n🎯 测试2：意图识别');
+            await DialogEngine.init();
+            
+            const intentTests = [
+                {input: '添加作业', expected: 'add_homework'},
+                {input: '查询作业', expected: 'query_homework'},
+                {input: '设置提醒', expected: 'set_reminder'},
+                {input: '今天有什么课', expected: 'ask_schedule'},
+                {input: '二食堂有什么菜', expected: 'ask_canteen'},
+                {input: '图书馆什么时候开门', expected: 'ask_library'},
+                {input: '校车几点发车', expected: 'ask_shuttle'},
+                {input: '快递站在哪里', expected: 'ask_express'},
+                {input: '体育馆开放时间', expected: 'ask_facility'},
+                {input: '你好', expected: 'greetings'},
+                {input: '谢谢', expected: 'thanks'},
+                {input: '再见', expected: 'goodbye'}
+            ];
+            
+            let intentPassed = 0;
+            for (const test of intentTests) {
+                const intent = DialogEngine.recognizeIntent(test.input);
+                if (intent === test.expected || intent.includes(test.expected)) {
+                    intentPassed++;
+                    log('✅ <span style="color: #10b981;">通过</span>: ' + test.input + ' -> ' + intent);
+                } else {
+                    log('❌ <span style="color: #ef4444;">失败</span>: ' + test.input);
+                    log('   期望: ' + test.expected);
+                    log('   实际: ' + intent);
+                }
+            }
+            log(`\n意图识别: ${intentPassed}/${intentTests.length} 通过 (${Math.round(intentPassed/intentTests.length*100)}%)`);
+
+            log('\n🤖 测试3：响应生成');
+            const responseTests = [
+                {
+                    input: '添加高数作业，周五截止',
+                    expectedContains: ['高数', '周五', '作业']
+                },
+                {
+                    input: '查询本周作业',
+                    expectedContains: ['查询', '本周']
+                },
+                {
+                    input: '你好',
+                    expectedContains: []
+                }
+            ];
+            
+            let responsePassed = 0;
+            for (const test of responseTests) {
+                try {
+                    const response = await DialogEngine.generateResponse(test.input);
+                    const allMatch = test.expectedContains.length === 0 || 
+                                   test.expectedContains.every(text => response.text.includes(text));
+                    
+                    if (allMatch) {
+                        responsePassed++;
+                        log('✅ <span style="color: #10b981;">通过</span>: ' + test.input);
+                    } else {
+                        log('❌ <span style="color: #ef4444;">失败</span>: ' + test.input);
+                        log('   期望包含: ' + test.expectedContains.join(', '));
+                        log('   实际响应: ' + response.text);
+                    }
+                } catch (error) {
+                    log('❌ <span style="color: #ef4444;">错误</span>: ' + test.input);
+                    log('   错误: ' + error.message);
+                }
+            }
+            log(`\n响应生成: ${responsePassed}/${responseTests.length} 通过 (${Math.round(responsePassed/responseTests.length*100)}%)`);
+
+            const totalPassed = passed + intentPassed + responsePassed;
+            const totalTests = entityTests.length + intentTests.length + responseTests.length;
+            const overall = Math.round((totalPassed / totalTests) * 100);
+            
+            log('\n' + '='.repeat(50));
+            log(`<span style="color: #667eea; font-weight: bold; font-size: 18px;">总体评分: ${totalPassed}/${totalTests} (${overall}%)</span>`);
+            log('='.repeat(50));
+        }
+
+        function checkEntities(actual, expected) {
+            let matchCount = 0;
+            const totalExpected = Object.keys(expected).length;
+            
+            for (const [key, value] of Object.entries(expected)) {
+                if (actual[key] && actual[key].includes(value)) {
+                    matchCount++;
+                }
+            }
+            
+            return matchCount >= Math.ceil(totalExpected * 0.5);
+        }
+
+        async function runEntityTests() {
+            clearOutput();
+            log('<span style="color: #667eea; font-weight: bold;">=== 实体抽取测试 ===</span>\n');
+            
+            const tests = [
+                '帮我记一下高数作业，后天截止',
+                '添加英语作文作业，本周五交',
+                '查询我这周的作业',
+                '设置提醒，提前1天',
+                '明天上午9点提醒'
+            ];
+            
+            for (const input of tests) {
+                const entities = EntityExtractor.extract(input);
+                log('输入: ' + input);
+                log('实体: ' + JSON.stringify(entities, null, 2));
+                log('');
+            }
+        }
+
+        async function runIntentTests() {
+            clearOutput();
+            await DialogEngine.init();
+            log('<span style="color: #667eea; font-weight: bold;">=== 意图识别测试 ===</span>\n');
+            
+            const tests = [
+                '添加作业',
+                '查询作业',
+                '设置提醒',
+                '今天有什么课',
+                '二食堂有什么菜',
+                '图书馆什么时候开门',
+                '校车几点发车',
+                '快递站在哪里',
+                '体育馆开放时间',
+                '你好',
+                '谢谢',
+                '再见'
+            ];
+            
+            for (const input of tests) {
+                const intent = DialogEngine.recognizeIntent(input);
+                log('输入: ' + input);
+                log('意图: ' + intent);
+                log('');
+            }
+        }
+    </script>
+</body>
+</html>

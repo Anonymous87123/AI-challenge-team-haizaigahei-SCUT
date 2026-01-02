@@ -19,7 +19,13 @@ const ChatModule = {
     /**
      * 初始化聊天模块
      */
-    init() {
+    async init() {
+        // 先初始化对话引擎
+        if (typeof DialogEngine !== 'undefined') {
+            await DialogEngine.init();
+            console.log('✅ 智能对话引擎已加载');
+        }
+        
         this.bindEvents();
         this.loadHistory();
         this.updateCountdown();
@@ -411,7 +417,40 @@ const ChatModule = {
      * 生成AI响应
      * @param {string} userMessage - 用户消息
      */
-    generateAIResponse(userMessage) {
+    async generateAIResponse(userMessage) {
+        // 优先检查校园服务查询（保持原有功能）
+        const serviceIntent = this.checkServiceIntent(userMessage);
+        if (serviceIntent) {
+            await this.handleServiceQuery(serviceIntent, userMessage);
+            return;
+        }
+        
+        // 如果没有匹配到校园服务，使用智能对话引擎
+        if (typeof DialogEngine !== 'undefined') {
+            try {
+                const dialogResponse = await DialogEngine.generateResponse(userMessage);
+                
+                // 添加AI回复到上下文
+                this.state.conversationContext.push({
+                    type: 'ai',
+                    content: dialogResponse.text,
+                    timestamp: Date.now()
+                });
+                
+                // 限制上下文长度
+                if (this.state.conversationContext.length > this.state.maxContextLength) {
+                    this.state.conversationContext = this.state.conversationContext.slice(-8);
+                }
+                
+                this.addMessage('ai', dialogResponse.text);
+                return;
+            } catch (error) {
+                console.error('对话引擎错误:', error);
+                // 降级到原有逻辑
+            }
+        }
+        
+        // 降级处理：使用原有的规则系统
         const intent = this.recognizeIntent(userMessage);
         const context = this.understandContext(userMessage, intent);
         
@@ -427,6 +466,186 @@ const ChatModule = {
                 break;
                 
             // 场馆意图处理（直接返回场馆信息）
+            case 'gymnasium':
+            case 'swimming_pool':
+            case 'fitness_center':
+            case 'tennis_court':
+            case 'badminton_court':
+            case 'basketball_court':
+            case 'table_tennis':
+            case 'yoga_studio':
+                response = this.handleVenueQuery(context);
+                break;
+                
+            case 'canteen':
+            case 'canteen_menu':
+                response = this.handleCanteenQuery(context);
+                break;
+                
+            case 'library':
+            case 'library_hours':
+                response = this.handleLibraryQuery(context);
+                break;
+                
+            case 'shuttle':
+            case 'shuttle_schedule':
+                response = `## 🚌 校车时刻表详情\n\n${this.generateDetailedSchedule()}`;
+                if (typeof campusData !== 'undefined' && campusData.shuttle) {
+                    extraData = { type: 'shuttle', data: campusData.shuttle.routes };
+                }
+                break;
+                
+            case 'express':
+            case 'express_location':
+                response = this.handleExpressQuery();
+                if (typeof campusData !== 'undefined' && campusData.express) {
+                    extraData = { type: 'express', data: campusData.express.points };
+                }
+                break;
+                
+            case 'homework':
+                response = this.handleHomeworkQuery();
+                break;
+                
+            case 'classroom':
+                const classroomInfo = this.handleClassroomQuery();
+                response = classroomInfo.text;
+                extraData = classroomInfo.extraData;
+                break;
+                
+            case 'borrowing_process':
+                response = `## 📖 借书流程\n\n${(typeof campusData !== 'undefined' && campusData.campus_services?.library?.borrowing_process || []).map((step, index) => `${index + 1}. ${step}`).join('\n\n')}\n\n**注意事项**：\n• 请爱护书籍，不得涂画\n• 按期归还，逾期每天罚款0.5元\n• 书籍遗失需照价赔偿`;
+                break;
+                
+            case 'gym_hours':
+                response = this.handleVenueQuery('gymnasium');
+                break;
+                
+            case 'swimming_pool_hours':
+                response = this.handleVenueQuery('swimming_pool');
+                break;
+                
+            case 'fitness_center_hours':
+                response = this.handleVenueQuery('fitness_center');
+                break;
+                
+            case 'tennis_court_hours':
+                response = this.handleVenueQuery('tennis_court');
+                break;
+                
+            case 'badminton_court_hours':
+                response = this.handleVenueQuery('badminton_court');
+                break;
+                
+            case 'basketball_court_hours':
+                response = this.handleVenueQuery('basketball_court');
+                break;
+                
+            case 'table_tennis_hours':
+                response = this.handleVenueQuery('table_tennis');
+                break;
+                
+            case 'yoga_studio_hours':
+                response = this.handleVenueQuery('yoga_studio');
+                break;
+                
+            case 'all_venues':
+                response = this.handleAllVenuesQuery();
+                break;
+                
+            case 'hospital_phone':
+                response = this.handleHospitalQuery();
+                break;
+                
+            case 'print_location':
+                response = this.handlePrintQuery();
+                break;
+                
+            case 'reminder':
+                response = '我来帮您设置提醒。请问您需要设置什么内容的提醒？\n\n您可以告诉我：\n• 提醒内容（如：上课、会议等）\n• 提醒时间\n\n或者直接说"设置上课提醒"，我会为您设置下一节课的提醒。';
+                setTimeout(() => {
+                    Utils.Modal.open('reminderModal');
+                }, 1000);
+                break;
+                
+            case 'unknown':
+                const responses = [
+                    '我理解您的问题。作为校园AI助手，我可以帮您查询课程表、校园位置、食堂信息、图书馆空位、校车时刻等。请问需要什么具体帮助？',
+                    '感谢您的提问！我可以为您提供全方位的校园信息服务，包括课程安排、地点导航、提醒设置、食堂推荐等功能。您想了解哪个方面？',
+                    '我正在不断学习中，目前可以为您提供丰富的校园服务。您可以尝试询问:\n• "今天有什么课"\n• "食堂今天有什么菜"\n• "图书馆空位查询"\n• "设置上课提醒"\n\n有什么需要帮助的吗？'
+                ];
+                response = responses[Math.floor(Math.random() * responses.length)];
+                break;
+                
+            default:
+                response = this.handleDefaultQuery(context);
+        }
+        
+        // 添加AI回复到上下文
+        this.state.conversationContext.push({
+            type: 'ai',
+            content: response,
+            timestamp: Date.now()
+        });
+        
+        // 限制上下文长度
+        if (this.state.conversationContext.length > this.state.maxContextLength) {
+            this.state.conversationContext = this.state.conversationContext.slice(-8);
+        }
+        
+        this.addMessage('ai', response, extraData);
+    },
+    
+    /**
+     * 检查校园服务意图
+     * @param {string} userMessage - 用户消息
+     * @returns {string|null} 服务类型
+     */
+    checkServiceIntent(userMessage) {
+        const lowerMessage = userMessage.toLowerCase();
+        const serviceKeywords = {
+            course: ['课', '课程', '上课', '课程表'],
+            canteen: ['食堂', '吃饭', '餐厅', '今天有什么菜'],
+            library: ['图书馆', '借书', '学习'],
+            shuttle: ['校车', '班车', '校车时刻表'],
+            express: ['快递', '包裹', '快递站'],
+            venue: ['体育馆', '游泳馆', '健身房', '球场'],
+            homework: ['作业', '交作业'],
+            classroom: ['教室', '教室在哪'],
+            reminder: ['提醒', '设置提醒'],
+            hospital: ['校医院', '校医院电话'],
+            print: ['打印', '哪里打印']
+        };
+        
+        for (const [service, keywords] of Object.entries(serviceKeywords)) {
+            if (keywords.some(keyword => lowerMessage.includes(keyword))) {
+                return service;
+            }
+        }
+        
+        return null;
+    },
+    
+    /**
+     * 处理校园服务查询
+     * @param {string} service - 服务类型
+     * @param {string} userMessage - 用户消息
+     */
+    async handleServiceQuery(service, userMessage) {
+        const intent = this.recognizeIntent(userMessage);
+        const context = this.understandContext(userMessage, intent);
+        
+        let response = '';
+        let extraData = null;
+        
+        // 根据上下文生成响应
+        switch(context) {
+            case 'course':
+            case 'course_location':
+            case 'course_time':
+                response = this.handleCourseQuery(context, userMessage);
+                break;
+                
             case 'gymnasium':
             case 'swimming_pool':
             case 'fitness_center':
@@ -991,7 +1210,7 @@ const ChatModule = {
             <div class="w-10 h-10 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center flex-shrink-0">
                 <i class="fas fa-robot text-white"></i>
             </div>
-            <div class="message-bubble ai-message">
+            <div class="message-bubble ai-message relative">
                 <div class="typing-indicator">
                     <div class="typing-dot"></div>
                     <div class="typing-dot"></div>

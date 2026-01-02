@@ -7,6 +7,127 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- 内嵌对话数据 - 避免CORS问题 -->
+    <script>
+    window.EMBEDDED_DIALOG_DATA = {
+        greetings: {
+            dialog_type: "greetings",
+            description: "打招呼与寒暄场景对话",
+            version: "2.0",
+            trigger_keywords: ["你好", "嗨", "hello", "hi", "在吗", "早上好", "下午好", "晚上好", "哈喽", "嘿", "hey", "哈罗", "哈", "打招呼", "您好", "大家好", "早安", "午安", "晚安", "早上好呀", "下午好呀", "晚上好呀", "你好呀", "嗨呀", "hello呀", "嗨嗨", "来啦", "在这个", "来了", "在忙吗", "忙吗", "有空吗", "有时间吗", "在吗在吗", "在不在", "呼叫", "滴滴", "叮咚", "有人吗", "出来聊聊", "聊聊", "最近好吗", "最近怎么样", "怎么样", "还好吗", "还好吧", "好久不见", "好久没聊了", "好久没联系", "好久没见", "想你了", "找你", "想跟你说话", "想聊聊", "找你聊天", "聊聊天", "test", "测试", "test01", "测试01"],
+            response_templates: [
+                {personality: "外向友好", responses: ["嗨！{time_greeting}！你今天怎么样？", "哈喽！见到你真开心~ 最近忙什么呢？", "嘿！{time_greeting}！有什么好玩的计划吗？", "在的在的！有什么事吗？", "你好呀！好久没聊了，最近过得怎么样？", "嘿嘿，我在呢！想聊什么？", "哈喽哈喽！找我有什么事吗？", "嗨嗨！今天心情怎么样？"], usage_patterns: ["初次见面", "日常问候", "重新联系"]},
+                {personality: "内向温和", responses: ["{time_greeting}，你好呀👋", "嗯嗯，{time_greeting}！你还好吗？", "嗨...{time_greeting}，最近过得怎么样？", "在的，有什么事吗？", "你好呀，最近还好吧？", "嗯嗯，我在。想聊些什么呢？", "嗨...有点忙不过来了，不过还是想跟你聊聊", "{time_greeting}呀，今天过得怎么样？"], usage_patterns: ["礼貌问候", "熟人打招呼"]},
+                {personality: "活泼幽默", responses: ["{emoji} 嘿嘿！{time_greeting}！你又来啦！", "哇！{time_greeting}！今天心情怎么样？我猜很棒吧😉", "Bonjour（法式打招呼）~ {time_greeting}！要不要聊聊？", "叮咚！你的好友已上线！有什么吩咐？😄", "滴滴！收到你的呼叫啦！", "呼叫我？收到收到！", "嘿嘿，你在找我吗？我在呢在呢！", "surprise！{time_greeting}！今天有什么新鲜事？"], usage_patterns: ["轻松闲聊", "好朋友互动"]},
+                {personality: "理性沉稳", responses: ["{time_greeting}。有什么我可以帮助你的吗？", "你好{time_greeting}。今天有什么安排？", "{time_greeting}，在忙吗？需要帮忙吗？", "在的，请说。", "你好，请问有什么需要帮助的？", "{time_greeting}，我今天有些忙，不过可以聊几句。", "嗯，我在。说吧。", "你好。今天有什么计划吗？"], usage_patterns: ["正式场合", "学业交流"]}
+            ],
+            context_requirements: {time_aware: true, relationship_level: ["陌生人", "熟人", "好友"], emotional_tone: ["友好", "中性", "热情"]}
+        },
+        study: {
+            dialog_type: "campus_study",
+            description: "学习相关对话场景",
+            version: "2.0",
+            trigger_keywords: ["学习", "考试", "复习", "作业", "课程", "上课", "成绩", "挂科", "及格", "科目", "专业", "高数", "数学", "英语", "语文", "物理", "化学", "生物", "计算机", "编程", "代码", "数据结构", "算法", "操作系统", "数据库", "网络", "软件工程", "Java", "Python", "C++", "JavaScript", "期末", "期中", "月考", "补考", "重修", "绩点", "GPA", "奖学金", "考研", "保研", "论文", "毕业论文", "答辩", "实验", "报告", "PPT", "演讲", "展示", "小组作业", "图书馆", "自习室", "上课地点", "教室", "教学楼", "实验室", "机房", "老师", "教授", "讲师", "辅导员", "班主任", "助教", "课本", "教材", "参考书", "笔记", "讲义", "课件", "复习资料", "题库", "真题", "模拟题", "练习题", "作业题", "考试题", "听不懂", "太难了", "不会", "没学过", "没听", "没听懂", "听不进去", "看书", "背书", "背诵", "记忆", "理解", "掌握", "学会", "学会了吗", "考试周", "考试月", "复习周", "备考", "突击", "熬夜", "通宵", "学霸", "学渣", "尖子生", "成绩好", "成绩差", "挂科率", "及格率", "选课", "退课", "换课", "学分", "必修", "选修", "通识课", "专业课", "课程表", "课表", "上课时间", "下课时间", "课间休息", "课间", "考试时间", "考试地点", "考试顺序", "考试安排", "考试科目", "作业提交", "作业截止", "作业期限", "作业未交", "作业交了吗", "课程设计", "大作业", "小作业", "平时成绩", "期末成绩", "总成绩", "预习", "复习", "温习", "自学", "网络课", "网课", "在线学习", "学习计划", "学习目标", "学习进度", "学习效率", "学习方法", "笔记整理", "知识点", "重点", "难点", "考点", "题型", "刷题", "做题", "改题", "对答案", "查答案", "抄作业"],
+            response_templates: [
+                {personality: "学霸型", responses: ["我最近在复习{subject}，感觉{difficulty}部分比较难，你呢？", "这门课重点在{topic}，我整理了笔记要不要看？", "考试周要来了，我打算泡图书馆，要不要一起？", "这学期{subject}有点难，我每天花{hours}小时复习呢", "{subject}的{topic}部分你要注意，老师经常考", "我这里有历年真题，你要不要参考一下？", "图书馆三楼自习室比较安静，适合复习{subject}", "要不要一起组建学习小组？这样效率会高一些", "我每天晚上在图书馆复习，{timing}你可以来找我", "{subject}的{topic}我总结了一些心得，分享一下？", "考试别慌，把重点知识点都过一遍就行", "我可以帮你梳理一下{subject}的知识框架"], knowledge_domains: ["计算机", "数学", "物理", "化学", "英语", "文学", "历史", "哲学"], study_style: "系统化学习", emotional_tone: "积极帮助"},
+                {personality: "普通型", responses: ["啊，又要考试了！我{subject}还完全没看，求学霸带飞😭", "感觉这门课太难了...特别是{topic}部分，完全听不懂", "复习什么呀，明天再说吧~ 你复习得怎么样？", "听说这次考试挺难的，{subject}老师很严格呢", "{subject}我还在挣扎中，你呢？有啥好方法吗？", "这个知识点我也没掌握，要不一起研究下？", "最近太忙了，{subject}根本没时间复习", "作业写了没？能不能借我参考参考？😂", "考完试再说吧，现在只想放松一下", "{subject}太枯燥了，完全学不进去", "希望这次能及格就好，不求高分了", "有没有人帮帮我这学渣，{subject}真的不会"], study_style: "被动学习", emotional_tone: "焦虑放松"},
+                {personality: "拖延型", responses: ["学习？什么学习？我只知道明天截止日期...😅", "唉，{subject}作业又拖到最后一刻了，我是不是没救了", "复习？不存在的，考前突击才是王道！", "别跟我提考试，我还有三篇论文没写呢", "{subject}作业是什么时候交来着？", "明天就要交了？救命啊！😱", "每次都想早点开始，结果最后一天才动工", "有没有好心人能帮我写写{subject}作业？", "熬夜也是常态了，通宵复习也没问题", "{subject}我看都没看过，完全没印象", "先打游戏去，学习的事明天再说", "Deadline是第一生产力，越临近效率越高😂"], study_style: "临时抱佛脚", emotional_tone: "自我调侃"}
+            ],
+            context_requirements: {exam_season: true, course_related: true, academic_pressure: ["低", "中", "高"]}
+        },
+        entertainment: {
+            dialog_type: "entertainment",
+            description: "娱乐爱好对话场景",
+            version: "2.0",
+            trigger_keywords: ["游戏", "电影", "音乐", "动漫", "追剧", "运动", "健身", "篮球", "足球", "唱歌", "跳舞", "王者荣耀", "原神", "英雄联盟", "LOL", "CSGO", "吃鸡", "绝地求生", "我的世界", "Minecraft", "手游", "端游", "网游", "单机", "主机", "游戏机", "Switch", "PS5", "Xbox", "开黑", "组队", "打排位", "段位", "王者", "钻石", "星耀", "黄金", "白银", "青铜", "看电影", "看剧", "追番", "动漫", "番剧", "新番", "国漫", "日漫", "美剧", "韩剧", "热搜", "综艺", "真人秀", "脱口秀", "喜剧", "恐怖片", "动作片", "科幻片", "爱情片", "听歌", "音乐", "歌曲", "歌手", "演唱会", "音乐节", "KTV", "卡拉OK", "唱歌", "流行音乐", "摇滚", "民谣", "电子音乐", "古典音乐", "说唱", "rap", "嘻哈", "运动", "健身", "跑步", "游泳", "打球", "锻炼", "瑜伽", "健身房", "体育馆", "篮球", "足球", "羽毛球", "乒乓球", "网球", "排球", "高尔夫", "台球", "NBA", "CBA", "世界杯", "欧洲杯", "欧冠", "英超", "西甲", "德甲", "周末", "假期", "放假", "休息", "玩", "娱乐", "休闲", "放松", "旅游", "旅行", "出去玩", "打卡", "景点", "风景区", "民宿", "酒店", "美食", "吃", "好吃的", "餐厅", "火锅", "烧烤", "小吃", "奶茶", "咖啡", "拍照", "摄影", "朋友圈", "打卡点", "网红地", "颜值", "自拍", "抖音", "快手", "B站", "bilibili", "小红书", "微博", "朋友圈", "QQ空间", "网", "上网", "冲浪", "刷视频", "刷剧", "刷屏", "吃瓜", "八卦", "游戏好玩", "游戏好玩吗", "玩什么游戏", "推荐游戏", "新游戏", "热门游戏", "电影好看", "电影好看吗", "看什么电影", "推荐电影", "新电影", "热门电影", "音乐好听", "音乐好听吗", "听什么歌", "推荐歌曲", "新歌", "热门歌曲", "有意思", "好玩", "有趣", "无聊", "没意思", "放松", "开心", "快乐", "开心点", "快乐一下"],
+            response_templates: [
+                {interest: "游戏", personality: "游戏迷", responses: ["你也玩{game_name}吗？我最近沉迷这个游戏！", "这游戏{game_feature}太好玩了，要不要一起开黑？", "我昨天打到{level}了，差点就通关了！", "你知道吗？这个游戏有个bug特别有趣...", "我段位是{rank}，你呢？要不要上分？", "这游戏{hero}超厉害的，我每次都选TA", "最近{game_name}出了新皮肤/新角色，超帅！", "周末有空一起打游戏吗？我带你飞", "这游戏{boss}太难打了，打了才过去", "你用什么设备玩？PC还是手机？", "这个游戏我最喜欢{mode}模式", "要不要交换游戏好友？我带你"], game_topics: ["王者荣耀", "原神", "英雄联盟", "CSGO", "我的世界", "绝地求生", "和平精英", "和平精英", "第五人格", "明日方舟", "阴阳师", "崩坏3", "王者荣耀国际版", "永劫无间"], game_features: ["画质", "玩法", "剧情", "人物", "音效", "操作"], emotional_tone: "兴奋"},
+                {interest: "电影", personality: "影迷", responses: ["你看{movie_name}了吗？{opinion}！", "最近上映的{movie_type}电影你觉得怎么样？", "我这周末打算去看电影，要不要一起？", "推荐你看看{recommendation}，超级好看！", "{movie_type}类型的电影我都爱看", "最近有什么好电影推荐吗？我想去影院看", "这个导演的作品我都喜欢，太有才华了", "{actor}的演技超棒的，每一部戏都不错", "网上评价{movie_name}如何？", "我喜欢在{time}看电影，体验特别好", "这电影{plot}反转太精彩了！", "要不要一起看？我可以给你讲讲背景"], favorite_genres: ["科幻", "喜剧", "动作", "悬疑", "恐怖", "爱情", "动画", "纪录片", "战争", "历史"], movie_topics: ["流浪地球", "复仇者联盟", "变形金刚", "哈利波特", "指环王", "泰坦尼克号", "阿凡达", "星际穿越"], emotional_tone: "分享欲"},
+                {interest: "音乐", personality: "音乐爱好者", responses: ["你听{song_name}了吗？太好听了！", "最近在听{music_genre}，很放松", "我也喜欢{music_genre}！有什么好歌推荐吗？", "[分享歌曲]{song_name}-{artist_name}，超好听！", "这首歌{feature}特别打动我", "我的歌单里全是{genre}风格的歌", "有没有一起去KTV的机会？我可以给你唱歌听", "这个歌手的声音太有辨识度了", "最近很火的这首歌你听过吗？{song_name}", "我喜欢{time}听歌，感觉特别有氛围", "这首歌的歌词写得真好，听完很有感触", "要不要和我一起听？我分享给你"], music_taste: ["流行", "摇滚", "民谣", "电子", "古典", "说唱", "爵士", "布鲁斯", "乡村", "古风"], music_topics: ["周杰伦", "邓紫棋", "林俊杰", "Taylor Swift", "Billie Eilish", "周杰伦的新歌", "热门歌曲", "经典歌曲"], emotional_tone: "文艺"},
+                {interest: "运动", personality: "运动达人", responses: ["你也喜欢运动啊！我最喜欢{sport}了", "这周末有个{activity}比赛，要不要一起去看？", "我每周都去{frequency}次{location}运动", "运动能让人保持好状态，身体倍儿棒！", "{sport}能锻炼{benefit}，效果特别好", "要不要一起去运动？我可以教你", "最近在练{skill}，进步很多！", "我坚持运动{duration}了，感觉精力充沛", "运动后出出汗特别舒服", "你知道吗？{fact}", "有没有一起组队的？{sport}缺人", "运动装备很关键，我的{equipment}特别好"], sports: ["篮球", "足球", "羽毛球", "跑步", "健身", "游泳", "网球", "乒乓球", "排球", "高尔夫", "瑜伽", "滑雪"], sports_locations: ["篮球场", "足球场", "健身房", "游泳池", "田径场", "网球场", "瑜伽馆"], emotional_tone: "健康活力"},
+                {interest: "泛娱乐", personality: "娱乐达人", responses: ["最近{trend}太火了，你看了吗？", "网上都在聊{topic}，你怎么看？", "我每天都会刷{app}，挺有意思的", "这种{type}视频我超爱看的", "有没有什么好玩的推荐一下？", "周末想出去玩，有什么好地方吗？", "最近{event}你感兴趣吗？要不要一起？", "我发现一个超好玩的东西，推荐给你！", "这个{content}太有意思了，笑死我了😂", "无聊的时候我就刷{app}消磨时间", "你平时喜欢玩什么？我们聊聊", "最近有什么新鲜事吗？跟我说说呗"], trending_topics: ["热门话题", "热搜", "新鲜事", "八卦", "新闻", "网红"], entertainment_apps: ["抖音", "B站", "小红书", "微博", "快手", "微信朋友圈"], emotional_tone: "轻松愉快"}
+            ],
+            context_requirements: {interest_matching: true, recommendation_system: true, activity_invitation: true}
+        },
+        emotional: {
+            dialog_type: "emotional_support",
+            description: "情感支持与情绪管理对话",
+            version: "2.0",
+            trigger_keywords: ["难过", "开心", "生气", "焦虑", "压力", "郁闷", "烦恼", "开心", "兴奋", "担心", "害怕", "不开心", "心情不好", "心情好", "心情差", "心情低落", "心情愉快", "心情激动", "伤心", "痛苦", "悲伤", "沮丧", "失望", "失落", "崩溃", "绝望", "快乐", "高兴", "激动", "兴奋", "惊喜", "欢乐", "愉快", "喜悦", "生气", "愤怒", "暴躁", "恼火", "讨厌", "烦死了", "气死了", "气死我了", "担心", "害怕", "恐惧", "紧张", "不安", "恐慌", "焦虑", "焦虑症", "压力", "压力大", "压得喘不过气", "压力大得不行", "压力山大", "郁闷", "憋屈", "委屈", "不爽", "不舒服", "心里难受", "烦恼", "烦心", "操心", "操心不已", "想不开", "钻牛角尖", "累", "好累", "累死了", "疲惫", "精疲力尽", "身心俱疲", "想哭", "哭", "哭了", "忍不住", "眼泪", "眼泪止不住", "孤独", "寂寞", "孤单", "没人理", "没人理解", "没人陪", "无聊", "没意思", "枯燥", "乏味", "空虚", "没什么事", "想聊天", "找人聊聊", "想说话", "想说说话", "想倾诉", "谢谢你", "谢谢", "感谢", "感谢你", "多谢", "谢啦", "对不起", "抱歉", "不好意思", "对不起哈", "我的错", "没事", "没事的", "没关系", "别担心", "不用担心"],
+            response_templates: [
+                {emotion: "negative", scenarios: ["难过", "郁闷", "烦恼", "压力大", "焦虑", "伤心", "痛苦", "悲伤", "沮丧", "失望", "失落", "崩溃", "绝望", "不开心", "心情不好", "心情差", "心情低落", "孤独", "寂寞", "孤单", "委屈", "憋屈", "不爽", "不舒服", "心里难受", "累", "好累", "累死了", "疲惫", "精疲力尽", "身心俱疲", "想哭", "哭", "哭了"], personality: "温暖型", responses: ["怎么了？发生什么事了吗？跟我说说吧", "抱抱你🤗，别难过，一切都会好起来的", "我明白你的感受，想聊聊吗？我一直在", "没关系的，偶尔有低落期很正常。你愿意分享发生了什么吗？", "听着，你很棒，别这样否定自己", "我就在这里陪着你，想说什么都可以", "想哭就哭出来吧，憋着多累呀", "这段时间确实不容易，你已经做得很好了", "别太责怪自己，有些事情不是你能控制的", "累就歇会儿，身体和心理都要照顾好", "有什么需要我帮忙的吗？尽管开口", "我会一直支持你的，别一个人扛着"], response_strategy: "共情+倾听+陪伴", emotional_tone: "温柔理解"},
+                {emotion: "positive", scenarios: ["开心", "兴奋", "快乐", "高兴", "激动", "惊喜", "欢乐", "愉快", "喜悦", "心情好", "心情愉快", "开心"], personality: "热情型", responses: ["哇！太棒了！快跟我说说发生什么开心的事了！😊", "真为你高兴！看着你开心我也很开心~", "太好了！值得庆祝一下！", "耶！今天是个好日子呀！", "太棒了！为你感到高兴！", "这个好消息必须要好好庆祝一下！", "你 deserve（值得）这一切好运气！", "看到你这么开心，我也跟着高兴起来~", "有什么好事快分享给我！我听着呢", "继续保持这种好状态，你越来越棒了！", "真棒！今天的你闪闪发光✨", "开心就要大声笑出来！哈哈"], response_strategy: "分享快乐+放大积极情绪", emotional_tone: "热情兴奋"},
+                {emotion: "anxious", scenarios: ["担心", "害怕", "焦虑", "压力大", "恐惧", "紧张", "不安", "恐慌", "压力", "压力大", "压得喘不过气", "压力山大"], personality: "理性型", responses: ["理解你的担心。具体是为什么呢？我们一起分析一下", "焦虑很正常，别给自己太大压力。可以把问题拆解来看", "深呼吸，放轻松。你担心的结果可能没那么糟糕", "要不要把具体问题列出来，我们逐个解决？", "先别想那么多，一步一步来", "你想想最坏的结果是什么？其实也没那么可怕", "试着转移下注意力，做点别的事情放松一下", "相信自己的能力，你比想象中更强大", "把大问题分解成小任务，就容易多了", "我陪你一起想办法，不会有问题的", "想想之前类似的情况，你不都解决了吗？", "放平心态，车到山前必有路"], response_strategy: "理性分析+提供解决方案", emotional_tone: "冷静建议"},
+                {emotion: "angry", scenarios: ["生气", "愤怒", "暴躁", "恼火", "讨厌", "烦死了", "气死了", "气死我了"], personality: "开导型", responses: ["生气是可以的，说明你在乎这件事。发生了什么？", "先冷静一下，别冲动。告诉我具体情况", "你的感受我理解，愤怒后可以想想怎么解决问题", "呼~先喝口水消消气，然后我们慢慢说", "我知道你现在很生气，但先别做决定", "发泄出来也没关系，别憋在心里", "深呼吸...冷静...现在感觉好点了吗？", "这件事情确实让人不爽，理解你的愤怒", "气坏身体不值得，我们想想怎么办", "先把情绪放一下，理性分析一下情况", "有些事情不值得我们生气，不值得", "别让这件事影响你的心情，不值得"], response_strategy: "接纳情绪+引导冷静", emotional_tone: "包容安抚"},
+                {emotion: "gratitude", scenarios: ["谢谢你", "谢谢", "感谢", "感谢你", "多谢", "谢啦"], personality: "谦逊型", responses: ["不客气，这是我应该做的😊", "能帮上你我也很高兴~", "别这么客气，我们是朋友嘛", "举手之劳，不必道谢", "能帮到你就好，不用客气", "朋友之间互相帮助是应该的", "你太客气啦，下次有需要还找我", "不用谢，能帮你我很开心", "没事没事，这都不算什么", "你开心就好，不用老谢我", "哈哈，跟我还这么客气", "不用客气，我随时在的"], response_strategy: "谦虚友好", emotional_tone: "温暖谦逊"},
+                {emotion: "apology", scenarios: ["对不起", "抱歉", "不好意思", "对不起哈", "我的错"], personality: "宽容型", responses: ["没关系的，别放在心上", "不用担心，我明白你的意思", "没事的，小事而已", "没关系，我不介意", "别这么说，我理解的", "没事没事，不用道歉", "我不生气，别往心里去", "没事，都过去了", "你不用这么小心翼翼的，我们这么熟", "我都忘了这回事了，别放在心上", "哈哈，你太可爱了，还特意道歉", "没事，我们一起往前看"], response_strategy: "宽容接纳", emotional_tone: "温暖包容"},
+                {emotion: "bored", scenarios: ["无聊", "没意思", "枯燥", "乏味", "空虚", "没什么事"], personality: "陪伴型", responses: ["无聊啊？要不要聊聊天？", "最近有什么新鲜事吗？我们可以聊聊", "要不要一起玩点什么？", "我陪你聊聊吧，说说话就不无聊了", "有没有什么感兴趣的想了解的？", "要不要一起看看电影？打游戏也行", "聊聊天时间就过得快了", "我也是无聊呢，我们互相解闷吧", "你想聊什么都行，我听着呢", "要不要出去走走？或者找点事情做？", "无聊的时候可以思考一下人生哈哈", "我们可以一起打发时间呀"], response_strategy: "提供陪伴+建议活动", emotional_tone: "轻松友好"}
+            ],
+            context_requirements: {emotional_awareness: true, empathy_level: ["高共情", "中等共情", "理性建议"], follow_up_support: true}
+        },
+        profiles: {
+            extroverted_friendly: {profile_id: "P001", name: "外向友好型", personality_tags: ["外向", "友好", "热情", "善解人意"], dialog_style: {greeting_style: "热情", emoji_usage: "频繁", response_speed: "快", formality: "随意"}, interests: ["运动", "音乐", "社交", "游戏"], knowledge_domains: ["校园生活", "娱乐活动", "社交技巧"], dialog_preferences: {preferred_topics: ["生活", "娱乐", "社交"], avoided_topics: ["深度学术", "严肃话题"], conversation_length: "中等", question_frequency: "高"}, emotional_characteristics: {default_mood: "积极", emotional_sensitivity: "高", empathy_level: "高"}, sample_profile: {name: "王明", major: "市场营销", grade: "大二", avatar: "😊", signature: "生活不止眼前的苟且，还有诗和远方"}},
+            introverted_gentle: {profile_id: "P002", name: "内向温和型", personality_tags: ["内向", "温和", "细心", "安静"], dialog_style: {greeting_style: "礼貌", emoji_usage: "适中", response_speed: "中", formality: "适中"}, interests: ["阅读", "写作", "绘画", "音乐"], knowledge_domains: ["文学", "艺术", "历史", "哲学"], dialog_preferences: {preferred_topics: ["学习", "艺术", "深度交流"], avoided_topics: ["过于热闹的话题"], conversation_length: "长", question_frequency: "低"}, emotional_characteristics: {default_mood: "平和", emotional_sensitivity: "高", empathy_level: "很高"}, sample_profile: {name: "李婷", major: "中文系", grade: "大三", avatar: "📚", signature: "静以修身，俭以养德"}},
+            rational_steady: {profile_id: "P003", name: "理性沉稳型", personality_tags: ["理性", "沉稳", "逻辑性强", "可靠"], dialog_style: {greeting_style: "正式", emoji_usage: "极少", response_speed: "中慢", formality: "正式"}, interests: ["编程", "数学", "科技", "投资"], knowledge_domains: ["计算机", "数学", "逻辑", "工程"], dialog_preferences: {preferred_topics: ["学习", "技术", "职业发展"], avoided_topics: ["无关紧要的闲聊"], conversation_length: "中等", question_frequency: "中"}, emotional_characteristics: {default_mood: "中性", emotional_sensitivity: "低", empathy_level: "中"}, sample_profile: {name: "张伟", major: "计算机科学", grade: "大四", avatar: "💻", signature: "代码改变世界"}},
+            lively_humorous: {profile_id: "P004", name: "活泼幽默型", personality_tags: ["活泼", "幽默", "开朗", "风趣"], dialog_style: {greeting_style: "有趣", emoji_usage: "非常频繁", response_speed: "很快", formality: "非常随意"}, interests: ["搞笑", "游戏", "运动", "美食"], knowledge_domains: ["网络梗", "游戏", "娱乐"], dialog_preferences: {preferred_topics: ["娱乐", "搞笑", "日常生活"], avoided_topics: ["严肃话题"], conversation_length: "灵活", question_frequency: "很高"}, emotional_characteristics: {default_mood: "开心", emotional_sensitivity: "中", empathy_level: "中"}, sample_profile: {name: "刘洋", major: "艺术设计", grade: "大二", avatar: "😄", signature: "生活就是要开心！"}},
+            scholarly_type: {profile_id: "P005", name: "学霸型", personality_tags: ["好学", "认真", "乐于助人", "知识渊博"], dialog_style: {greeting_style: "礼貌", emoji_usage: "适中偏少", response_speed: "中", formality: "适中偏正式"}, interests: ["学习", "阅读", "研究", "竞赛"], knowledge_domains: ["所有学科", "学习方法", "学术技巧"], dialog_preferences: {preferred_topics: ["学习", "学术", "职业规划"], avoided_topics: ["娱乐八卦"], conversation_length: "长", question_frequency: "中偏高"}, emotional_characteristics: {default_mood: "积极", emotional_sensitivity: "中", empathy_level: "高"}, sample_profile: {name: "陈雪", major: "应用数学", grade: "大三", avatar: "🎓", signature: "知识改变命运"}}
+        },
+        homework_management: {
+            dialog_type: "homework_management",
+            description: "作业管理对话场景",
+            version: "3.0",
+            trigger_keywords: ["作业", "assignment", "task", "项目", "截止", "due", "deadline", "最后期限", "添加作业", "添加", "记录", "写作业", "做作业", "查询作业", "查看作业", "作业查询", "有什么作业", "交作业", "提交", "submit", "作业截止", "什么时候交", "什么时候截止", "高数作业", "数学作业", "英语作业", "作业本", "习题", "练习", "实验报告", "论文", "报告", "presentation", "展示", "演讲", "编程", "代码"],
+            intents: {
+                add_homework: {description: "添加作业记录", required_entities: ["homework_name", "due_date"], optional_entities: ["course_name", "note"], response_templates: ["好的，我来帮你记录{course_name}作业。{homework_name}截止日期是{due_date}，需要我设置提醒吗？", "收到！{course_name}作业已保存：{homework_name}，截止时间：{due_date}", "✅ 已记录：{course_name} - {homework_name}，截止时间：{due_date}", "了解！{homework_name}截止日期是{due_date}，我已经记下来了~", "好的，已为你添加{course_name}作业：{homework_name}，需要在{due_date}前完成哦"]},
+                query_homework: {description: "查询作业", required_entities: [], optional_entities: ["course_name", "time_range"], response_templates: ["正在查询{time_range}{course_name}的作业...", "让我看看{time_range}{course_name}有什么作业要交...", "📚 查询中：{course_name}{time_range}的作业安排", "OK，我来帮你查查{time_range}{course_name}的作业情况"]}
+            }
+        },
+        course_query: {
+            dialog_type: "course_query",
+            description: "课程查询对话场景",
+            version: "3.0",
+            trigger_keywords: ["课程", "课表", "上课", "课程表", "时间表", "今天课", "明天课", "本周课", "下周课", "课程安排", "上课时间", "上课地点", "教室", "教学楼", "理科楼", "文科楼", "工科楼", "查询课程", "查看课程", "什么课", "有课吗", "第几节课", "几节课", "几点上课", "在哪里上课", "课程信息", "课程详情", "课程介绍", "选课", "退课", "换课", "补课", "调课", "停课", "课程通知"],
+            intents: {
+                ask_schedule: {description: "询问课程表", required_entities: [], optional_entities: ["time_range", "course_name"], response_templates: ["正在查询{time_range}的课程安排...", "📅 让我看看{time_range}有什么课...", "好的，查询{time_range}的课表...", "查询中...{time_range}的课程安排"]},
+                query_course: {description: "查询课程信息", required_entities: [], optional_entities: ["course_name", "location"], response_templates: ["正在查询{course_name}的信息...", "让我查找{course_name}的相关信息...", "🔍 正在搜索{course_name}...", "好的，查找{course_name}的详细信息..."]}
+            }
+        },
+        reminder: {
+            dialog_type: "reminder",
+            description: "提醒设置对话场景",
+            version: "3.0",
+            trigger_keywords: ["提醒", "remind", "reminder", "alarm", "设置提醒", "添加提醒", "创建提醒", "提前提醒", "提醒我", "别忘了提醒", "时间提醒", "作业提醒", "课程提醒", "闹钟", "时间", "deadline", "截止", "别忘了", "记得提醒", "记得做", "提前通知", "提前告知", "考前提醒"],
+            intents: {
+                set_reminder: {description: "设置提醒", required_entities: ["reminder_time"], optional_entities: ["homework_name", "course_name"], response_templates: ["好的，已设置提醒：{homework_name}将在{reminder_time}提醒你", "✅ 提醒已设置！{homework_name} - {reminder_time}", "没问题，我会提前{reminder_time}提醒你{homework_name}的截止", "好的，{homework_name}的提醒时间已设置为{reminder_time}"]}
+            }
+        },
+        campus_life: {
+            dialog_type: "campus_life",
+            description: "校园生活服务对话场景",
+            version: "3.0",
+            trigger_keywords: ["食堂", "餐厅", "吃饭", "用餐", "菜单", "菜谱", "今天吃什么", "有什么菜", "推荐菜", "一食堂", "二食堂", "三食堂", "图书馆", "自习", "座位", "开放时间", "借书", "校车", "班车", "交通", "时刻表", "发车", "快递", "取件", "菜鸟驿站", "快递站", "包裹", "体育馆", "运动", "健身房", "游泳馆", "球场", "打印", "复印", "打印店", "文印"],
+            intents: {
+                ask_canteen: {description: "询问食堂菜单", required_entities: [], optional_entities: ["location"], response_templates: ["正在查询{location}的今日菜单...", "🍽 今日{location}推荐菜品：", "好的，让我看看{location}今天有什么好吃的...", "查询{location}今日菜品..."]},
+                ask_library: {description: "查询图书馆信息", required_entities: [], optional_entities: ["location"], response_templates: ["正在查询图书馆信息...", "📚 图书馆信息：", "好的，图书馆相关信息如下：", "查询中...图书馆"]},
+                ask_shuttle: {description: "查询校车时刻", required_entities: [], optional_entities: ["location"], response_templates: ["正在查询校车时刻表...", "🚌 校车时刻表：", "好的，校车时刻安排如下：", "查询校车信息..."]},
+                ask_express: {description: "查询快递信息", required_entities: [], optional_entities: ["location"], response_templates: ["正在查询快递站点信息...", "📦 快递站点信息：", "好的，快递相关信息如下：", "查询快递信息..."]},
+                ask_facility: {description: "查询场馆设施", required_entities: [], optional_entities: ["activity_type"], response_templates: ["正在查询场馆信息...", "🏟️ 场馆开放信息：", "好的，场馆相关信息如下：", "查询场馆信息..."]}
+            }
+        }
+    };
+    </script>
+    
+    <script src="components/utils.js"></script>
+    
+    <!-- 对话引擎核心模块 -->
+    <script src="components/dialog_engine/entity_extractor.js"></script>
+    <script src="components/dialog_engine/dialog_state_machine.js"></script>
+    <script src="components/dialog_engine/response_generator.js"></script>
+    <script src="components/dialog_engine/dialog_engine.js"></script>
+    <script src="components/dialog_engine/personality_selector.js"></script>
+    <script src="components/dialog_engine/intelligent_dialog_tests.js"></script>
+    
+    <script src="components/chat.js"></script>
     <style>
         :root {
             /* 主色调 - 中性紫色系 */
@@ -127,7 +248,20 @@
             --glass-border: rgba(255, 255, 255, 0.1);
             
             --border-color: #4A5568;
-        }
+            
+            /* 卡片背景 - 深色模式 */
+            --card-bg: #1e293b;
+            --card-bg-hover: #334155;
+            
+            /* 输入框背景 - 深色模式 */
+                --input-bg: #1e293b;
+                --input-bg-hover: #334155;
+                --input-bg-focus: #0f172a;
+                
+                /* 输入框文字颜色 */
+                --input-text-light: #1F2937;
+                --input-text-dark: #F7FAFC;
+            }
 
         * {
             margin: 0;
@@ -137,32 +271,59 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
-            background: linear-gradient(135deg, #e8eaf6 0%, #c5cae9 25%, #b39ddb 50%, #9575cd 75%, #b39ddb 100%);
-            background-size: 400% 400%;
-            animation: gradientShift 15s ease infinite;
+            /* 白天模式：使用固定的浅色背景 */
+            background: #e8eaf6;
             min-height: 100vh;
             color: var(--text-primary);
-            transition: all 0.3s ease;
+            transition: background 0.3s ease, color 0.3s ease;
         }
 
-        /* 背景渐变动画 */
-        @keyframes gradientShift {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
-        /* 深色模式背景 */
+        /* 深色模式背景 - 固定颜色 */
         [data-theme="dark"] body {
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #1f1f3a 100%);
-            background-size: 400% 400%;
-            animation: gradientShiftDark 15s ease infinite;
+            background: #1a1a2e;
         }
 
-        @keyframes gradientShiftDark {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+        /* 主界面标题和副标题 - 主题切换 */
+        .app-title {
+            /* 白天模式：黑色 */
+            color: #1a1a1a;
+            transition: color 0.3s ease;
+        }
+
+        .app-subtitle {
+            /* 白天模式：深灰色 */
+            color: #4a5568;
+            transition: color 0.3s ease;
+        }
+
+        /* 深色模式：标题和副标题变为白色 */
+        [data-theme="dark"] .app-title {
+            color: #ffffff;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        [data-theme="dark"] .app-subtitle {
+            color: #e2e8f0;
+            text-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        /* 聊天输入框文字颜色修复 */
+        #messageInput {
+            color: #1F2937 !important;
+        }
+
+        [data-theme="dark"] #messageInput {
+            color: #F7FAFC !important;
+            background: #1e293b !important;
+            border-color: #4A5568 !important;
+        }
+
+        #messageInput::placeholder {
+            color: #9CA3AF !important;
+        }
+
+        [data-theme="dark"] #messageInput::placeholder {
+            color: #6B7280 !important;
         }
 
         /* 毛玻璃效果 */
@@ -298,10 +459,11 @@
         }
 
         .ai-message {
-            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            /* 使用CSS变量以支持主题切换 */
+            background: var(--card-bg);
             color: var(--text-primary);
-            border: 1px solid #E2E8F0;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-sm);
             /* 机器人消息：左边直角（对着机器人），其余三个角圆角 */
             border-radius: 18px 18px 18px 4px;
         }
@@ -1353,17 +1515,29 @@
             font-size: 3rem;
             font-weight: 700;
             margin-bottom: 1rem;
-            background: linear-gradient(45deg, #fff, #f0f0f0);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            /* 白天模式：黑色 */
+            color: #1a1a1a;
+            background: none;
+            -webkit-text-fill-color: initial;
         }
 
         .brand-subtitle {
             font-size: 1.2rem;
-            opacity: 0.9;
+            /* 白天模式：深灰色 */
+            color: #4a5568;
             margin-bottom: 2rem;
             line-height: 1.6;
+        }
+
+        /* 深色模式：标题和副标题变为白色 */
+        [data-theme="dark"] .brand-title {
+            color: #ffffff;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        [data-theme="dark"] .brand-subtitle {
+            color: #e2e8f0;
+            text-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);
         }
 
         .brand-features {
@@ -2087,6 +2261,12 @@
                     <span class="ml-auto px-2 py-0.5 bg-yellow-600 text-white text-xs rounded-full font-semibold">New</span>
                 </button>
                 
+                <button id="consumptionRecordBtn" onclick="showConsumptionList()" class="quick-action-btn w-full flex items-center space-x-3 mt-2 relative" data-type="consumption">
+                    <i class="fas fa-receipt text-red-400"></i>
+                    <span class="sidebar-content">消费记录</span>
+                    <span class="ml-auto px-2 py-0.5 bg-red-600 text-white text-xs rounded-full font-semibold">New</span>
+                </button>
+                
                 <button id="consumptionAnalysisBtn" onclick="showConsumptionAnalysisFixed(event)" class="quick-action-btn w-full flex items-center space-x-3 mt-2 relative" data-type="consumption">
                     <i class="fas fa-wallet text-teal-400"></i>
                     <span class="sidebar-content">消费分析</span>
@@ -2132,8 +2312,8 @@
                         <i class="fas fa-bars text-xl"></i>
                     </button>
                     <div>
-                        <h1 class="text-2xl font-extrabold text-white tracking-wide" style="text-shadow: 2px 2px 8px rgba(0,0,0,0.3);">校园AI助手</h1>
-                        <p class="text-sm font-medium text-gray-200 mt-0.5" style="text-shadow: 1px 1px 4px rgba(0,0,0,0.2);">您的智能校园向导</p>
+                        <h1 class="app-title text-2xl font-extrabold tracking-wide">校园AI助手</h1>
+                        <p class="app-subtitle text-sm font-medium mt-0.5">您的智能校园向导</p>
                     </div>
                 </div>
 
@@ -2210,9 +2390,10 @@
                         <!-- 输入框 -->
                         <div class="flex-1 relative">
                             <textarea
-                                id="messageInput" 
-                                placeholder="输入您的问题..." 
+                                id="messageInput"
+                                placeholder="输入您的问题..."
                                 class="w-full px-4 py-3 rounded-2xl resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white bg-opacity-90 border border-gray-200"
+                                style="color: var(--input-text-light, #1F2937);"
                                 rows="1"
                                 onkeydown="handleKeyPress(event)"
                                 oninput="autoResize(this); showSuggestions(this.value)"></textarea>
@@ -2321,10 +2502,6 @@
         <i class="fas fa-question"></i>
     </button>
 
-    <!-- 测试按钮（临时） -->
-    <button id="testSimpleBtn" class="floating-btn" style="bottom: 290px; right: 20px; background: #22c55e;" onclick="if(window.testSimple) window.testSimple()" title="简单测试">
-        <i class="fas fa-check"></i>
-    </button>
 
     <!-- 课程表模态框 -->
     <div id="scheduleModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
@@ -2378,6 +2555,14 @@
                             <span class="text-sm">活动提醒</span>
                         </label>
                     </div>
+                </div>
+
+                <div>
+                    <button onclick="PersonalitySelector.openModal()"
+                            class="w-full px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors flex items-center justify-center">
+                        <i class="fas fa-smile mr-2"></i>
+                        选择对话风格
+                    </button>
                 </div>
                 
                 <div class="flex space-x-3 pt-2">
@@ -2796,6 +2981,94 @@
             </div>
         </div>
     
+        <!-- 消费记录模态框 -->
+        <div id="consumptionRecordModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-[100001]">
+            <div class="glass-card rounded-2xl p-6 max-w-md w-full mx-4 slide-in-up">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-xl font-bold" style="color: var(--text-primary);">
+                        <i class="fas fa-receipt text-red-500 mr-2"></i> 记录消费
+                    </h3>
+                    <button onclick="closeConsumptionRecordModal()" class="text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+                
+                <form id="consumptionForm" onsubmit="saveConsumption(event)">
+                    <div class="space-y-4">
+                        <!-- 餐别选择 -->
+                        <div>
+                            <label class="block text-sm font-medium mb-2" style="color: var(--text-secondary);">
+                                <i class="fas fa-utensils mr-1"></i> 餐别
+                            </label>
+                            <select id="mealType" required
+                                class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
+                                style="background: var(--input-bg); border-color: var(--border-color); color: var(--text-primary);">
+                                <option value="">请选择餐别</option>
+                                <option value="早餐">🌅 早餐</option>
+                                <option value="午餐">☀️ 午餐</option>
+                                <option value="晚餐">🌙 晚餐</option>
+                                <option value="夜宵">🌃 夜宵</option>
+                                <option value="下午茶">🍵 下午茶</option>
+                            </select>
+                        </div>
+                        
+                        <!-- 金额输入 -->
+                        <div>
+                            <label class="block text-sm font-medium mb-2" style="color: var(--text-secondary);">
+                                <i class="fas fa-yen-sign mr-1"></i> 金额
+                            </label>
+                            <input type="number" id="consumptionAmount" step="0.01" min="0" required
+                                placeholder="请输入消费金额"
+                                class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
+                                style="background: var(--input-bg); border-color: var(--border-color); color: var(--text-primary);">
+                        </div>
+                        
+                        <!-- 备注（可选） -->
+                        <div>
+                            <label class="block text-sm font-medium mb-2" style="color: var(--text-secondary);">
+                                <i class="fas fa-comment mr-1"></i> 备注（可选）
+                            </label>
+                            <textarea id="consumptionNote" rows="2"
+                                placeholder="添加备注信息..."
+                                class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 resize-none"
+                                style="background: var(--input-bg); border-color: var(--border-color); color: var(--text-primary);"></textarea>
+                        </div>
+                        
+                        <!-- 提交按钮 -->
+                        <button type="submit"
+                            class="w-full py-3 bg-gradient-to-r from-red-500 to-orange-500 text-white font-semibold rounded-lg hover:shadow-lg transform hover:scale-105 transition-all">
+                            <i class="fas fa-save mr-2"></i> 保存消费记录
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- 消费列表模态框 -->
+        <div id="consumptionListModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-[100001]">
+            <div class="glass-card rounded-2xl p-6 max-w-2xl w-full mx-4 slide-in-up max-h-[90vh] overflow-hidden flex flex-col">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-xl font-bold" style="color: var(--text-primary);">
+                        <i class="fas fa-list text-red-500 mr-2"></i> 消费记录列表
+                    </h3>
+                    <button onclick="closeConsumptionListModal()" class="text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+                
+                <div class="space-y-3 overflow-y-auto flex-1 pr-2" id="consumptionList" style="max-height: 60vh;">
+                    <!-- 消费记录将动态插入这里 -->
+                </div>
+                
+                <div class="mt-4 pt-4 border-t border-gray-200" style="border-color: var(--border-color);">
+                    <div class="flex justify-between items-center text-lg font-semibold" style="color: var(--text-primary);">
+                        <span>总支出：</span>
+                        <span class="text-red-500" id="totalConsumption">¥0.00</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- 智能消费分析模态框 -->
         <div id="consumptionAnalysisModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-[99999]">
             <div class="glass-card rounded-2xl p-6 max-w-6xl w-full mx-4 slide-in-up max-h-[90vh] overflow-hidden">
@@ -2804,8 +3077,11 @@
                         <i class="fas fa-wallet text-teal-500 mr-3"></i> 消费分析
                     </h3>
                     <div class="flex items-center space-x-2">
-                        <button onclick="openAddConsumptionForm()" class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-sm">
+                        <button onclick="showConsumptionRecord()" class="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg text-sm">
                             <i class="fas fa-plus mr-1"></i> 记录消费
+                        </button>
+                        <button onclick="showConsumptionList()" class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-sm">
+                            <i class="fas fa-list mr-1"></i> 查看详情
                         </button>
                         <button onclick="exportConsumptionReport()" class="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg text-sm">
                             <i class="fas fa-file-download mr-1"></i> 导出
@@ -3549,7 +3825,7 @@
                     <div class="flex-1 relative">
                         <textarea
                             id="chatMessageInput"
-                            class="w-full px-4 py-3 bg-white bg-opacity-10 border border-gray-300 border-opacity-30 rounded-xl text-white placeholder-gray-400 resize-none focus:outline-none focus:ring-2 focus:ring-pink-500"
+                            class="w-full px-4 py-3 bg-white bg-opacity-10 border border-gray-300 border-opacity-30 rounded-xl text-gray-900 placeholder-gray-400 resize-none focus:outline-none focus:ring-2 focus:ring-pink-500"
                             rows="1"
                             placeholder="输入消息..."
                             onkeypress="handleChatKeyPress(event)"
@@ -4606,7 +4882,7 @@
                         <i class="fas fa-robot text-white"></i>
                     </div>
                     <div class="w-[calc(100%-3.5rem)] max-w-3xl">
-                        <div class="message-bubble ai-message w-full">
+                        <div class="message-bubble ai-message w-full relative">
                             ${messageContent}
                         </div>
                         <div class="text-xs text-gray-500 mt-1">${getCurrentTime()}</div>
@@ -8226,48 +8502,26 @@
         }
 
         /**
-         * 模拟好友自动回复
+         * 模拟好友自动回复（使用智能对话引擎）
          */
-        function simulateFriendReply(friendId, userMessage) {
+        async function simulateFriendReply(friendId, userMessage) {
             const friend = campusData.simulatingUsers[friendId];
             if (!friend) return;
-
+            
+            // 使用智能对话引擎生成回复
             let reply = '';
-
-            // 根据用户消息生成回复
-            const userMessageLower = userMessage.toLowerCase();
-            const currentUser = getCurrentUser();
-
-            // 预置开场对话
-            if (userMessageLower.includes('你好') || userMessageLower === 'hello') {
-                const greetings = [
-                    '你好！很高兴认识你！',
-                    '你好啊！很高兴能和你成为朋友！',
-                    '嗨！很高兴认识你这个新朋友！'
-                ];
-                reply = greetings[Math.floor(Math.random() * greetings.length)];
-            } else if (userMessageLower.includes('我是') && userMessageLower.includes('专业的')) {
-                reply = `我是${friend.major}专业的，我们可能有共同话题！以后多交流呀！`;
-            } else if (userMessageLower.includes('学习') || userMessageLower.includes('课程')) {
-                const studyReplies = [
-                    '这学期课程挺多的，你要加油哦！',
-                    '听说图书馆最近人很多，要早点去占座呢',
-                    '我们可以一起学习，互相帮助！'
-                ];
-                reply = studyReplies[Math.floor(Math.random() * studyReplies.length)];
-            } else if (userMessageLower.includes('兴趣爱好') || userMessageLower.includes('兴趣')) {
-                const myInterests = friend.interests || ['学习', '运动'];
-                reply = `我的兴趣爱好有${myInterests.join('、')}，你呢？有什么爱好吗？`;
-            } else {
-                const generalReplies = [
-                    '嗯嗯，我明白你的意思',
-                    '这个想法不错啊！',
-                    '哈哈，有意思！',
-                    '好的，我会记住的',
-                    '下次我们可以一起聊聊这个话题',
-                    '我也这么觉得！'
-                ];
-                reply = generalReplies[Math.floor(Math.random() * generalReplies.length)];
+            
+            try {
+                if (typeof DialogEngine !== 'undefined') {
+                    const response = await DialogEngine.generateResponse(userMessage);
+                    reply = response.text;
+                } else {
+                    // 降级处理：使用简单的通用回复
+                    reply = '嗯嗯，我明白你的意思。';
+                }
+            } catch (error) {
+                console.error('对话引擎错误:', error);
+                reply = '我正在学习中，能多跟我说说吗？';
             }
 
             // 发送好友回复
@@ -8371,72 +8625,25 @@
         }
 
         /**
-         * 添加初始聊天消息（自动化交互流程）
+         * 添加初始聊天消息（只保留系统提示）
          */
         function addInitialChatMessages(friendId, currentUser, friend) {
             const messages = friendChatHistory[friendId];
-            const now = Date.now();
-
-            // 系统欢迎消息
+            
+            // 只添加系统提示消息，不自动发送对话
             messages.push({
                 from: 'system',
                 content: '你们已经是朋友了，开始聊天吧！',
-                timestamp: now
+                timestamp: Date.now()
             });
-
-            // 预置开场对话
-            setTimeout(() => {
-                setTimeout(() => {
-                    messages.push({
-                        from: 'me',
-                        content: '你好',
-                        timestamp: now + 2000
-                    });
-                    localStorage.setItem('friendChatHistory', JSON.stringify(friendChatHistory));
-                    if (currentChatFriendId === friendId) {
-                        loadChatMessages(friendId);
-                    }
-
-                    // 好友回复
-                    setTimeout(() => {
-                        messages.push({
-                            from: 'friend',
-                            content: '你好！很高兴认识你！',
-                            timestamp: now + 3500
-                        });
-                        localStorage.setItem('friendChatHistory', JSON.stringify(friendChatHistory));
-                        if (currentChatFriendId === friendId) {
-                            loadChatMessages(friendId);
-                        }
-
-                        // 用户再次发送
-                        setTimeout(() => {
-                            messages.push({
-                                from: 'me',
-                                content: `我是${currentUser.major}专业的，你呢？`,
-                                timestamp: now + 6000
-                            });
-                            localStorage.setItem('friendChatHistory', JSON.stringify(friendChatHistory));
-                            if (currentChatFriendId === friendId) {
-                                loadChatMessages(friendId);
-                            }
-
-                            // 好友回复
-                            setTimeout(() => {
-                                messages.push({
-                                    from: 'friend',
-                                    content: `我是${friend.major}专业的，我们可能有共同话题！`,
-                                    timestamp: now + 8500
-                                });
-                                localStorage.setItem('friendChatHistory', JSON.stringify(friendChatHistory));
-                                if (currentChatFriendId === friendId) {
-                                    loadChatMessages(friendId);
-                                }
-                            }, 2000);
-                        }, 2000);
-                    }, 1500);
-                }, 1000);
-            }, 500);
+            
+            // 保存聊天记录
+            localStorage.setItem('friendChatHistory', JSON.stringify(friendChatHistory));
+            
+            // 如果当前正在查看这个好友的聊天，刷新显示
+            if (currentChatFriendId === friendId) {
+                loadChatMessages(friendId);
+            }
         }
 
         /**
@@ -9988,6 +10195,196 @@ ${Object.entries(reportData.goals).map(([key, val]) =>
             if (modal) {
                 modal.classList.remove('modal-visible');
                 modal.classList.add('hidden');
+            }
+        }
+
+        /**
+         * 显示消费记录模态框
+         */
+        function showConsumptionRecord() {
+            const modal = document.getElementById('consumptionRecordModal');
+            if (modal) {
+                modal.style.display = 'flex';
+                modal.classList.remove('hidden');
+                // 清空表单
+                document.getElementById('consumptionForm').reset();
+            }
+        }
+
+        /**
+         * 关闭消费记录模态框
+         */
+        function closeConsumptionRecordModal() {
+            const modal = document.getElementById('consumptionRecordModal');
+            if (modal) {
+                modal.style.display = 'none';
+                modal.classList.add('hidden');
+            }
+        }
+
+        /**
+         * 保存消费记录
+         */
+        function saveConsumption(event) {
+            event.preventDefault();
+            
+            const mealType = document.getElementById('mealType').value;
+            const amount = parseFloat(document.getElementById('consumptionAmount').value);
+            const note = document.getElementById('consumptionNote').value.trim();
+            
+            if (!mealType || !amount) {
+                alert('请填写完整的消费信息');
+                return;
+            }
+            
+            // 获取现有记录
+            const records = JSON.parse(localStorage.getItem('consumptionRecords') || '[]');
+            
+            // 创建新记录
+            const newRecord = {
+                id: Date.now(),
+                mealType: mealType,
+                amount: amount,
+                note: note,
+                date: new Date().toISOString(),
+                timestamp: Date.now()
+            };
+            
+            // 保存到localStorage
+            records.push(newRecord);
+            localStorage.setItem('consumptionRecords', JSON.stringify(records));
+            
+            // 关闭模态框
+            closeConsumptionRecordModal();
+            
+            // 在聊天框中显示提示消息
+            const mealEmoji = {
+                '早餐': '🌅',
+                '午餐': '☀️',
+                '晚餐': '🌙',
+                '夜宵': '🌃',
+                '下午茶': '🍵'
+            };
+            
+            const message = `✅ 消费记录保存成功！\n\n**餐别**：${mealEmoji[mealType]} ${mealType}\n**金额**：¥${amount.toFixed(2)}${note ? `\n**备注**：${note}` : ''}\n\n您可以在"消费记录"中查看所有记录。`;
+            
+            // 使用ChatModule的addMessage函数显示消息
+            if (typeof ChatModule !== 'undefined' && ChatModule.addMessage) {
+                ChatModule.addMessage('ai', message);
+            } else {
+                // 如果ChatModule不可用，使用fallback
+                addMessage('ai', message);
+            }
+        }
+
+        /**
+         * 显示消费列表模态框
+         */
+        function showConsumptionList() {
+            const modal = document.getElementById('consumptionListModal');
+            if (modal) {
+                modal.style.display = 'flex';
+                modal.classList.remove('hidden');
+                renderConsumptionList();
+            }
+        }
+
+        /**
+         * 关闭消费列表模态框
+         */
+        function closeConsumptionListModal() {
+            const modal = document.getElementById('consumptionListModal');
+            if (modal) {
+                modal.style.display = 'none';
+                modal.classList.add('hidden');
+            }
+        }
+
+        /**
+         * 渲染消费记录列表
+         */
+        function renderConsumptionList() {
+            const records = JSON.parse(localStorage.getItem('consumptionRecords') || '[]');
+            const container = document.getElementById('consumptionList');
+            
+            // 按日期降序排序
+            records.sort((a, b) => b.timestamp - a.timestamp);
+            
+            if (records.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-8 text-gray-500">
+                        <i class="fas fa-receipt text-4xl mb-4 opacity-50"></i>
+                        <p>暂无消费记录</p>
+                        <p class="text-sm mt-2">点击"记录消费"开始记账</p>
+                    </div>
+                `;
+                document.getElementById('totalConsumption').textContent = '¥0.00';
+                return;
+            }
+            
+            // 渲染记录列表
+            container.innerHTML = records.map((record, index) => {
+                const date = new Date(record.date);
+                const dateStr = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+                const timeStr = `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
+                
+                const mealEmoji = {
+                    '早餐': '🌅',
+                    '午餐': '☀️',
+                    '晚餐': '🌙',
+                    '夜宵': '🌃',
+                    '下午茶': '🍵'
+                };
+                
+                return `
+                    <div class="flex items-center justify-between p-4 rounded-lg hover:scale-[1.02] transition-transform"
+                         style="background: ${index % 2 === 0 ? 'var(--bg-secondary)' : 'var(--bg-tertiary)'}; border: 1px solid var(--border-color);">
+                        <div class="flex-1">
+                            <div class="flex items-center space-x-2">
+                                <span class="text-xl">${mealEmoji[record.mealType] || '🍽️'}</span>
+                                <span class="font-semibold" style="color: var(--text-primary);">${record.mealType}</span>
+                            </div>
+                            <div class="text-sm mt-1" style="color: var(--text-secondary);">
+                                <i class="fas fa-calendar-alt mr-1"></i>${dateStr}
+                                <i class="fas fa-clock ml-2 mr-1"></i>${timeStr}
+                                ${record.note ? `<i class="fas fa-comment ml-2 mr-1"></i>${record.note}` : ''}
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <span class="text-xl font-bold text-red-500">¥${record.amount.toFixed(2)}</span>
+                            <button onclick="deleteConsumption(${record.id})"
+                                    class="text-gray-400 hover:text-red-500 transition-colors p-2"
+                                    title="删除记录">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            // 计算总支出
+            const total = records.reduce((sum, r) => sum + r.amount, 0);
+            document.getElementById('totalConsumption').textContent = `¥${total.toFixed(2)}`;
+        }
+
+        /**
+         * 删除消费记录
+         */
+        function deleteConsumption(id) {
+            if (!confirm('确定要删除这条消费记录吗？')) {
+                return;
+            }
+            
+            const records = JSON.parse(localStorage.getItem('consumptionRecords') || '[]');
+            const filteredRecords = records.filter(r => r.id !== id);
+            localStorage.setItem('consumptionRecords', JSON.stringify(filteredRecords));
+            
+            // 重新渲染列表
+            renderConsumptionList();
+            
+            // 显示删除成功提示
+            if (typeof ChatModule !== 'undefined' && ChatModule.addMessage) {
+                ChatModule.addMessage('ai', '🗑️ 消费记录已删除');
             }
         }
 
@@ -15863,5 +16260,120 @@ ${records.map(r =>
         
         console.log('[修复代码] 模态框显示修复代码已加载');
     </script>
+
+    <!-- 用户画像选择模态框 -->
+    <div id="personalityModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-6">
+                <div>
+                    <h2 class="text-2xl font-bold text-gray-800">选择对话风格</h2>
+                    <p class="text-gray-600 mt-1">选择您偏好的AI助手性格类型</p>
+                </div>
+                <button id="closePersonalityModal" class="text-gray-500 hover:text-gray-700 text-2xl">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div id="personalityGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- 画像卡片将通过JavaScript动态加载 -->
+            </div>
+            
+            <div class="mt-6 pt-4 border-t border-gray-200">
+                <div class="flex justify-between items-center">
+                    <div class="text-sm text-gray-600">
+                        <i class="fas fa-info-circle mr-1"></i>
+                        您可以随时更改对话风格
+                    </div>
+                    <button onclick="PersonalitySelector.closeModal()"
+                            class="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors">
+                        暂时保留
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .personality-card {
+            padding: 1.5rem;
+            border-radius: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+        
+        .personality-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .personality-card.selected {
+            border-color: #3B82F6;
+            background: linear-gradient(135deg, #EBF5FF 0%, #DBE4FF 100%);
+        }
+        
+        .personality-emoji {
+            font-size: 3rem;
+            margin-bottom: 0.75rem;
+        }
+        
+        .personality-name {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: #1F2937;
+            margin-bottom: 0.5rem;
+        }
+        
+        .personality-description {
+            color: #6B7280;
+            margin-bottom: 0.75rem;
+            line-height: 1.5;
+        }
+        
+        .personality-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        
+        .personality-tag {
+            padding: 0.25rem 0.75rem;
+            background: #F3F4F6;
+            color: #4B5563;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes slideOut {
+            from {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            to {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+        }
+        
+        .animate-slideIn {
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        .animate-slideOut {
+            animation: slideOut 0.3s ease-in;
+        }
+    </style>
 </body>
 </html>

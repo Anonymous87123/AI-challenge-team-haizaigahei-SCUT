@@ -1,0 +1,52 @@
+{
+  "dialog_type": "reminder",
+  "description": "提醒设置对话场景",
+  "version": "3.0",
+  "trigger_keywords": [
+    "提醒", "remind", "reminder", "alarm",
+    "设置提醒", "添加提醒", "创建提醒",
+    "提前提醒", "提醒我", "别忘了提醒",
+    "时间提醒", "作业提醒", "课程提醒",
+    "闹钟", "时间", "deadline", "截止",
+    "别忘了", "记得提醒", "记得做",
+    "提前通知", "提前告知", "考前提醒"
+  ],
+  "intents": {
+    "set_reminder": {
+      "description": "设置提醒",
+      "required_entities": ["reminder_time"],
+      "optional_entities": ["homework_name", "course_name"],
+      "response_templates": [
+        "好的，已设置提醒：{homework_name}将在{reminder_time}提醒你",
+        "✅ 提醒已设置！{homework_name} - {reminder_time}",
+        "没问题，我会提前{reminder_time}提醒你{homework_name}的截止",
+        "好的，{homework_name}的提醒时间已设置为{reminder_time}"
+      ],
+      "sample_dialogues": [
+        {
+          "user": "帮我设置个提醒，高数作业后天截止",
+          "ai": "好的，需要在什么时候提醒你？比如提前1天或具体时间？",
+          "follow_up": "提前2小时吧",
+          "ai_follow_up": "✅ 提醒已设置！高数作业将在截止前2小时提醒你"
+        },
+        {
+          "user": "设置提醒，明天上午9点提醒我交英语作业",
+          "ai": "好的，明天上午9点会提醒你交英语作业。"
+        }
+      ]
+    }
+  },
+  "entity_examples": {
+    "reminder_time": [
+      "提前1天", "提前2天", "提前1小时", "提前2小时",
+      "明天上午9点", "后天晚上8点",
+      "截止前1天", "截止前3小时",
+      "每天早上8点", "每周一提醒"
+    ],
+    "homework_name": [
+      "高数作业", "英语论文", "实验报告",
+      "编程作业", "presentation",
+      "提交作业", "交报告"
+    ]
+  }
+}
