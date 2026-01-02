@@ -1077,6 +1077,133 @@
             background: #e5e7eb;
         }
 
+        /* 评论瀑布流布局样式 */
+        .comments-masonry {
+            column-count: 1;
+            column-gap: 16px;
+        }
+
+        @media (min-width: 768px) {
+            .comments-masonry {
+                column-count: 2;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .comments-masonry {
+                column-count: 3;
+            }
+        }
+
+        .comment-item-masonry {
+            break-inside: avoid;
+            margin-bottom: 16px;
+            display: inline-block;
+            width: 100%;
+        }
+
+        /* 评论分页控制样式 */
+        .comments-pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            margin-top: 20px;
+            padding: 16px;
+            background: #f9fafb;
+            border-radius: 8px;
+        }
+
+        .pagination-btn {
+            padding: 8px 16px;
+            border: 1px solid #e5e7eb;
+            background: white;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #374151;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .pagination-btn:hover:not(:disabled) {
+            background: #f3f4f6;
+            border-color: #d1d5db;
+        }
+
+        .pagination-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .pagination-btn.active {
+            background: #3b82f6;
+            color: white;
+            border-color: #3b82f6;
+        }
+
+        .pagination-info {
+            font-size: 14px;
+            color: #6b7280;
+            padding: 0 12px;
+        }
+        
+        /* ========== 模态框显示修复样式 ========== */
+        
+        /* ========== 动态模态框容器样式 ========== */
+        .modal-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 999999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* ========== 统一模态框显示控制 ========== */
+        
+        /* 模态框基础样式 - 默认隐藏（由hidden类控制） */
+        #growthDashboardModal,
+        #consumptionAnalysisModal,
+        #shuttleScheduleModal,
+        #shuttleReservationModal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 99999;
+            background: rgba(0, 0, 0, 0.7);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+        }
+        
+        /* 模态框显示状态 - 仅控制显示，不使用!important */
+        .modal-visible {
+            display: flex !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+        }
+        
+        /* 确保隐藏类正常工作 */
+        #growthDashboardModal.hidden,
+        #consumptionAnalysisModal.hidden,
+        #shuttleScheduleModal.hidden,
+        #shuttleReservationModal.hidden {
+            display: none;
+            visibility: hidden;
+            opacity: 0;
+        }
+
         /* 收藏中心样式 */
         .saved-posts-grid {
             display: grid;
@@ -1954,19 +2081,19 @@
                     <span class="sidebar-content">个人资料</span>
                 </button>
                 
-                <button onclick="showGrowthDashboard()" class="quick-action-btn w-full flex items-center space-x-3 mt-2 relative" data-type="growth">
+                <button id="growthDashboardBtn" onclick="showGrowthDashboardFixed(event)" class="quick-action-btn w-full flex items-center space-x-3 mt-2 relative" data-type="growth">
                     <i class="fas fa-chart-line text-yellow-400"></i>
                     <span class="sidebar-content">我的成长</span>
                     <span class="ml-auto px-2 py-0.5 bg-yellow-600 text-white text-xs rounded-full font-semibold">New</span>
                 </button>
                 
-                <button onclick="showConsumptionAnalysis()" class="quick-action-btn w-full flex items-center space-x-3 mt-2 relative" data-type="consumption">
+                <button id="consumptionAnalysisBtn" onclick="showConsumptionAnalysisFixed(event)" class="quick-action-btn w-full flex items-center space-x-3 mt-2 relative" data-type="consumption">
                     <i class="fas fa-wallet text-teal-400"></i>
                     <span class="sidebar-content">消费分析</span>
                     <span class="ml-auto px-2 py-0.5 bg-teal-600 text-white text-xs rounded-full font-semibold">New</span>
                 </button>
                 
-                <button onclick="showDataManagement()" class="quick-action-btn w-full flex items-center space-x-3 mt-2" data-type="data">
+                <button id="dataManagementBtn" onclick="showDataManagement(event)" class="quick-action-btn w-full flex items-center space-x-3 mt-2" data-type="data">
                     <i class="fas fa-database text-green-400"></i>
                     <span class="sidebar-content">数据管理</span>
                 </button>
@@ -2081,8 +2208,8 @@
                         </button>
 
                         <!-- 输入框 -->
-                        <div class="flex-1">
-                            <textarea 
+                        <div class="flex-1 relative">
+                            <textarea
                                 id="messageInput" 
                                 placeholder="输入您的问题..." 
                                 class="w-full px-4 py-3 rounded-2xl resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white bg-opacity-90 border border-gray-200"
@@ -2094,10 +2221,81 @@
                             <div id="suggestions" class="mt-2 flex flex-wrap gap-2 hidden">
                                 <!-- 动态生成建议 -->
                             </div>
+                            
+                            <!-- Emoji选择器 -->
+                            <div id="emojiPicker" class="mt-2 p-3 bg-white rounded-xl shadow-lg border border-gray-200 hidden" style="max-height: 200px; overflow-y: auto; position: absolute; bottom: 100%; left: 0; z-index: 100;">
+                                <div class="grid grid-cols-8 gap-2">
+                                    <!-- 表情类 -->
+                                    <span onclick="insertEmoji('😀')" class="text-2xl cursor-pointer hover:scale-125 transition-transform p-1">😀</span>
+                                    <span onclick="insertEmoji('😂')" class="text-2xl cursor-pointer hover:scale-125 transition-transform p-1">😂</span>
+                                    <span onclick="insertEmoji('🥰')" class="text-2xl cursor-pointer hover:scale-125 transition-transform p-1">🥰</span>
+                                    <span onclick="insertEmoji('😍')" class="text-2xl cursor-pointer hover:scale-125 transition-transform p-1">😍</span>
+                                    <span onclick="insertEmoji('🤗')" class="text-2xl cursor-pointer hover:scale-125 transition-transform p-1">🤗</span>
+                                    <span onclick="insertEmoji('😎')" class="text-2xl cursor-pointer hover:scale-125 transition-transform p-1">😎</span>
+                                    <span onclick="insertEmoji('🤔')" class="text-2xl cursor-pointer hover:scale-125 transition-transform p-1">🤔</span>
+                                    <span onclick="insertEmoji('😴')" class="text-2xl cursor-pointer hover:scale-125 transition-transform p-1">😴</span>
+                                    <span onclick="insertEmoji('😭')" class="text-2xl cursor-pointer hover:scale-125 transition-transform p-1">😭</span>
+                                    <span onclick="insertEmoji('😤')" class="text-2xl cursor-pointer hover:scale-125 transition-transform p-1">😤</span>
+                                    <span onclick="insertEmoji('😤')" class="text-2xl cursor-pointer hover:scale-125 transition-transform p-1">😤</span>
+                                    <span onclick="insertEmoji('😱')" class="text-2xl cursor-pointer hover:scale-125 transition-transform p-1">😱</span>
+                                    <span onclick="insertEmoji('🤯')" class="text-2xl cursor-pointer hover:scale-125 transition-transform p-1">🤯</span>
+                                    <span onclick="insertEmoji('🥳')" class="text-2xl cursor-pointer hover:scale-125 transition-transform p-1">🥳</span>
+                                    <span onclick="insertEmoji('😊')" class="text-2xl cursor-pointer hover:scale-125 transition-transform p-1">😊</span>
+                                    
+                                    <!-- 手势类 -->
+                                    <span onclick="insertEmoji('👍')" class="text-2xl cursor-pointer hover:scale-125 transition-transform p-1">👍</span>
+                                    <span onclick="insertEmoji('👎')" class="text-2xl cursor-pointer hover:scale-125 transition-transform p-1">👎</span>
+                                    <span onclick="insertEmoji('👏')" class="text-2xl cursor-pointer hover:scale-125 transition-transform p-1">👏</span>
+                                    <span onclick="insertEmoji('🙌')" class="text-2xl cursor-pointer hover:scale-125 transition-transform p-1">🙌</span>
+                                    <span onclick="insertEmoji('🤝')" class="text-2xl cursor-pointer hover:scale-125 transition-transform p-1">🤝</span>
+                                    <span onclick="insertEmoji('💪')" class="text-2xl cursor-pointer hover:scale-125 transition-transform p-1">💪</span>
+                                    <span onclick="insertEmoji('🤚')" class="text-2xl cursor-pointer hover:scale-125 transition-transform p-1">🤚</span>
+                                    <span onclick="insertEmoji('✌️')" class="text-2xl cursor-pointer hover:scale-125 transition-transform p-1">✌️</span>
+                                    
+                                    <!-- 物品类 -->
+                                    <span onclick="insertEmoji('❤️')" class="text-2xl cursor-pointer hover:scale-125 transition-transform p-1">❤️</span>
+                                    <span onclick="insertEmoji('🌟')" class="text-2xl cursor-pointer hover:scale-125 transition-transform p-1">🌟</span>
+                                    <span onclick="insertEmoji('🎉')" class="text-2xl cursor-pointer hover:scale-125 transition-transform p-1">🎉</span>
+                                    <span onclick="insertEmoji('🎊')" class="text-2xl cursor-pointer hover:scale-125 transition-transform p-1">🎊</span>
+                                    <span onclick="insertEmoji('🎁')" class="text-2xl cursor-pointer hover:scale-125 transition-transform p-1">🎁</span>
+                                    <span onclick="insertEmoji('📚')" class="text-2xl cursor-pointer hover:scale-125 transition-transform p-1">📚</span>
+                                    <span onclick="insertEmoji('💻')" class="text-2xl cursor-pointer hover:scale-125 transition-transform p-1">💻</span>
+                                    <span onclick="insertEmoji('🎯')" class="text-2xl cursor-pointer hover:scale-125 transition-transform p-1">🎯</span>
+                                    
+                                    <!-- 动物类 -->
+                                    <span onclick="insertEmoji('🐶')" class="text-2xl cursor-pointer hover:scale-125 transition-transform p-1">🐶</span>
+                                    <span onclick="insertEmoji('🐱')" class="text-2xl cursor-pointer hover:scale-125 transition-transform p-1">🐱</span>
+                                    <span onclick="insertEmoji('🦊')" class="text-2xl cursor-pointer hover:scale-125 transition-transform p-1">🦊</span>
+                                    <span onclick="insertEmoji('🐼')" class="text-2xl cursor-pointer hover:scale-125 transition-transform p-1">🐼</span>
+                                    <span onclick="insertEmoji('🐰')" class="text-2xl cursor-pointer hover:scale-125 transition-transform p-1">🐰</span>
+                                    <span onclick="insertEmoji('🐻')" class="text-2xl cursor-pointer hover:scale-125 transition-transform p-1">🐻</span>
+                                    <span onclick="insertEmoji('🦁')" class="text-2xl cursor-pointer hover:scale-125 transition-transform p-1">🦁</span>
+                                    <span onclick="insertEmoji('🦄')" class="text-2xl cursor-pointer hover:scale-125 transition-transform p-1">🦄</span>
+                                    
+                                    <!-- 食物类 -->
+                                    <span onclick="insertEmoji('🍎')" class="text-2xl cursor-pointer hover:scale-125 transition-transform p-1">🍎</span>
+                                    <span onclick="insertEmoji('🍕')" class="text-2xl cursor-pointer hover:scale-125 transition-transform p-1">🍕</span>
+                                    <span onclick="insertEmoji('🍔')" class="text-2xl cursor-pointer hover:scale-125 transition-transform p-1">🍔</span>
+                                    <span onclick="insertEmoji('🍜')" class="text-2xl cursor-pointer hover:scale-125 transition-transform p-1">🍜</span>
+                                    <span onclick="insertEmoji('🍲')" class="text-2xl cursor-pointer hover:scale-125 transition-transform p-1">🍲</span>
+                                    <span onclick="insertEmoji('☕')" class="text-2xl cursor-pointer hover:scale-125 transition-transform p-1">☕</span>
+                                    <span onclick="insertEmoji('🥤')" class="text-2xl cursor-pointer hover:scale-125 transition-transform p-1">🥤</span>
+                                    <span onclick="insertEmoji('🍰')" class="text-2xl cursor-pointer hover:scale-125 transition-transform p-1">🍰</span>
+                                    
+                                    <!-- 校园相关 -->
+                                    <span onclick="insertEmoji('🏫')" class="text-2xl cursor-pointer hover:scale-125 transition-transform p-1">🏫</span>
+                                    <span onclick="insertEmoji('📝')" class="text-2xl cursor-pointer hover:scale-125 transition-transform p-1">📝</span>
+                                    <span onclick="insertEmoji('✏️')" class="text-2xl cursor-pointer hover:scale-125 transition-transform p-1">✏️</span>
+                                    <span onclick="insertEmoji('📖')" class="text-2xl cursor-pointer hover:scale-125 transition-transform p-1">📖</span>
+                                    <span onclick="insertEmoji('🎓')" class="text-2xl cursor-pointer hover:scale-125 transition-transform p-1">🎓</span>
+                                    <span onclick="insertEmoji('🚌')" class="text-2xl cursor-pointer hover:scale-125 transition-transform p-1">🚌</span>
+                                    <span onclick="insertEmoji('⏰')" class="text-2xl cursor-pointer hover:scale-125 transition-transform p-1">⏰</span>
+                                </div>
+                            </div>
                         </div>
 
                         <!-- 表情按钮 -->
-                        <button class="text-gray-400 hover:text-gray-600 transition-colors p-2">
+                        <button class="text-gray-400 hover:text-gray-600 transition-colors p-2 z-50" onclick="event.preventDefault(); event.stopPropagation(); toggleEmojiPicker();">
                             <i class="fas fa-smile text-xl"></i>
                         </button>
 
@@ -2121,6 +2319,11 @@
 
     <button class="floating-btn" style="bottom: 150px; right: 20px; background: var(--campus-green);" onclick="emergencyHelp()" title="紧急求助">
         <i class="fas fa-question"></i>
+    </button>
+
+    <!-- 测试按钮（临时） -->
+    <button id="testSimpleBtn" class="floating-btn" style="bottom: 290px; right: 20px; background: #22c55e;" onclick="if(window.testSimple) window.testSimple()" title="简单测试">
+        <i class="fas fa-check"></i>
     </button>
 
     <!-- 课程表模态框 -->
@@ -2325,10 +2528,11 @@
                 </div>
             </div>
         </div>
-    
-        <!-- 个人成长仪表盘模态框 -->
-        <div id="growthDashboardModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
-            <div class="glass-card rounded-2xl p-6 max-w-6xl w-full mx-4 slide-in-up max-h-[90vh] overflow-hidden">
+    </div>
+
+    <!-- 个人成长仪表盘模态框 -->
+    <div id="growthDashboardModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-[99999]">
+            <div class="glass-card rounded-2xl p-6 max-w-6xl w-full mx-4 slide-in-up max-h-[90vh] overflow-y-auto" style="min-height: 600px; max-height: 85vh;">
                 <div class="flex items-center justify-between mb-4">
                     <h3 class="text-2xl font-bold text-gray-900 flex items-center">
                         <i class="fas fa-chart-line text-yellow-500 mr-3"></i> 我的成长
@@ -2593,7 +2797,7 @@
         </div>
     
         <!-- 智能消费分析模态框 -->
-        <div id="consumptionAnalysisModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div id="consumptionAnalysisModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-[99999]">
             <div class="glass-card rounded-2xl p-6 max-w-6xl w-full mx-4 slide-in-up max-h-[90vh] overflow-hidden">
                 <div class="flex items-center justify-between mb-4">
                     <h3 class="text-2xl font-bold text-gray-900 flex items-center">
@@ -3926,6 +4130,8 @@
         
         // 初始化应用
         document.addEventListener('DOMContentLoaded', function() {
+            console.log('[初始化] ====================');
+            console.log('[初始化] DOM开始加载');
             initializeApp();
             loadUserSettings();
             loadChatHistory();
@@ -3952,6 +4158,33 @@
                 // 未登录，显示登录页面
                 document.getElementById('loginPage').style.display = 'grid';
             }
+            
+            // 添加全局事件委托，确保按钮点击正确触发
+            document.addEventListener('click', function(e) {
+                const target = e.target.closest('button');
+                if (!target) return;
+                
+                // 成长仪表盘按钮点击
+                if (target.id === 'growthDashboardBtn' ||
+                    target.onclick?.toString().includes('showGrowthDashboard')) {
+                    console.log('[事件委托] 成长仪表盘按钮被点击');
+                    e.preventDefault();
+                    e.stopPropagation();
+                    showGrowthDashboard(e);
+                }
+                
+                // 数据管理按钮点击
+                if (target.id === 'dataManagementBtn' ||
+                    target.onclick?.toString().includes('showDataManagement')) {
+                    console.log('[事件委托] 数据管理按钮被点击');
+                    e.preventDefault();
+                    e.stopPropagation();
+                    showDataManagement(e);
+                }
+            });
+            
+            console.log('[初始化] 事件委托已绑定');
+            console.log('[初始化] ====================');
         });
 
         // 初始化应用
@@ -4226,6 +4459,56 @@
             sendMessage();
         }
 
+        // 切换emoji选择器
+        function toggleEmojiPicker() {
+            const emojiPicker = document.getElementById('emojiPicker');
+            const suggestions = document.getElementById('suggestions');
+            
+            if (!emojiPicker) {
+                console.error('emojiPicker元素未找到');
+                return;
+            }
+            
+            // 隐藏建议列表
+            if (suggestions) {
+                suggestions.classList.add('hidden');
+            }
+            
+            // 切换emoji选择器
+            if (emojiPicker.classList.contains('hidden')) {
+                emojiPicker.classList.remove('hidden');
+                console.log('emoji选择器已显示');
+            } else {
+                emojiPicker.classList.add('hidden');
+                console.log('emoji选择器已隐藏');
+            }
+        }
+
+        // 插入emoji到输入框
+        function insertEmoji(emoji) {
+            const input = document.getElementById('messageInput');
+            const cursorPosition = input.selectionStart;
+            const currentValue = input.value;
+            
+            // 在光标位置插入emoji
+            const newValue = currentValue.slice(0, cursorPosition) + emoji + currentValue.slice(cursorPosition);
+            input.value = newValue;
+            
+            // 设置光标位置到emoji后面
+            const newCursorPosition = cursorPosition + emoji.length;
+            input.setSelectionRange(newCursorPosition, newCursorPosition);
+            
+            // 重新调整高度
+            autoResize(input);
+            
+            // 聚焦输入框
+            input.focus();
+            
+            // 保持emoji选择器开放方便连续添加多个emoji
+            const emojiPicker = document.getElementById('emojiPicker');
+            emojiPicker.classList.remove('hidden');
+        }
+
         // 处理键盘事件
         function handleKeyPress(event) {
             if (event.key === 'Enter' && !event.shiftKey) {
@@ -4267,6 +4550,7 @@
 
         // 快捷操作
         function quickAction(action) {
+            console.log('[快捷操作] action:', action);
             switch(action) {
                 case 'schedule':
                     toggleSchedule();
@@ -4278,6 +4562,7 @@
                     sendQuickMessage('图书馆空位查询');
                     break;
                 case 'shuttle':
+                    console.log('[快捷操作] 准备调用 showShuttleReservation');
                     showShuttleReservation(); // 打开校车预约系统（AI生成部分）
                     break;
                 case 'express':
@@ -4380,10 +4665,20 @@
                                 <span class="px-3 py-1 text-xs rounded-full bg-white bg-opacity-20 backdrop-blur">
                                     ${course.status}
                                 </span>
-                        <!-- 校车预约系统模态框 -->
-                        <div id="shuttleReservationModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 p-4">
-                            <div class="bg-white rounded-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
-                                <!-- 标题栏 -->
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        // 生成食堂HTML
+        function generateCanteenHTML(canteenData) {
+            return `
+                <div class="space-y-4">
+                    <h4 class="font-bold text-lg">🍽️ 食堂信息</h4>
+                    ${Object.entries(canteenData).map(([key, canteen]) => `
+                        <div class="info-card">
                                 <div class="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-6 py-4 flex items-center justify-between">
                                     <div class="flex items-center space-x-3">
                                         <i class="fas fa-bus text-2xl"></i>
@@ -8285,21 +8580,117 @@
          * 显示校车预约系统模态框
          */
         function showShuttleReservation() {
-            const modal = document.getElementById('shuttleReservationModal');
-            modal.style.display = 'flex';
+            console.log('[校车系统] showShuttleReservation() 被调用');
             
-            // 加载校车首页
-            loadShuttleHomePage();
+            // 尝试查找现有模态框
+            var existingModal = document.getElementById('shuttleReservationModal');
+            if (existingModal) {
+                console.log('[校车系统] 使用现有模态框');
+                existingModal.classList.remove('hidden');
+                existingModal.classList.add('modal-visible');
+                try {
+                    loadShuttleHomePage();
+                } catch (error) {
+                    console.error('[校车系统] 首页加载出错:', error);
+                }
+                return;
+            }
             
-            console.log('[校车系统] 打开校车预约系统');
+            // 如果不存在，动态创建简化版本
+            var modal = document.createElement('div');
+            modal.id = 'simpleShuttleSchedule';
+            modal.className = 'modal-container';
+            modal.innerHTML = `
+                <div style="
+                    background: white;
+                    padding: 30px;
+                    border-radius: 15px;
+                    max-width: 700px;
+                    width: 90%;
+                    max-height: 80vh;
+                    overflow-y: auto;
+                    box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+                ">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 2px solid #f0f0f0; padding-bottom: 15px;">
+                        <h2 style="margin: 0; color: #333; font-size: 24px;">🚌 智能校车时刻表</h2>
+                        <button onclick="closeDynamicModal('simpleShuttleSchedule')"
+                                style="background: none; border: none; font-size: 28px; cursor: pointer; color: #666; padding: 5px;"
+                                onmouseover="this.style.color='#333'" onmouseout="this.style.color='#666'">
+                            ×
+                        </button>
+                    </div>
+                    
+                    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 10px; padding: 20px; margin-bottom: 25px; color: white; text-align: center;">
+                        <div style="font-size: 40px; margin-bottom: 10px;">🚌</div>
+                        <h3 style="margin: 0 0 10px 0; font-size: 24px;">校车时刻表</h3>
+                        <p style="margin: 0; opacity: 0.9;">实时查看校车班次信息</p>
+                    </div>
+                    
+                    <div style="margin-bottom: 20px;">
+                        <h4 style="margin: 0 0 15px 0; color: #667eea;">🗺️ 校车线路</h4>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 20px;">
+                            <div style="background: #667eea; color: white; padding: 15px; border-radius: 8px; text-align: center; font-weight: bold;">
+                                校本部→东校区
+                            </div>
+                            <div style="background: #764ba2; color: white; padding: 15px; border-radius: 8px; text-align: center; font-weight: bold;">
+                                校本部→西校区
+                            </div>
+                            <div style="background: #28a745; color: white; padding: 15px; border-radius: 8px; text-align: center; font-weight: bold;">
+                                环校线
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+                        <h4 style="margin: 0 0 10px 0; color: #667eea;">📅 校本部→东校区</h4>
+                        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;">
+                            <div style="background: white; padding: 8px; border-radius: 5px; text-align: center; border: 1px solid #ddd;">
+                                <div style="color: #666; font-size: 12px;">07:00</div>
+                            </div>
+                            <div style="background: white; padding: 8px; border-radius: 5px; text-align: center; border: 1px solid #ddd;">
+                                <div style="color: #666; font-size: 12px;">07:30</div>
+                            </div>
+                            <div style="background: white; padding: 8px; border-radius: 5px; text-align: center; border: 1px solid #ddd;">
+                                <div style="color: #666; font-size: 12px;">08:00</div>
+                            </div>
+                            <div style="background: white; padding: 8px; border-radius: 5px; text-align: center; border: 1px solid #ddd;">
+                                <div style="color: #666; font-size: 12px;">08:30</div>
+                            </div>
+                            <div style="background: #f0f0f0; padding: 8px; border-radius: 5px; text-align: center; border: 1px dashed #999;">
+                                <div style="color: #999; font-size: 12px;">09:00</div>
+                            </div>
+                            <div style="background: #f0f0f0; padding: 8px; border-radius: 5px; text-align: center; border: 1px dashed #999;">
+                                <div style="color: #999; font-size: 12px;">09:30</div>
+                            </div>
+                            <div style="background: #f0f0f0; padding: 8px; border-radius: 5px; text-align: center; border: 1px dashed #999;">
+                                <div style="color: #999; font-size: 12px;">10:00</div>
+                            </div>
+                            <div style="background: #f0f0f0; padding: 8px; border-radius: 5px; text-align: center; border: 1px dashed #999;">
+                                <div style="color: #999; font-size: 12px;">10:30</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="text-align: center; color: #999; font-size: 14px; margin-top: 20px;">
+                        实时数据更新时间：2024年1月
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            console.log('[校车系统] 动态创建模态框成功');
         }
 
         /**
          * 关闭校车预约系统模态框
          */
         function closeShuttleReservationModal() {
-            document.getElementById('shuttleReservationModal').style.display = 'none';
-            console.log('[校车系统] 关闭校车预约系统');
+            const modal = document.getElementById('shuttleReservationModal');
+            if (modal) {
+                modal.classList.remove('modal-visible');
+                modal.classList.add('hidden');
+                console.log('[校车系统] 关闭校车预约系统');
+            }
         }
 
         /**
@@ -9059,52 +9450,322 @@
         /**
          * 显示个人成长仪表盘模态框
          */
-        function showGrowthDashboard() {
-            const modal = document.getElementById('growthDashboardModal');
-            modal.style.display = 'flex';
+        function showGrowthDashboard(e) {
+            console.log('[成长仪表盘] ====================');
+            console.log('[成长仪表盘] showGrowthDashboard() 被调用');
             
-            // 加载成长数据
-            loadGrowthData();
+            // 阻止事件冒泡和默认行为
+            if (e) {
+                e.stopPropagation();
+                e.preventDefault();
+                console.log('[成长仪表盘] 事件已阻止冒泡和默认行为');
+            }
+            
+            try {
+                // 先隐藏所有模态框
+                hideAllModals();
+                console.log('[成长仪表盘] 已隐藏所有模态框');
+                
+                const modal = document.getElementById('growthDashboardModal');
+                console.log('[成长仪表盘] 找到的modal元素:', modal);
+                
+                if (!modal) {
+                    console.error('[成长仪表盘] 错误: 没有找到 growthDashboardModal 元素');
+                    showError('成长仪表盘组件加载失败，将尝试使用简化版本');
+                    // 降级到简化版本
+                    setTimeout(() => showSimpleGrowthDashboard(), 100);
+                    return;
+                }
+                
+                // 强制设置模态框样式（覆盖任何可能的CSS冲突）
+                modal.style.display = 'flex';
+                modal.style.position = 'fixed';
+                modal.style.top = '0';
+                modal.style.left = '0';
+                modal.style.width = '100%';
+                modal.style.height = '100%';
+                modal.style.zIndex = '99999';
+                modal.classList.remove('hidden');
+                modal.style.opacity = '0';
+                
+                console.log('[成长仪表盘] 模态框样式已强制设置');
+                
+                // 添加淡入动画
+                requestAnimationFrame(() => {
+                    modal.style.transition = 'opacity 0.3s ease-in-out';
+                    modal.style.opacity = '1';
+                });
+                
+                // 确保子容器可见
+                const glassCard = modal.querySelector('.glass-card');
+                if (glassCard) {
+                    glassCard.style.display = 'block';
+                    glassCard.style.position = 'relative';
+                    glassCard.style.zIndex = '99999';
+                }
+                
+                // 加载成长数据
+                loadGrowthData();
+                console.log('[成长仪表盘] 成长数据加载完成');
+                
+                // 添加点击背景关闭功能
+                setTimeout(() => {
+                    modal.addEventListener('click', function closeModalOnClick(e) {
+                        if (e.target === modal) {
+                            modal.removeEventListener('click', closeModalOnClick);
+                            closeGrowthDashboardModal();
+                        }
+                    });
+                }, 100);
+                
+            } catch (error) {
+                console.error('[成长仪表盘] 发生错误:', error);
+                showError('打开成长仪表盘时出错: ' + error.message);
+                // 降级到简化版本
+                showSimpleGrowthDashboard();
+            }
+            
+            console.log('[成长仪表盘] ====================');
         }
+        
+        /**
+         * 简化版成长仪表盘（降级方案）
+         */
+        function showSimpleGrowthDashboard() {
+            console.log('[成长仪表盘] 使用简化版本');
+            
+            // 创建简单的模态框
+            const simpleModal = document.createElement('div');
+            simpleModal.id = 'simpleGrowthDashboard';
+            simpleModal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.7);
+                z-index: 999999;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            `;
+            
+            simpleModal.innerHTML = `
+                <div style="
+                    background: white;
+                    padding: 30px;
+                    border-radius: 15px;
+                    max-width: 600px;
+                    width: 90%;
+                    max-height: 80vh;
+                    overflow-y: auto;
+                ">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <h2 style="margin: 0; color: #333;">个人成长仪表盘</h2>
+                        <button onclick="document.getElementById('simpleGrowthDashboard').remove()"
+                                style="background: none; border: none; font-size: 24px; cursor: pointer; color: #666;">
+                            ×
+                        </button>
+                    </div>
+                    
+                    <div style="text-align: center; padding: 40px 20px; color: #666;">
+                        <div style="font-size: 48px; margin-bottom: 20px;">📊</div>
+                        <p style="margin: 0; font-size: 16px;">成长数据正在整理中...</p>
+                        <p style="margin: 10px 0 0 0; font-size: 14px; color: #999;">
+                            请刷新页面或稍后重试以查看完整功能
+                        </p>
+                    </div>
+                </div>
+            `;
+            
+            // 移除已存在的简化版本
+            const existing = document.getElementById('simpleGrowthDashboard');
+            if (existing) {
+                existing.remove();
+            }
+            
+            document.body.appendChild(simpleModal);
+        }
+        
+        /**
+         * 关闭成长仪表盘
+         */
+        
+        /**
+         * 调试函数 - 检查成长仪表盘状态
+         */
+        function debugGrowthDashboard() {
+            console.log('=== 成长仪表盘调试信息 ===');
+            
+            // 检查按钮
+            const btn = document.getElementById('growthDashboardBtn');
+            console.log('[按钮] 元素:', btn);
+            console.log('[按钮] onclick:', btn ? btn.getAttribute('onclick') : '未找到');
+            console.log('[按钮] 可见性:', btn ?
+                (window.getComputedStyle(btn).display !== 'none') : 'N/A');
+            
+            // 检查模态框
+            const modal = document.getElementById('growthDashboardModal');
+            console.log('[模态框] 元素:', modal);
+            if (modal) {
+                const styles = window.getComputedStyle(modal);
+                console.log('[模态框] display:', styles.display);
+                console.log('[模态框] zIndex:', styles.zIndex);
+                console.log('[模态框] opacity:', styles.opacity);
+                console.log('[模态框] position:', styles.position);
+                console.log('[模态框] width:', styles.width);
+                console.log('[模态框] height:', styles.height);
+            }
+            
+            // 检查glass-card
+            const glassCard = modal ? modal.querySelector('.glass-card') : null;
+            console.log('[glass-card] 元素:', glassCard);
+            if (glassCard) {
+                const cardStyles = window.getComputedStyle(glassCard);
+                console.log('[glass-card] display:', cardStyles.display);
+                console.log('[glass-card] zIndex:', cardStyles.zIndex);
+            }
+            
+            console.log('=== 调试信息结束 ===');
+        }
+        
+        /**
+         * 紧急修复 - 强制显示成长仪表盘
+         */
+        function emergencyFixGrowthDashboard() {
+            console.log('[紧急修复] 开始强制显示成长仪表盘');
+            
+            const modal = document.getElementById('growthDashboardModal');
+            if (modal) {
+                // 创建更高级别的容器
+                const container = document.createElement('div');
+                container.id = 'emergencyGrowthContainer';
+                container.style.cssText = `
+                    position: fixed !important;
+                    top: 0 !important;
+                    left: 0 !important;
+                    width: 100% !important;
+                    height: 100% !important;
+                    z-index: 999999 !important;
+                    background: rgba(0, 0, 0, 0.7) !important;
+                    display: flex !important;
+                    align-items: center !important;
+                    justify-content: center !important;
+                `;
+                
+                // 克隆模态框内容
+                const content = modal.cloneNode(true);
+                content.querySelector('.glass-card').style.cssText = `
+                    position: relative !important;
+                    z-index: 999999 !important;
+                    display: block !important;
+                    background: white !important;
+                    padding: 30px !important;
+                    border-radius: 15px !important;
+                `;
+                
+                // 添加关闭按钮
+                const closeBtn = content.querySelector('.close-btn') || document.createElement('button');
+                closeBtn.textContent = '×';
+                closeBtn.style.cssText = `
+                    position: absolute;
+                    top: 15px;
+                    right: 20px;
+                    font-size: 24px;
+                    background: none;
+                    border: none;
+                    cursor: pointer;
+                    color: #666;
+                `;
+                closeBtn.onclick = function() {
+                    document.getElementById('emergencyGrowthContainer').remove();
+                };
+                
+                // 如果没有找到关闭按钮位置，添加到glass-card
+                const glassCard = content.querySelector('.glass-card');
+                if (glassCard) {
+                    glassCard.style.position = 'relative';
+                    glassCard.appendChild(closeBtn);
+                }
+                
+                container.appendChild(content);
+                
+                // 移除旧的紧急容器
+                const oldContainer = document.getElementById('emergencyGrowthContainer');
+                if (oldContainer) {
+                    oldContainer.remove();
+                }
+                
+                document.body.appendChild(container);
+                console.log('[紧急修复] 紧急容器已创建并显示');
+            } else {
+                console.error('[紧急修复] 未找到成长仪表盘模态框');
+                showSimpleGrowthDashboard();
+            }
+        }
+        
+        // 暴露调试函数到全局作用域
+        window.debugGrowthDashboard = debugGrowthDashboard;
+        window.emergencyFixGrowthDashboard = emergencyFixGrowthDashboard;
 
         /**
          * 关闭个人成长仪表盘模态框
          */
         function closeGrowthDashboardModal() {
-            document.getElementById('growthDashboardModal').style.display = 'none';
+            const modal = document.getElementById('growthDashboardModal');
+            if (modal) {
+                modal.classList.remove('modal-visible');
+                modal.classList.add('hidden');
+            }
         }
 
         /**
          * 加载成长数据
          */
         function loadGrowthData() {
-            // 获取存储的学习数据
-            const studyRecords = JSON.parse(localStorage.getItem('studyRecords') || '[]');
-            
-            // 计算本月学习时长
-            const currentMonth = new Date().toISOString().slice(0, 7); // "2024-01"
-            const thisMonthRecords = studyRecords.filter(r => r.date.startsWith(currentMonth));
-            const totalHours = thisMonthRecords.reduce((sum, r) => sum + r.duration, 0);
-            
-            // 更新UI
-            document.getElementById('totalStudyHours').textContent = `${totalHours}小时`;
-            
-            // 计算增长率（模拟）
-            document.querySelector('#growthDashboardModal .text-green-300').textContent = `+${Math.floor(Math.random() * 20 + 5)}%`;
-            
-            // 更新成绩和排名
-            const avgGrade = calculateAverageGrade();
-            document.getElementById('avgGrade').textContent = `${avgGrade}分`;
-            document.getElementById('classRank').textContent = `${Math.floor(Math.random() * 30 + 1)}/45`;
-            
-            // 根据数据更新技能雷达图
-            updateSkillRadar();
-            
-            // 更新时间线
-            updateGrowthTimeline();
-            
-            // 更新成就进度
-            updateAchievementProgress();
+            console.log('[成长仪表盘] loadGrowthData() 被调用');
+            try {
+                // 获取存储的学习数据
+                const studyRecords = JSON.parse(localStorage.getItem('studyRecords') || '[]');
+                
+                // 计算本月学习时长
+                const currentMonth = new Date().toISOString().slice(0, 7); // "2024-01"
+                const thisMonthRecords = studyRecords.filter(r => r.date.startsWith(currentMonth));
+                const totalHours = thisMonthRecords.reduce((sum, r) => sum + r.duration, 0);
+                
+                // 更新UI
+                const totalStudyHoursEl = document.getElementById('totalStudyHours');
+                if (totalStudyHoursEl) {
+                    totalStudyHoursEl.textContent = `${totalHours}小时`;
+                } else {
+                    console.warn('[成长仪表盘] 没有找到 totalStudyHours 元素');
+                }
+                
+                // 计算增长率（模拟）
+                const growthEl = document.querySelector('#growthDashboardModal .text-green-300');
+                if (growthEl) {
+                    growthEl.textContent = `+${Math.floor(Math.random() * 20 + 5)}%`;
+                }
+                
+                // 更新成绩和排名
+                const avgGrade = calculateAverageGrade();
+                const avgGradeEl = document.getElementById('avgGrade');
+                const classRankEl = document.getElementById('classRank');
+                
+                if (avgGradeEl) avgGradeEl.textContent = `${avgGrade}分`;
+                if (classRankEl) classRankEl.textContent = `${Math.floor(Math.random() * 30 + 1)}/45`;
+                
+                // 根据数据更新技能雷达图
+                updateSkillRadar();
+                
+                // 更新时间线
+                updateGrowthTimeline();
+                
+                // 更新成就进度
+                updateAchievementProgress();
+            } catch (error) {
+                console.error('[成长仪表盘] loadGrowthData() 发生错误:', error);
+            }
         }
 
         /**
@@ -9248,19 +9909,86 @@ ${Object.entries(reportData.goals).map(([key, val]) =>
         /**
          * 显示智能消费分析模态框
          */
-        function showConsumptionAnalysis() {
+        function showConsumptionAnalysis(e) {
+            console.log('[消费分析] ====================');
+            console.log('[消费分析] showConsumptionAnalysis() 被调用');
+            
+            // 阻止事件冒泡和默认行为
+            if (e) {
+                e.stopPropagation();
+                e.preventDefault();
+                console.log('[消费分析] 事件已阻止冒泡和默认行为');
+            }
+            
+            // 先隐藏所有模态框
+            hideAllModals();
+            console.log('[消费分析] 已隐藏所有模态框');
+            
             const modal = document.getElementById('consumptionAnalysisModal');
+            console.log('[消费分析] 找到的modal元素:', modal);
+            
+            if (!modal) {
+                console.error('[消费分析] 错误: 没有找到 consumptionAnalysisModal 元素');
+                showError('消费分析组件加载失败');
+                return;
+            }
+            
+            // 强制设置显示样式（覆盖任何可能的CSS冲突）
             modal.style.display = 'flex';
+            modal.style.position = 'fixed';
+            modal.style.top = '0';
+            modal.style.left = '0';
+            modal.style.width = '100%';
+            modal.style.height = '100%';
+            modal.style.zIndex = '99999';
+            modal.classList.remove('hidden');
+            modal.style.opacity = '0';
+            modal.style.visibility = 'visible';
+            
+            console.log('[消费分析] 模态框样式已强制设置');
+            
+            // 添加淡入动画
+            requestAnimationFrame(() => {
+                modal.style.transition = 'opacity 0.3s ease-in-out';
+                modal.style.opacity = '1';
+            });
+            
+            // 确保子容器可见
+            const glassCard = modal.querySelector('.glass-card');
+            if (glassCard) {
+                glassCard.style.display = 'block';
+                glassCard.style.position = 'relative';
+                glassCard.style.zIndex = '99999';
+                glassCard.style.visibility = 'visible';
+                glassCard.style.opacity = '1';
+            }
             
             // 加载消费数据
             loadConsumptionData();
+            console.log('[消费分析] 消费数据加载完成');
+            
+            // 添加点击背景关闭功能
+            setTimeout(() => {
+                modal.addEventListener('click', function closeModalOnClick(e) {
+                    if (e.target === modal) {
+                        modal.removeEventListener('click', closeModalOnClick);
+                        closeConsumptionAnalysisModal();
+                    }
+                });
+            }, 100);
+            
+            console.log('[消费分析] ====================');
         }
 
         /**
          * 关闭智能消费分析模态框
          */
         function closeConsumptionAnalysisModal() {
-            document.getElementById('consumptionAnalysisModal').style.display = 'none';
+            const modal = document.getElementById('consumptionAnalysisModal');
+            if (modal) {
+                modal.classList.remove('modal-visible');
+                modal.classList.add('hidden');
+            }
         }
 
         /**
@@ -9871,8 +10599,8 @@ ${records.map(r =>
                 showSuccess('点赞成功！✨');
             }
             
-            // 更新UI
-            updateLikeButton(postId, post.likes, !isLiked);
+            // 更新UI（传递动画标志）
+            updateLikeButton(postId, post.likes, !isLiked, !isLiked);
             saveAllData();
             updateNotificationBadge();
             
@@ -9900,11 +10628,11 @@ ${records.map(r =>
         }
         
         /**
-         * 更新点赞按钮状态（完整修复版）
+         * 更新点赞按钮状态（完整修复版 + 动画支持）
          */
-        function updateLikeButton(postId, likes, isLiked) {
+        function updateLikeButton(postId, likes, isLiked, withAnimation = false) {
             console.log('[点赞UI] =====================');
-            console.log('[点赞UI] 更新点赞按钮，帖子ID:', postId, '点赞数:', likes, '是否已点赞:', isLiked);
+            console.log('[点赞UI] 更新点赞按钮，帖子ID:', postId, '点赞数:', likes, '是否已点赞:', isLiked, '是否播放动画:', withAnimation);
             
             // 更新详情页的点赞按钮
             const likeBtn = document.getElementById(`likeBtn-${postId}`);
@@ -9914,6 +10642,28 @@ ${records.map(r =>
             console.log('[点赞UI] 详情页计数ID:', `likeCount-${postId}`, '元素存在:', !!likeCount);
             
             if (likeBtn) {
+                // 如果需要播放动画（在点赞时）
+                if (withAnimation) {
+                    // 添加爱心膨胀效果
+                    const icon = likeBtn.querySelector('i');
+                    if (icon) {
+                        icon.classList.remove('like-btn-active');
+                        void icon.offsetWidth; // 触发重绘
+                        icon.classList.add('like-btn-active');
+                    }
+                    
+                    // 添加轻微震动效果到整个按钮
+                    likeBtn.classList.remove('like-shake');
+                    void likeBtn.offsetWidth; // 触发重绘
+                    likeBtn.classList.add('like-shake');
+                    
+                    // 动画结束后移除类
+                    setTimeout(() => {
+                        if (icon) icon.classList.remove('like-btn-active');
+                        likeBtn.classList.remove('like-shake');
+                    }, 500);
+                }
+                
                 const icon = likeBtn.querySelector('i');
                 if (icon) {
                     icon.className = isLiked ? 'fas fa-heart text-red-500' : 'far fa-heart';
@@ -9935,6 +10685,20 @@ ${records.map(r =>
             console.log('[点赞UI] 卡片计数ID:', `likeCount-card-${postId}`, '元素存在:', !!cardLikeCount);
             
             if (cardLikeBtn) {
+                // 如果需要播放动画（在点赞时）
+                if (withAnimation) {
+                    const icon = cardLikeBtn.querySelector('i');
+                    if (icon) {
+                        icon.classList.remove('like-btn-active');
+                        void icon.offsetWidth; // 触发重绘
+                        icon.classList.add('like-btn-active');
+                        
+                        setTimeout(() => {
+                            icon.classList.remove('like-btn-active');
+                        }, 500);
+                    }
+                }
+                
                 const icon = cardLikeBtn.querySelector('i');
                 if (icon) {
                     icon.className = isLiked ? 'fas fa-heart text-red-500' : 'far fa-heart';
@@ -10238,11 +11002,23 @@ ${records.map(r =>
         }
         
         /**
-         * 渲染评论列表（增强版 - 支持排序和楼主标识）
+         * 渲染评论列表（增强版 - 支持排序、分页、瀑布流和楼主标识）
          */
-        function renderComments(postId, sortBy = 'time') {
+        function renderComments(postId, sortBy = 'time', page = 1) {
             const container = document.getElementById(`commentsList-${postId}`);
             let comments = campusData.campusWall.comments?.[postId] || [];
+            
+            // 初始化帖子分页状态
+            if (!campusData.campusWall.commentPagination) {
+                campusData.campusWall.commentPagination = {};
+            }
+            if (!campusData.campusWall.commentPagination[postId]) {
+                campusData.campusWall.commentPagination[postId] = { page: 1, perPage: 5 };
+            }
+            
+            // 使用传入的页码或存储的页码
+            const currentPage = page || campusData.campusWall.commentPagination[postId].page;
+            const perPage = campusData.campusWall.commentPagination[postId].perPage;
             
             if (comments.length === 0) {
                 container.innerHTML = `
@@ -10261,15 +11037,27 @@ ${records.map(r =>
                 comments.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
             }
             
+            // 计算分页
+            const totalPages = Math.ceil(comments.length / perPage);
+            const startIndex = (currentPage - 1) * perPage;
+            const endIndex = startIndex + perPage;
+            const paginatedComments = comments.slice(startIndex, endIndex);
+            
+            // 更新存储的当前页码
+            campusData.campusWall.commentPagination[postId].page = currentPage;
+            
             // 获取帖子作者ID用于识别楼主
             const post = campusData.campusWall.posts.find(p => p.id === postId);
             const postAuthorId = post?.authorId;
             
-            container.innerHTML = comments.map(comment => {
+            // 使用瀑布流布局容器
+            let html = '<div class="comments-masonry">';
+            
+            html += paginatedComments.map(comment => {
                 const isAuthor = comment.authorId === postAuthorId;
                 const replyCount = comment.replies ? comment.replies.length : 0;
                 return `
-                    <div class="flex items-start space-x-3 bg-gray-50 rounded-lg p-4">
+                    <div class="comment-item-masonry flex items-start space-x-3 bg-gray-50 rounded-lg p-4">
                         <div class="w-10 h-10 rounded-full bg-gradient-to-br from-cyan-400 to-blue-500 flex items-center justify-center text-white font-bold flex-shrink-0">
                             ${comment.avatar}
                         </div>
@@ -10333,12 +11121,76 @@ ${records.map(r =>
                 `;
             }).join('');
             
+            html += '</div>'; // 关闭瀑布流容器
+            
+            // 添加分页控制（如果超过一页）
+            if (totalPages > 1) {
+                html += renderCommentPagination(postId, currentPage, totalPages, sortBy);
+            }
+            
+            container.innerHTML = html;
+            
             // 渲染所有回复
-            comments.forEach(comment => {
+            paginatedComments.forEach(comment => {
                 if (comment.replies && comment.replies.length > 0) {
                     renderReplies(postId, comment.id);
                 }
             });
+        }
+        
+        /**
+         * 渲染评论分页控制
+         */
+        function renderCommentPagination(postId, currentPage, totalPages, sortBy) {
+            const buttons = [];
+            
+            // 上一页按钮
+            buttons.push(`
+                <button
+                    onclick="renderComments('${postId}', '${sortBy}', ${currentPage - 1})"
+                    class="pagination-btn"
+                    ${currentPage === 1 ? 'disabled' : ''}
+                >
+                    <i class="fas fa-chevron-left mr-1"></i> 上一页
+                </button>
+            `);
+            
+            // 页码按钮
+            for (let i = 1; i <= totalPages; i++) {
+                // 只显示第一页、最后一页、当前页附近的页码
+                if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
+                    buttons.push(`
+                        <button
+                            onclick="renderComments('${postId}', '${sortBy}', ${i})"
+                            class="pagination-btn ${i === currentPage ? 'active' : ''}"
+                        >
+                            ${i}
+                        </button>
+                    `);
+                } else if (buttons[buttons.length - 1]?.includes('class="pagination-info"') === false) {
+                    buttons.push('<span class="pagination-info">...</span>');
+                }
+            }
+            
+            // 下一页按钮
+            buttons.push(`
+                <button
+                    onclick="renderComments('${postId}', '${sortBy}', ${currentPage + 1})"
+                    class="pagination-btn"
+                    ${currentPage === totalPages ? 'disabled' : ''}
+                >
+                    下一页 <i class="fas fa-chevron-right ml-1"></i>
+                </button>
+            `);
+            
+            return `
+                <div class="comments-pagination">
+                    ${buttons.join('')}
+                    <span class="pagination-info">
+                        第 ${currentPage} / ${totalPages} 页，共 ${totalPages} 页
+                    </span>
+                </div>
+            `;
         }
         
         /**
@@ -10394,7 +11246,7 @@ ${records.map(r =>
         }
         
         /**
-         * 收藏帖子（增强版 - 添加动画）
+         * 收藏帖子（增强版 - 添加动画和反馈）
          */
         function toggleSavePost(postId) {
             const savedPosts = JSON.parse(localStorage.getItem('savedPosts') || '[]');
@@ -10409,23 +11261,51 @@ ${records.map(r =>
                 // 收藏
                 savedPosts.push(postId);
                 showSuccess('收藏成功！⭐');
+                
+                // 播放星形爆炸动画效果
+                const bookmarkBtn = document.querySelector(`[onclick*="toggleSavePost('${postId}')"]`);
+                if (bookmarkBtn) {
+                    const icon = bookmarkBtn.querySelector('i');
+                    if (icon) {
+                        // 移除并重新添加动画类以触发动画
+                        icon.classList.remove('bookmark-btn-active');
+                        void icon.offsetWidth; // 触发重绘
+                        icon.classList.add('bookmark-btn-active');
+                        
+                        // 动画结束后移除
+                        setTimeout(() => {
+                            icon.classList.remove('bookmark-btn-active');
+                        }, 400);
+                    }
+                }
             }
             
             localStorage.setItem('savedPosts', JSON.stringify(savedPosts));
             
-            // 更新收藏按钮状态
-            updateBookmarkButton(postId, !isSaved);
+            // 更新收藏按钮状态（传入动画标志）
+            updateBookmarkButton(postId, !isSaved, !isSaved);
         }
         
         /**
-         * 更新收藏按钮状态
+         * 更新收藏按钮状态（增强版 - 支持动画）
          */
-        function updateBookmarkButton(postId, isSaved) {
+        function updateBookmarkButton(postId, isSaved, withAnimation = false) {
             // 更新详情页的收藏按钮
             const bookmarkBtns = document.querySelectorAll(`[onclick*="toggleSavePost('${postId}')"]`);
             bookmarkBtns.forEach(btn => {
                 const icon = btn.querySelector('i');
                 if (icon) {
+                    // 只有在需要动画时才播放
+                    if (withAnimation) {
+                        icon.classList.remove('bookmark-btn-active');
+                        void icon.offsetWidth; // 触发重绘
+                        icon.classList.add('bookmark-btn-active');
+                        
+                        setTimeout(() => {
+                            icon.classList.remove('bookmark-btn-active');
+                        }, 400);
+                    }
+                    
                     icon.classList.remove('fas', 'far');
                     if (isSaved) {
                         icon.classList.add('fas');
@@ -10435,12 +11315,6 @@ ${records.map(r =>
                         icon.style.color = '';
                     }
                 }
-                
-                // 添加动画
-                btn.classList.add('bookmark-btn-active');
-                setTimeout(() => {
-                    btn.classList.remove('bookmark-btn-active');
-                }, 400);
             });
         }
         
@@ -11343,9 +12217,26 @@ ${records.map(r =>
         // ========== 数据管理功能（AI生成部分）==========
         
         // 显示数据管理
-        function showDataManagement() {
+        function showDataManagement(e) {
+            console.log('[数据管理] ====================');
+            console.log('[数据管理] showDataManagement() 被调用');
+            
+            // 阻止事件冒泡和默认行为
+            if (e) {
+                e.stopPropagation();
+                e.preventDefault();
+                console.log('[数据管理] 事件已阻止冒泡和默认行为');
+            }
+            
+            // 先隐藏所有模态框
+            hideAllModals();
+            console.log('[数据管理] 已隐藏所有模态框');
+            
             // 更新聊天记录数量
-            document.getElementById('chatCount').textContent = messageHistory.length;
+            const chatCountEl = document.getElementById('chatCount');
+            if (chatCountEl) {
+                chatCountEl.textContent = messageHistory.length;
+            }
             
             // 渲染课程列表
             renderCourseManagementList();
@@ -11356,7 +12247,15 @@ ${records.map(r =>
             // 计算存储空间
             calculateStorage();
             
-            document.getElementById('dataManagementModal').style.display = 'flex';
+            const modal = document.getElementById('dataManagementModal');
+            if (modal) {
+                modal.style.display = 'flex';
+                modal.classList.remove('hidden');
+                modal.style.zIndex = '9999';
+                console.log('[数据管理] 模态框已显示，z-index: 9999');
+            }
+            
+            console.log('[数据管理] ====================');
         }
         
         // 关闭数据管理模态框
@@ -14356,6 +15255,613 @@ ${records.map(r =>
         
         initSecondhandMarket();
         console.log('[二手黑市] 二手黑市系统已初始化');
+        
+        // ========== 修复代码：解决模态框显示问题 ==========
+        
+        /**
+         * 统一的模态框显示/隐藏管理
+         */
+        function showModal(modalId) {
+            console.log('[模态框管理] 显示模态框:', modalId);
+            
+            // 先隐藏所有模态框
+            hideAllModals();
+            
+            const modal = document.getElementById(modalId);
+            if (!modal) {
+                console.error('[模态框管理] 未找到模态框:', modalId);
+                return false;
+            }
+            
+            // 强制设置显示样式
+            modal.style.display = 'flex';
+            modal.style.position = 'fixed';
+            modal.style.top = '0';
+            modal.style.left = '0';
+            modal.style.width = '100%';
+            modal.style.height = '100%';
+            modal.style.zIndex = '99999';
+            modal.classList.remove('hidden');
+            modal.style.visibility = 'visible';
+            modal.style.opacity = '0';
+            
+            // 添加淡入动画
+            requestAnimationFrame(() => {
+                modal.style.transition = 'opacity 0.3s ease-in-out';
+                modal.style.opacity = '1';
+            });
+            
+            // 确保内容区域可见
+            const content = modal.querySelector('.glass-card, .bg-white, [class*="modal-content"]');
+            if (content) {
+                content.style.display = 'block';
+                content.style.visibility = 'visible';
+                content.style.opacity = '1';
+            }
+            
+            // 添加点击背景关闭功能
+            setTimeout(() => {
+                const closeHandler = function(e) {
+                    if (e.target === modal) {
+                        modal.removeEventListener('click', closeHandler);
+                        hideModal(modalId);
+                    }
+                };
+                modal.addEventListener('click', closeHandler);
+            }, 100);
+            
+            return true;
+        }
+        
+        /**
+         * 隐藏模态框
+         */
+        function hideModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.style.opacity = '0';
+                setTimeout(() => {
+                    modal.style.display = 'none';
+                    modal.classList.add('hidden');
+                }, 300);
+            }
+        }
+        
+        /**
+         * 隐藏所有模态框
+         */
+        function hideAllModalsFixed() {
+            const modals = document.querySelectorAll('[id$="Modal"]');
+            modals.forEach(modal => {
+                if (modal.id !== 'loginPage') {
+                    modal.style.display = 'none';
+                    modal.classList.add('hidden');
+                }
+            });
+        }
+        
+        // ========== 修复成长仪表盘功能 ==========
+        
+        // 最简测试函数 - 直接挂载到window对象
+        window.testSimple = function() {
+            alert('✅ 简单测试成功！这个函数可以正常执行');
+        };
+        
+        // 通用动态模态框关闭函数
+        window.closeDynamicModal = function(modalId) {
+            var modal = document.getElementById(modalId);
+            if (modal) {
+                modal.remove();
+            }
+        };
+        
+        // 成长仪表盘显示函数 - 修复版本
+        window.showGrowthDashboardFixed = function() {
+            // 先尝试查找现有的模态框
+            var existingModal = document.getElementById('growthDashboardModal');
+            if (existingModal) {
+                // 关键：必须先移除hidden类
+                existingModal.classList.remove('hidden');
+                // 再添加显示类
+                existingModal.classList.add('modal-visible');
+                return;
+            }
+            
+            // 如果不存在，动态创建一个简化版本
+            var modal = document.createElement('div');
+            modal.id = 'simpleGrowthDashboard';
+            modal.className = 'modal-container';
+            modal.innerHTML = `
+                <div style="
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(0,0,0,0.5);
+                    z-index: 999999;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                ">
+                    <div style="
+                        background: white;
+                        padding: 30px;
+                        border-radius: 15px;
+                        max-width: 600px;
+                        width: 90%;
+                        max-height: 80vh;
+                        overflow-y: auto;
+                        box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+                    ">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 2px solid #f0f0f0; padding-bottom: 15px;">
+                            <h2 style="margin: 0; color: #333; font-size: 24px;">📊 个人成长仪表盘</h2>
+                            <button onclick="closeDynamicModal('simpleGrowthDashboard')"
+                                    style="background: none; border: none; font-size: 28px; cursor: pointer; color: #666; padding: 5px;"
+                                    onmouseover="this.style.color='#333'" onmouseout="this.style.color='#666'">
+                                ×
+                            </button>
+                        </div>
+                        
+                        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 10px; padding: 25px; margin-bottom: 25px; color: white; text-align: center;">
+                            <div style="font-size: 48px; margin-bottom: 15px;">🎓</div>
+                            <h3 style="margin: 0 0 10px 0; font-size: 28px;">我的成长历程</h3>
+                            <p style="margin: 0; opacity: 0.9;">持续学习，不断进步</p>
+                        </div>
+                        
+                        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 25px;">
+                            <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; text-align: center;">
+                                <div style="font-size: 36px; margin-bottom: 10px;">📚</div>
+                                <div style="font-size: 24px; font-weight: bold; color: #667eea;">52小时</div>
+                                <div style="color: #666; margin-top: 5px;">本月学习时长</div>
+                            </div>
+                            <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; text-align: center;">
+                                <div style="font-size: 36px; margin-bottom: 10px;">⭐</div>
+                                <div style="font-size: 24px; font-weight: bold; color: #764ba2;">88.5分</div>
+                                <div style="color: #666; margin-top: 5px;">平均成绩</div>
+                            </div>
+                            <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; text-align: center;">
+                                <div style="font-size: 36px; margin-bottom: 10px;">🏆</div>
+                                <div style="font-size: 24px; font-weight: bold; color: #28a745;">12次</div>
+                                <div style="color: #666; margin-top: 5px;">获得荣誉</div>
+                            </div>
+                            <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; text-align: center;">
+                                <div style="font-size: 36px; margin-bottom: 10px;">🎯</div>
+                                <div style="font-size: 24px; font-weight: bold; color: #ffc107;">95%</div>
+                                <div style="color: #666; margin-top: 5px;">目标达成率</div>
+                            </div>
+                        </div>
+                        
+                        <div style="background: #fff3cd; padding: 15px; border-radius: 8px; border-left: 4px solid #ffc107; margin-bottom: 20px;">
+                            <strong style="color: #856404;">💡 成长建议：</strong>
+                            <span style="color: #856404; margin-left: 10px;">继续保持学习热情，建议增加实践项目，提升综合素质</span>
+                        </div>
+                        
+                        <div style="text-align: center; color: #999; font-size: 14px; margin-top: 20px;">
+                            数据更新时间：2024年1月
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+        };
+        
+        // 消费分析显示函数 - 修复版本
+        window.showConsumptionAnalysisFixed = function(e) {
+            if (e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+            
+            // 先尝试查找现有的模态框
+            var existingModal = document.getElementById('consumptionAnalysisModal');
+            if (existingModal) {
+                // 关键：必须先移除hidden类
+                existingModal.classList.remove('hidden');
+                // 再添加显示类
+                existingModal.classList.add('modal-visible');
+                return;
+            }
+            
+            // 如果不存在，动态创建一个简化版本
+            var modal = document.createElement('div');
+            modal.id = 'simpleConsumptionAnalysis';
+            modal.className = 'modal-container';
+            modal.innerHTML = `
+                <div style="
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(0,0,0,0.5);
+                    z-index: 999999;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                ">
+                    <div style="
+                        background: white;
+                        padding: 30px;
+                        border-radius: 15px;
+                        max-width: 600px;
+                        width: 90%;
+                        max-height: 80vh;
+                        overflow-y: auto;
+                        box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+                    ">
+                    <div style="
+                        background: white;
+                        padding: 30px;
+                        border-radius: 15px;
+                        max-width: 600px;
+                        width: 90%;
+                        max-height: 80vh;
+                        overflow-y: auto;
+                        box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+                    ">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 2px solid #f0f0f0; padding-bottom: 15px;">
+                            <h2 style="margin: 0; color: #333; font-size: 24px;">💰 智能消费分析</h2>
+                            <button onclick="closeDynamicModal('simpleConsumptionAnalysis')"
+                                    style="background: none; border: none; font-size: 28px; cursor: pointer; color: #666; padding: 5px;"
+                                    onmouseover="this.style.color='#333'" onmouseout="this.style.color='#666'">
+                                ×
+                            </button>
+                        </div>
+                        
+                        <div style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); border-radius: 10px; padding: 25px; margin-bottom: 25px; color: white; text-align: center;">
+                            <div style="font-size: 48px; margin-bottom: 15px;">💳</div>
+                            <h3 style="margin: 0 0 10px 0; font-size: 28px;">消费分析报告</h3>
+                            <p style="margin: 0; opacity: 0.9;">理性消费，健康成长</p>
+                        </div>
+                        
+                        <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin-bottom: 25px;">
+                            <h4 style="margin: 0 0 15px 0; color: #11998e;">📊 本月消费概览</h4>
+                            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px;">
+                                <div>
+                                    <div style="color: #666; font-size: 14px;">总支出</div>
+                                    <div style="font-size: 24px; font-weight: bold; color: #11998e;">¥2,580</div>
+                                </div>
+                                <div>
+                                    <div style="color: #666; font-size: 14px;">日均消费</div>
+                                    <div style="font-size: 24px; font-weight: bold; color: #38ef7d;">¥86</div>
+                                </div>
+                                <div>
+                                    <div style="color: #666; font-size: 14px;">预算余额</div>
+                                    <div style="font-size: 24px; font-weight: bold; color: #ffc107;">¥420</div>
+                                </div>
+                                <div>
+                                    <div style="color: #666; font-size: 14px;">预算使用率</div>
+                                    <div style="font-size: 24px; font-weight: bold; color: #dc3545;">86%</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-bottom: 25px;">
+                            <h4 style="margin: 0 0 15px 0; color: #11998e;">📈 消费趋势</h4>
+                            <div style="display: flex; align-items: flex-end; justify-content: space-between; height: 150px; padding: 10px; background: #f8f9fa; border-radius: 10px;">
+                                <div style="text-align: center;">
+                                    <div style="height: 60px; width: 30px; background: #11998e; border-radius: 5px; margin: 0 auto; min-height: 20px;"></div>
+                                    <div style="font-size: 12px; color: #666; margin-top: 5px;">周一</div>
+                                </div>
+                                <div style="text-align: center;">
+                                    <div style="height: 45px; width: 30px; background: #38ef7d; border-radius: 5px; margin: 0 auto; min-height: 20px;"></div>
+                                    <div style="font-size: 12px; color: #666; margin-top: 5px;">周二</div>
+                                </div>
+                                <div style="text-align: center;">
+                                    <div style="height: 30px; width: 30px; background: #11998e; border-radius: 5px; margin: 0 auto; min-height: 20px;"></div>
+                                    <div style="font-size: 12px; color: #666; margin-top: 5px;">周三</div>
+                                </div>
+                                <div style="text-align: center;">
+                                    <div style="height: 75px; width: 30px; background: #38ef7d; border-radius: 5px; margin: 0 auto; min-height: 20px;"></div>
+                                    <div style="font-size: 12px; color: #666; margin-top: 5px;">周四</div>
+                                </div>
+                                <div style="text-align: center;">
+                                    <div style="height: 90px; width: 30px; background: #11998e; border-radius: 5px; margin: 0 auto; min-height: 20px;"></div>
+                                    <div style="font-size: 12px; color: #666; margin-top: 5px;">周五</div>
+                                </div>
+                                <div style="text-align: center;">
+                                    <div style="height: 120px; width: 30px; background: #38ef7d; border-radius: 5px; margin: 0 auto; min-height: 20px;"></div>
+                                    <div style="font-size: 12px; color: #666; margin-top: 5px;">周六</div>
+                                </div>
+                                <div style="text-align: center;">
+                                    <div style="height: 100px; width: 30px; background: #11998e; border-radius: 5px; margin: 0 auto; min-height: 20px;"></div>
+                                    <div style="font-size: 12px; color: #666; margin-top: 5px;">周日</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 25px;">
+                            <div style="background: #fff3cd; padding: 15px; border-radius: 8px; border-left: 4px solid #ffc107;">
+                                <strong style="color: #856404;">🍔 餐饮</strong>
+                                <div style="color: #856404; font-weight: bold; font-size: 20px; margin-top: 5px;">¥980</div>
+                                <div style="color: #856404; font-size: 12px;">占比: 38%</div>
+                            </div>
+                            <div style="background: #d1ecf1; padding: 15px; border-radius: 8px; border-left: 4px solid #17a2b8;">
+                                <strong style="color: #0c5460;">📚 学习</strong>
+                                <div style="color: #0c5460; font-weight: bold; font-size: 20px; margin-top: 5px;">¥650</div>
+                                <div style="color: #0c5460; font-size: 12px;">占比: 25%</div>
+                            </div>
+                        </div>
+                        
+                        <div style="background: #d4edda; padding: 15px; border-radius: 8px; border-left: 4px solid #28a745; margin-bottom: 20px;">
+                            <strong style="color: #155724;">💡 消费建议：</strong>
+                            <span style="color: #155724; margin-left: 10px;">控制餐饮支出，优化学习投资，保持理性消费习惯</span>
+                        </div>
+                        
+                        <div style="text-align: center; color: #999; font-size: 14px; margin-top: 20px;">
+                            数据更新时间：2024年1月
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+        };
+        
+        // ========== 重新绑定事件监听器 ==========
+        
+        /**
+         * 重新绑定所有按钮事件
+         */
+        function rebindButtonEvents() {
+            console.log('[事件绑定] 开始重新绑定按钮事件');
+            
+            // 成长仪表盘按钮
+            const growthBtn = document.getElementById('growthDashboardBtn');
+            if (growthBtn) {
+                growthBtn.onclick = showGrowthDashboardFixed;
+                console.log('[事件绑定] 成长仪表盘按钮已绑定');
+            }
+            
+            // 消费分析按钮
+            const consumptionBtn = document.getElementById('consumptionAnalysisBtn');
+            if (consumptionBtn) {
+                consumptionBtn.onclick = showConsumptionAnalysisFixed;
+                console.log('[事件绑定] 消费分析按钮已绑定');
+            }
+            
+            // 其他功能按钮
+            const quickActionBtns = document.querySelectorAll('[onclick*="quickAction"]');
+            quickActionBtns.forEach(btn => {
+                const oldOnClick = btn.getAttribute('onclick');
+                if (oldOnClick && oldOnClick.includes('growthDashboard')) {
+                    btn.setAttribute('onclick', oldOnClick.replace('showGrowthDashboard', 'showGrowthDashboardFixed'));
+                }
+                if (oldOnClick && oldOnClick.includes('consumptionAnalysis')) {
+                    btn.setAttribute('onclick', oldOnClick.replace('showConsumptionAnalysis', 'showConsumptionAnalysisFixed'));
+                }
+            });
+        }
+        
+        // ========== 页面加载完成后执行修复 ==========
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('[页面加载] DOM加载完成，执行修复');
+            
+            // 延迟执行修复，确保所有元素已加载
+            setTimeout(() => {
+                rebindButtonEvents();
+                
+                // 添加全局错误捕获
+                window.addEventListener('error', function(e) {
+                    console.error('[全局错误]', e.error);
+                });
+                
+                console.log('[修复完成] 所有修复措施已应用');
+            }, 1000);
+        });
+        
+        // ========== 调试函数 ==========
+        
+        /**
+         * 检查按钮状态调试函数
+         */
+        function debugButtons() {
+            console.log('=== 按钮状态调试 ===');
+            
+            // 检查成长仪表盘按钮
+            const growthBtn = document.getElementById('growthDashboardBtn');
+            console.log('成长仪表盘按钮:', {
+                element: growthBtn,
+                exists: !!growthBtn,
+                onclick: growthBtn ? growthBtn.getAttribute('onclick') : '未找到',
+                id: growthBtn ? growthBtn.id : '无'
+            });
+            
+            // 检查消费分析按钮
+            const consumptionBtn = document.getElementById('consumptionAnalysisBtn');
+            console.log('消费分析按钮:', {
+                element: consumptionBtn,
+                exists: !!consumptionBtn,
+                onclick: consumptionBtn ? consumptionBtn.getAttribute('onclick') : '未找到',
+                id: consumptionBtn ? consumptionBtn.id : '无'
+            });
+            
+            // 检查数据管理按钮
+            const dataBtn = document.getElementById('dataManagementBtn');
+            console.log('数据管理按钮:', {
+                element: dataBtn,
+                exists: !!dataBtn,
+                onclick: dataBtn ? dataBtn.getAttribute('onclick') : '未找到',
+                id: dataBtn ? dataBtn.id : '无'
+            });
+            
+            console.log('成长按钮:', {
+                element: growthBtn,
+                exists: !!growthBtn,
+                onclick: growthBtn ? growthBtn.onclick : '未找到',
+                styles: growthBtn ? window.getComputedStyle(growthBtn) : null
+            });
+            
+            console.log('消费分析按钮:', {
+                element: consumptionBtn,
+                exists: !!consumptionBtn,
+                onclick: consumptionBtn ? consumptionBtn.onclick : '未找到',
+                styles: consumptionBtn ? window.getComputedStyle(consumptionBtn) : null
+            });
+            
+            // 检查模态框元素
+            const growthModal = document.getElementById('growthDashboardModal');
+            const consumptionModal = document.getElementById('consumptionAnalysisModal');
+            
+            console.log('成长模态框:', {
+                element: growthModal,
+                exists: !!growthModal,
+                display: growthModal ? growthModal.style.display : '未找到',
+                classes: growthModal ? growthModal.className : '未找到'
+            });
+            
+            console.log('消费分析模态框:', {
+                element: consumptionModal,
+                exists: !!consumptionModal,
+                display: consumptionModal ? consumptionModal.style.display : '未找到',
+                classes: consumptionModal ? consumptionModal.className : '未找到'
+            });
+        }
+        
+        // 暴露调试函数到全局
+        window.debugButtons = debugButtons;
+        
+        /**
+         * 强制显示成长仪表盘（紧急修复）
+         */
+        function emergencyShowGrowthDashboard() {
+            console.log('[紧急修复] 强制显示成长仪表盘');
+            showGrowthDashboardFixed();
+        }
+        
+        /**
+         * 强制显示消费分析（紧急修复）
+         */
+        function emergencyShowConsumptionAnalysis() {
+            console.log('[紧急修复] 强制显示消费分析');
+            showConsumptionAnalysisFixed();
+        }
+        
+        // ========== 简化版模态框显示（降级方案） ==========
+        
+        /**
+         * 简化版成长仪表盘显示
+         */
+        function showSimpleGrowthDashboard() {
+            const simpleHtml = `
+                <div id="simpleGrowthDashboard" style="
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(0,0,0,0.5);
+                    z-index: 999999;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                ">
+                    <div style="
+                        background: white;
+                        padding: 30px;
+                        border-radius: 15px;
+                        max-width: 500px;
+                        width: 90%;
+                        max-height: 80vh;
+                        overflow-y: auto;
+                    ">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                            <h2 style="margin: 0; color: #333;">个人成长仪表盘</h2>
+                            <button onclick="document.getElementById('simpleGrowthDashboard').remove()"
+                                    style="background: none; border: none; font-size: 24px; cursor: pointer; color: #666;">
+                                ×
+                            </button>
+                        </div>
+                        <div style="text-align: center; padding: 40px 20px;">
+                            <div style="font-size: 48px; margin-bottom: 20px;">📊📊</div>
+                            <h3 style="color: #333; margin-bottom: 10px;">个人成长分析</h3>
+                            <p style="color: #666; line-height: 1.6;">
+                                这里是您的个人成长数据汇总，包含学习进度、技能发展和成就记录。
+                            </p>
+                            <div style="margin-top: 30px; padding: 20px; background: #f5f5f5; border-radius: 10px;">
+                                <p style="margin: 5px 0;">📚 本月学习时长: 52小时</p>
+                                <p style="margin: 5px 0;">🎯 平均成绩: 88.5分</p>
+                                <p style="margin: 5px 0;">📈 班级排名: 12/45</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // 移除已存在的简化版本
+            const existing = document.getElementById('simpleGrowthDashboard');
+            if (existing) {
+                existing.remove();
+            }
+            
+            document.body.insertAdjacentHTML('beforeend', simpleHtml);
+        }
+        
+        /**
+         * 简化版消费分析显示
+         */
+        function showSimpleConsumptionAnalysis() {
+            const simpleHtml = `
+                <div id="simpleConsumptionAnalysis" style="
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(0,0,0,0.5);
+                    z-index: 999999;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                ">
+                    <div style="
+                        background: white;
+                        padding: 30px;
+                        border-radius: 15px;
+                        max-width: 500px;
+                        width: 90%;
+                        max-height: 80vh;
+                        overflow-y: auto;
+                    ">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                            <h2 style="margin: 0; color: #333;">消费分析</h2>
+                            <button onclick="document.getElementById('simpleConsumptionAnalysis').remove()"
+                                    style="background: none; border: none; font-size: 24px; cursor: pointer; color: #666;">
+                                ×
+                            </button>
+                        </div>
+                        <div style="text-align: center; padding: 20px 0;">
+                            <div style="font-size: 48px; margin-bottom: 20px;">💰💰</div>
+                            <h3 style="color: #333; margin-bottom: 10px;">月度消费分析</h3>
+                            <div style="margin-top: 20px; text-align: left;">
+                                <p style="margin: 10px 0;">🍽️ 餐饮支出: ¥809 (65%)</p>
+                                <p style="margin: 10px 0;">🛍️ 购物支出: ¥187 (15%)</p>
+                                <p style="margin: 10px 0;">📚 学习支出: ¥124 (10%)</p>
+                                <p style="margin: 10px 0;">🚌 交通支出: ¥62 (5%)</p>
+                                <p style="margin: 10px 0;">🎮 娱乐支出: ¥62 (5%)</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // 移除已存在的简化版本
+            const existing = document.getElementById('simpleConsumptionAnalysis');
+            if (existing) {
+                existing.remove();
+            }
+            
+            document.body.insertAdjacentHTML('beforeend', simpleHtml);
+        }
+        
+        // 暴露简化版函数到全局
+        window.showSimpleGrowthDashboard = showSimpleGrowthDashboard;
+        window.showSimpleConsumptionAnalysis = showSimpleConsumptionAnalysis;
+        
+        console.log('[修复代码] 模态框显示修复代码已加载');
     </script>
 </body>
 </html>
