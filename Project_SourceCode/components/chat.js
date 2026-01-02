@@ -610,19 +610,21 @@ const ChatModule = {
             shuttle: ['校车', '班车', '校车时刻表'],
             express: ['快递', '包裹', '快递站'],
             venue: ['体育馆', '游泳馆', '健身房', '球场'],
-            homework: ['作业', '交作业'],
+            // 注释掉homework相关关键词，让DialogEngine处理作业请求
+            // homework: ['作业', '交作业'],  // 移除，使用DialogEngine处理
             classroom: ['教室', '教室在哪'],
-            reminder: ['提醒', '设置提醒'],
+            // 注释掉reminder相关关键词，让DialogEngine处理提醒请求
+            // reminder: ['提醒', '设置提醒'],  // 移除，使用DialogEngine处理
             hospital: ['校医院', '校医院电话'],
             print: ['打印', '哪里打印']
         };
-        
+            
         for (const [service, keywords] of Object.entries(serviceKeywords)) {
             if (keywords.some(keyword => lowerMessage.includes(keyword))) {
                 return service;
             }
         }
-        
+            
         return null;
     },
     
