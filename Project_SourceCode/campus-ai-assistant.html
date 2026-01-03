@@ -4389,7 +4389,7 @@
             shuttle: ['校车', '巴士', '班车', 'shuttle', 'bus', '几点发车', '时刻表'],
             express: ['快递', '包裹', 'express', 'package', '快递站', '取件码'],
             activity: ['活动', '演出', '比赛', 'event', 'activity'],
-            homework: ['作业', '交', '高数', 'homework'],
+            // homework: ['作业', '交', '高数', 'homework'],  // 移除，使用DialogEngine处理
             classroom: ['教室', '计算机课', '计算机', 'classroom'],
             hospital: ['校医院', '医生', '看病', '电话'],
             print: ['打印', 'copy', '打印店', '哪里可以打印'],
@@ -4462,6 +4462,59 @@
             console.log('[初始化] 事件委托已绑定');
             console.log('[初始化] ====================');
         });
+
+        // 加载所有数据
+        function loadAllData() {
+            console.log('[数据加载] 开始加载数据');
+            
+            // 加载聊天历史
+            const savedChatHistory = localStorage.getItem('chatHistory');
+            if (savedChatHistory) {
+                try {
+                    chatHistory = JSON.parse(savedChatHistory);
+                    console.log('[数据加载] 聊天历史已加载');
+                } catch (e) {
+                    console.error('[数据加载] 聊天历史加载失败:', e);
+                }
+            }
+            
+            // 加载提醒数据
+            const savedReminders = localStorage.getItem('reminders');
+            if (savedReminders) {
+                try {
+                    campusData.reminders = JSON.parse(savedReminders);
+                    console.log('[数据加载] 提醒数据已加载');
+                } catch (e) {
+                    console.error('[数据加载] 提醒数据加载失败:', e);
+                    campusData.reminders = [];
+                }
+            }
+            
+            // 加载自定义课程
+            const savedCourses = localStorage.getItem('customCourses');
+            if (savedCourses) {
+                try {
+                    campusData.courses = JSON.parse(savedCourses);
+                    console.log('[数据加载] 自定义课程已加载');
+                } catch (e) {
+                    console.error('[数据加载] 自定义课程加载失败:', e);
+                }
+            }
+            
+            // 加载校园数据
+            const savedCampusData = localStorage.getItem('campusData');
+            if (savedCampusData) {
+                try {
+                    const parsed = JSON.parse(savedCampusData);
+                    Object.assign(campusData, parsed);
+                    console.log('[数据加载] 校园数据已加载');
+                } catch (e) {
+                    console.error('[数据加载] 校园数据加载失败:', e);
+                }
+            }
+            
+            console.log('[数据加载] 数据加载完成');
+        }
 
         // 初始化应用
         function initializeApp() {
@@ -5501,9 +5554,10 @@
             if (message.includes('校车几点发车') || message.includes('校车时刻表')) {
                 return 'shuttle_schedule';
             }
-            if (message.includes('高数作业') || message.includes('作业什么时候交')) {
-                return 'homework';
-            }
+            // 移除homework精确匹配，使用DialogEngine处理
+            // if (message.includes('高数作业') || message.includes('作业什么时候交')) {
+            //     return 'homework';
+            // }
             if (message.includes('怎么借书') || message.includes('借书流程')) {
                 return 'borrowing_process';
             }
@@ -5536,7 +5590,37 @@
          * @param {string} userMessage - 用户输入的消息
          * @returns {void} 直接调用addMessage显示响应
          */
-        function generateAIResponse(userMessage) {
+        async function generateAIResponse(userMessage) {
+            // 优先使用DialogEngine处理所有请求
+            if (typeof DialogEngine !== 'undefined') {
+                try {
+                    // 检查DialogEngine是否处于活跃的多轮对话状态
+                    const isActiveDialog = DialogEngine.state &&
+                                          DialogEngine.state.activeDialogState &&
+                                          DialogEngine.state.activeDialogState.isDialogActive;
+                    
+                    // 如果处于活跃对话，直接由DialogEngine处理
+                    // 或者检测是否可能启动新的DialogEngine对话
+                    const dialogEngineKeywords = ['作业', 'homework', 'assignment', 'task',
+                                                   '添加作业', '添加', '记录', '写作业', '做作业',
+                                                   '交作业', '提交', '提交作业', '新作业',
+                                                   '提醒', '设置提醒', '闹钟'];
+                    const hasDialogEngineKeyword = dialogEngineKeywords.some(keyword =>
+                        userMessage.toLowerCase().includes(keyword)
+                    );
+                    
+                    if (isActiveDialog || hasDialogEngineKeyword) {
+                        const dialogResponse = await DialogEngine.generateResponse(userMessage);
+                        conversationContext.push({ type: 'ai', content: dialogResponse.text, timestamp: Date.now() });
+                        addMessage('ai', dialogResponse.text);
+                        return;
+                    }
+                } catch (error) {
+                    console.error('[DialogEngine] 处理失败:', error);
+                    // 如果DialogEngine失败，继续使用原有逻辑
+                }
+            }
+            
             const intent = recognizeIntent(userMessage);  // 识别用户意图
             const context = understandContext(userMessage, intent);  // 理解上下文
             
@@ -5623,10 +5707,10 @@
                     response = `## 📦 快递站位置信息\n\n${campusData.express.points.map(point => `### ${point.name}\n📍 **位置**：${point.location}\n⏰ **营业时间**：${point.hours}\n🚚 **支持快递**：${point.companies.join('、')}\n\n`).join('---\n\n')}\n**取件码提示**：取件码会通过短信发送，请携带校园卡领取。`;
                     break;
                 
-                // 📝 作业查询（AI生成部分）
-                case 'homework':
-                    response = generateHomeworkInfo();
-                    break;
+                // 📝 作业查询 - 移除，使用DialogEngine处理
+                // case 'homework':
+                //     response = generateHomeworkInfo();
+                //     break;
                 
                 // 🏫 教室位置查询（AI生成部分）
                 case 'classroom':

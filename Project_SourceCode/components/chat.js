@@ -685,10 +685,11 @@ const ChatModule = {
                 }
                 break;
                 
-            case 'homework':
-                response = this.handleHomeworkQuery();
-                break;
-                
+            // 作业查询 - 移除，使用DialogEngine处理
+            // case 'homework':
+            //     response = this.handleHomeworkQuery();
+            //     break;
+            
             case 'classroom':
                 const classroomInfo = this.handleClassroomQuery();
                 response = classroomInfo.text;
@@ -805,7 +806,7 @@ const ChatModule = {
             shuttle: ['校车', '巴士', '班车', 'shuttle', 'bus', '几点发车', '时刻表'],
             express: ['快递', '包裹', 'express', 'package', '快递站', '取件码'],
             activity: ['活动', '演出', '比赛', 'event', 'activity'],
-            homework: ['作业', '交', '高数', 'homework'],
+            // homework: ['作业', '交', '高数', 'homework'],  // 移除，使用DialogEngine处理作业请求
             classroom: ['教室', '计算机课', '计算机', 'classroom'],
             hospital: ['校医院', '医生', '看病', '电话'],
             print: ['打印', 'copy', '打印店', '哪里可以打印'],
@@ -927,7 +928,7 @@ const ChatModule = {
         
         // 特定问题精确匹配（最后手段）
         const quickMatches = [
-            '高数作业什么时候交',
+            // '高数作业什么时候交',  // 移除，使用DialogEngine处理作业查询
             '今天有什么菜',
             '今日菜单',
             '校车几点发车',
@@ -939,7 +940,7 @@ const ChatModule = {
         ];
         
         const contextMap = {
-            '高数作业什么时候交': 'homework',
+            // '高数作业什么时候交': 'homework',  // 移除，使用DialogEngine处理作业查询
             '今天有什么菜': 'canteen_menu',
             '今日菜单': 'canteen_menu',
             '校车几点发车': 'shuttle_schedule',

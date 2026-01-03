@@ -109,14 +109,22 @@ const DialogStateMachine = {
             entity => !this.state.collectedEntities[entity]
         );
 
-        // 如果所有必需实体都有了，检查可选实体
-        if (this.state.waitingFor.length === 0) {
+        // 如果所有必需实体都有了，检查可选实体（仅询问一次）
+        if (this.state.waitingFor.length === 0 && this.state.turnCount < 3) {
+            // 只询问缺失且尚未请求过的可选实体
+            const requestedOptional = new Set();
+            for (const msg of this.state.conversationHistory) {
+                if (msg.type === 'clarification' && msg.waitingFor) {
+                    requestedOptional.add(msg.waitingFor);
+                }
+            }
+            
             const missingOptional = intentConfig.optional.filter(
-                entity => !this.state.collectedEntities[entity]
+                entity => !this.state.collectedEntities[entity] && !requestedOptional.has(entity)
             );
             
-            // 根据对话轮数决定是否询问可选实体
-            if (this.state.turnCount < 3 && missingOptional.length > 0) {
+            // 只询问第一个可选实体
+            if (missingOptional.length > 0) {
                 this.state.waitingFor = [missingOptional[0]];
             }
         }
@@ -150,6 +158,12 @@ const DialogStateMachine = {
             timestamp: Date.now()
         });
 
+        // 检查是否是否表示"没有"的回答
+        const negativeResponses = ['没有', '不需要', '无', '不用', 'nothing', 'no'];
+        const isNegativeResponse = negativeResponses.some(resp =>
+            userInput.includes(resp) || userInput.trim() === ''
+        );
+        
         // 合并新实体
         let hasNewEntity = false;
         for (const [key, value] of Object.entries(newEntities)) {
@@ -160,13 +174,36 @@ const DialogStateMachine = {
             }
         }
 
-        // 更新等待列表
-        if (hasNewEntity) {
+        // 更新等待列表（如果有新实体或者用户给出否定回答）
+        if (hasNewEntity || isNegativeResponse) {
             this.updateWaitingList();
         }
 
         // 检查是否完成
         if (this.state.waitingFor.length === 0) {
+            return this.completeDialog();
+        }
+
+        // 检查是否是可选实体的否定回答，如果询问可选实体但用户说没有，直接完成
+        const intentConfig = this.intentStates[this.state.currentIntent];
+        if (this.state.waitingFor.length > 0 &&
+            intentConfig.optional.includes(this.state.waitingFor[0]) &&
+            isNegativeResponse) {
+            // 移除这个可选实体，继续检查
+            const currentWaiting = this.state.waitingFor.shift();
+            this.state.waitingFor = [];
+            return this.completeDialog();
+        }
+
+        // 检查重试次数，如果太多无有效回答，也完成对话
+        const consecutiveEmptyInputs = this.state.conversationHistory.filter(
+            msg => msg.role === 'user' &&
+                   (msg.entities === null || Object.keys(msg.entities).length === 0)
+        );
+        
+        if (consecutiveEmptyInputs.length >= 3) {
+            console.log('⚠️ [DialogStateMachine] 多次无效输入，结束对话');
+            this.state.waitingFor = [];
             return this.completeDialog();
         }
 
@@ -193,11 +230,12 @@ const DialogStateMachine = {
             question = '好的！' + question;
         }
 
-        // 记录AI回复
+        // 记录AI回复，包括等待的实体
         this.state.conversationHistory.push({
             role: 'assistant',
             content: question,
             type: 'clarification',
+            waitingFor: nextEntity,
             timestamp: Date.now()
         });
 
