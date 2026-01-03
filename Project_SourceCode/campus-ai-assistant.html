@@ -2476,7 +2476,7 @@
                         </div>
 
                         <!-- 表情按钮 -->
-                        <button class="text-gray-400 hover:text-gray-600 transition-colors p-2 z-50" onclick="event.preventDefault(); event.stopPropagation(); toggleEmojiPicker();">
+                        <button class="text-gray-400 hover:text-gray-600 transition-colors p-2 z-50" onclick="event.preventDefault(); event.stopPropagation(); toggleEmojiPicker(event);">
                             <i class="fas fa-smile text-xl"></i>
                         </button>
 
@@ -4789,13 +4789,21 @@
         }
 
         // 切换emoji选择器
-        function toggleEmojiPicker() {
+        function toggleEmojiPicker(event) {
+            console.log('[Emoji] toggleEmojiPicker函数被调用');
+            
             const emojiPicker = document.getElementById('emojiPicker');
             const suggestions = document.getElementById('suggestions');
             
             if (!emojiPicker) {
-                console.error('emojiPicker元素未找到');
+                console.error('[Emoji] emojiPicker元素未找到');
                 return;
+            }
+            
+            // 如果提供了event对象，阻止默认行为和冒泡
+            if (event) {
+                event.preventDefault();
+                event.stopPropagation();
             }
             
             // 隐藏建议列表
@@ -4806,10 +4814,10 @@
             // 切换emoji选择器
             if (emojiPicker.classList.contains('hidden')) {
                 emojiPicker.classList.remove('hidden');
-                console.log('emoji选择器已显示');
+                console.log('[Emoji] emoji选择器已显示');
             } else {
                 emojiPicker.classList.add('hidden');
-                console.log('emoji选择器已隐藏');
+                console.log('[Emoji] emoji选择器已隐藏');
             }
         }
 

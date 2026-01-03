@@ -4166,9 +4166,7 @@ Project_SourceCode/
 
 \textbf{电子邮箱}：haizaigahei@outlook.com
 
-\textbf{GitHub仓库}：
-
-\url{https://github.com/Anonymous87123/AI-challenge-team-haizaigahei-SCUT.git}
+\textbf{仓库}：https://github.com/Anonymous87123/AI-challenge-team-haizaigahei-SCUT.git
 
 \textbf{CoStrict用户ID}：2e95ff89-bf87-4c2e-9011-5a8eb5472fe9
 
@@ -5044,19 +5042,30 @@ LocalFirst是指"本地优先"的数据策略，即所有数据优先存储和�
 
 短期规划是在保持纯前端架构的前提下，进一步完善产品功能和用户体验。
 
-\textbf{1. 接入真实AI API，提升对话质量}
+\textbf{1. 嵌入AI实现更强大的智能对话}
 
-虽然当前的前端对话引擎v3.0已经能够满足基本需求，但相比真实的NLP模型（如ChatGPT、百度文心一言），在理解深度和回复丰富性上还有差距。
+虽然当前的前端对话引擎v3.0已经能够满足基本需求，但为了提供更加自然、智能、个性化的对话体验，我们将嵌入DeepSeek等先进的大语言模型，实现更强大的智能对话能力。通过大模型的深度语义理解和生成能力，系统将能够处理更复杂的用户意图、提供更加精准的回答和个性化的建议。
 
 \textbf{实现方案}：
 \begin{itemize}
-    \item \textbf{API接入}：选择合适的AI API（如OpenAI GPT-3.5、百度文心一言、阿里通义千问）
+    \item \textbf{API接入}：选择合适的AI API（如DeepSeek、OpenAI GPT-3.5、百度文心一言、阿里通义千问）
+        \begin{itemize}
+            \item \textbf{DeepSeek深度集成}：DeepSeek作为国产大模型的代表，具有性价比高、中文理解能力强等特点，特别适合校园应用场景
+            \item \textbf{多模型支持}：根据对话场景智能选择最合适的AI模型，提升响应质量和效率
+        \end{itemize}
     \item \textbf{混合架构}：
         \begin{itemize}
             \item 常规对话（课程查询、校园服务）使用前端引擎，快速响应
             \item 复杂对话（情感支持、学习建议）调用AI API，生成高质量回复
         \end{itemize}
     \item \textbf{降级机制}：当API调用失败或超时，自动降级到前端引擎
+\end{itemize}
+
+\textbf{个性化智能服务}：
+\begin{itemize}
+    \item \textbf{智能备忘系统}：基于大模型的智能理解和推理能力，自动识别和记录学生的日程安排、考试时间、作业截止等信息，并在此基础上提供智能提醒和时间管理建议
+    \item \textbf{消费分析智能建议}：结合大数据分析和AI推理，深入分析学生的消费习惯和模式，提供个性化的省钱建议、消费优化方案，帮助学生培养良好的理财习惯
+    \item \textbf{学习路径推荐}：基于学生的学习数据（课程成绩、作业完成情况、学习时长等），利用AI算法为学生推荐个性化的学习路径、重点复习方向和课外拓展资源
 \end{itemize}
 
 \textbf{预期效果}：
@@ -5382,9 +5391,9 @@ LocalFirst是指"本地优先"的数据策略，即所有数据优先存储和�
 \vspace{0.5cm}
 
 \begin{center}
-\textbf{\Large 感谢观看！}\\
+\textbf{\Large 感谢观看如此长的介绍文档！}\\
 \vspace{0.5cm}
-\textit{祝您在2026年"码上AI"创新应用赛中取得优异成绩！}
+\textit{希望我在2026年"码上AI"创新应用赛中取得优异成绩！}
 \end{center}
 
 \end{document}

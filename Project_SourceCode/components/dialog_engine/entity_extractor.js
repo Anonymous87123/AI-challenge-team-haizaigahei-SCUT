@@ -62,20 +62,33 @@ const EntityExtractor = {
             /(?:.*)作业[:：]\s*(.+?)\s*(?:，|。|截止|交|$)/,
             /(?:做|写|完成)(.+?)作业(?:[:：]\s*(.+?))?(?:，|。|截止|交|$)/,
             /(?:添加|记录|记一下)(.+?)作业(?:[:：]\s*(.+?))?(?:，|。|截止|交|$)/,
-            /(?:添加|记录|记一下)?(.{1,20})作业/  // 简化模式：提取作业前20个字符
+            /^(.{2,20})作业$/  // 要求至少2个字符，避免匹配"添加作业"
         ];
 
         for (const pattern of patterns) {
             const match = text.match(pattern);
-            if (match && match[1].trim()) {
+            // 确保提取到有效内容（非空且长度合理）
+            if (match && match[1]) {
                 let content = match[1].trim();
                 
-                // 移除动作动词
+                // 检查内容是否为空
+                if (content.length === 0) {
+                    console.log(`⚠️ [EntityExtractor] 模式匹配成功但提取内容为空，继续尝试其他模式`);
+                    continue;  // 继续尝试其他模式，而不是返回默认值
+                }
+                
+                // 检查提取的内容是否只是动作动词（如"添加"、"记一下"等）
+                let isOnlyActionVerb = false;
                 for (const verb of actionVerbs) {
-                    if (content.startsWith(verb)) {
-                        content = content.substring(verb.length).trim();
+                    if (content === verb) {
+                        console.log(`⚠️ [EntityExtractor] 提取的内容"${content}"只是动作动词，无效`);
+                        isOnlyActionVerb = true;
                         break;
                     }
+                }
+                
+                if (isOnlyActionVerb) {
+                    continue;  // 继续尝试其他模式
                 }
                 
                 // 移除课程名前缀（如"高数作业"中的"高数"）
@@ -87,9 +100,10 @@ const EntityExtractor = {
                     }
                 }
                 
-                // 如果内容为空，返回默认值
+                // 再次检查处理后的内容是否为空
                 if (content.length === 0) {
-                    return '作业';
+                    console.log(`⚠️ [EntityExtractor] 处理后内容为空，继续尝试其他模式`);
+                    continue;  // 继续尝试其他模式
                 }
                 
                 // 识别作业类型
@@ -198,11 +212,27 @@ const EntityExtractor = {
             return bestMatch;
         }
         
-        // 默认返回"作业"
-        if (text.includes('作业')) {
-            return '作业';
+        // 检查是否只是简单的关键词，没有具体内容
+        // 如果整个文本只包含动作动词和"作业"，说明没有具体内容
+        const textTrimmed = text.trim();
+        
+        // 检查是否只是"作业"或简单的动作+作业（使用已定义的actionVerbs）
+        for (const verb of actionVerbs) {
+            if (textTrimmed === verb + '作业' || textTrimmed === '作业') {
+                console.log(`⚠️ [EntityExtractor] 输入"${text}"只包含动作动词和"作业"，无具体内容`);
+                return null;
+            }
+        }
+        
+        // 检查是否是极短的输入（如"一个作业"、"记作业"等）
+        if (/^(一|一个|个|记)(作业)?$/.test(textTrimmed) ||
+            /^(添加|记录|记一下)?(一|一个|个)?$作业$/.test(textTrimmed)) {
+            console.log(`⚠️ [EntityExtractor] 输入"${text}"过于简单，无法确定具体内容`);
+            return null;
         }
 
+        // 其他情况返回null，让系统询问具体内容
+        console.log(`⚠️ [EntityExtractor] 输入"${text}"无法提取到有效作业名称`);
         return null;
     },
 

@@ -105,12 +105,20 @@ const DialogStateMachine = {
         const intentConfig = this.intentStates[this.state.currentIntent];
         if (!intentConfig) return;
 
-        this.state.waitingFor = intentConfig.required.filter(
+        // 先清空等待列表
+        this.state.waitingFor = [];
+
+        // 检查必需实体是否缺失
+        const missingRequired = intentConfig.required.filter(
             entity => !this.state.collectedEntities[entity]
         );
 
+        if (missingRequired.length > 0) {
+            // 有缺失的必需实体，优先询问
+            this.state.waitingFor = missingRequired;
+        }
         // 如果所有必需实体都有了，检查可选实体（仅询问一次）
-        if (this.state.waitingFor.length === 0 && this.state.turnCount < 3) {
+        else if (this.state.turnCount < 4) {
             // 只询问缺失且尚未请求过的可选实体
             const requestedOptional = new Set();
             for (const msg of this.state.conversationHistory) {
@@ -174,10 +182,8 @@ const DialogStateMachine = {
             }
         }
 
-        // 更新等待列表（如果有新实体或者用户给出否定回答）
-        if (hasNewEntity || isNegativeResponse) {
-            this.updateWaitingList();
-        }
+        // 始终更新等待列表（确保状态正确）
+        this.updateWaitingList();
 
         // 检查是否完成
         if (this.state.waitingFor.length === 0) {
