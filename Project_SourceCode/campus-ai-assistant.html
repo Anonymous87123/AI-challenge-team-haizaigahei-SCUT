@@ -2382,11 +2382,6 @@
                 <!-- 输入区域 -->
                 <div class="glass-effect px-6 py-4">
                     <div class="flex items-end space-x-3">
-                        <!-- 语音按钮 -->
-                        <button class="text-gray-400 hover:text-gray-600 transition-colors p-2">
-                            <i class="fas fa-microphone text-xl"></i>
-                        </button>
-
                         <!-- 输入框 -->
                         <div class="flex-1 relative">
                             <textarea
@@ -2402,9 +2397,10 @@
                             <div id="suggestions" class="mt-2 flex flex-wrap gap-2 hidden">
                                 <!-- 动态生成建议 -->
                             </div>
-                            
-                            <!-- Emoji选择器 -->
-                            <div id="emojiPicker" class="mt-2 p-3 bg-white rounded-xl shadow-lg border border-gray-200 hidden" style="max-height: 200px; overflow-y: auto; position: absolute; bottom: 100%; left: 0; z-index: 100;">
+                        </div>
+                        
+                        <!-- Emoji选择器 - 移到输入框外面以避免overflow问题 -->
+                        <div id="emojiPicker" class="p-3 bg-white rounded-xl shadow-lg border border-gray-200 hidden" style="max-height: 200px; overflow-y: auto; position: fixed; bottom: 120px; right: 80px; z-index: 99999; width: 320px;">
                                 <div class="grid grid-cols-8 gap-2">
                                     <!-- 表情类 -->
                                     <span onclick="insertEmoji('😀')" class="text-2xl cursor-pointer hover:scale-125 transition-transform p-1">😀</span>
@@ -2474,11 +2470,6 @@
                                 </div>
                             </div>
                         </div>
-
-                        <!-- 表情按钮 -->
-                        <button class="text-gray-400 hover:text-gray-600 transition-colors p-2 z-50" onclick="event.preventDefault(); event.stopPropagation(); toggleEmojiPicker(event);">
-                            <i class="fas fa-smile text-xl"></i>
-                        </button>
 
                         <!-- 发送按钮 -->
                         <button 
@@ -4402,6 +4393,96 @@
             hours: ['开放时间', '开门', '几点开门', '什么时候开门']
         };
 
+        // ========== Emoji选择器功能 (必须在DOMContentLoaded之前定义) ==========
+        
+        // 切换emoji选择器
+        function toggleEmojiPicker(event) {
+            console.log('[Emoji] toggleEmojiPicker函数被调用');
+            
+            const emojiPicker = document.getElementById('emojiPicker');
+            const suggestions = document.getElementById('suggestions');
+            
+            if (!emojiPicker) {
+                console.error('[Emoji] emojiPicker元素未找到');
+                return;
+            }
+            
+            // 如果提供了event对象，阻止默认行为和冒泡
+            if (event) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            
+            // 隐藏建议列表
+            if (suggestions) {
+                suggestions.classList.add('hidden');
+            }
+            
+            // 切换emoji选择器
+            const isHidden = emojiPicker.classList.contains('hidden');
+            console.log('[Emoji] emoji选择器当前状态:', isHidden ? '隐藏' : '显示');
+            console.log('[Emoji] emojiPicker.offsetWidth:', emojiPicker.offsetWidth);
+            console.log('[Emoji] emojiPicker.offsetHeight:', emojiPicker.offsetHeight);
+            console.log('[Emoji] emojiPicker getBoundingClientRect:', emojiPicker.getBoundingClientRect());
+            
+            if (isHidden) {
+                // 移除hidden类
+                emojiPicker.classList.remove('hidden');
+                
+                // 使用多种方式确保显示
+                emojiPicker.style.display = 'block';
+                emojiPicker.style.visibility = 'visible';
+                emojiPicker.style.opacity = '1';
+                emojiPicker.style.position = 'absolute';
+                emojiPicker.style.bottom = '100%';
+                emojiPicker.style.left = '0';
+                emojiPicker.style.zIndex = '9999';
+                emojiPicker.style.pointerEvents = 'auto';
+                
+                // 确保父元素不被隐藏
+                const parent = emojiPicker.parentElement;
+                if (parent) {
+                    parent.style.overflow = 'visible';
+                    console.log('[Emoji] 父元素overflow设置为visible');
+                }
+                
+                console.log('[Emoji] emojiPicker.style.display:', emojiPicker.style.display);
+                console.log('[Emoji] emojiPicker.style.visibility:', emojiPicker.style.visibility);
+                console.log('[Emoji] emojiPicker.offsetWidth after show:', emojiPicker.offsetWidth);
+                console.log('[Emoji] emoji选择器已显示');
+            } else {
+                emojiPicker.classList.add('hidden');
+                console.log('[Emoji] emoji选择器已隐藏');
+            }
+        }
+        
+        // 插入emoji到输入框
+        function insertEmoji(emoji) {
+            console.log('[Emoji] insertEmoji函数被调用:', emoji);
+            
+            const input = document.getElementById('messageInput');
+            if (!input) {
+                console.error('[Emoji] messageInput元素未找到');
+                return;
+            }
+            
+            const cursorPosition = input.selectionStart;
+            const currentValue = input.value;
+            
+            // 在光标位置插入emoji
+            const newValue = currentValue.slice(0, cursorPosition) + emoji + currentValue.slice(cursorPosition);
+            input.value = newValue;
+            
+            // 设置光标位置到emoji后面
+            const newCursorPosition = cursorPosition + emoji.length;
+            input.setSelectionRange(newCursorPosition, newCursorPosition);
+            
+            // 聚焦输入框
+            input.focus();
+            
+            console.log('[Emoji] emoji已插入:', emoji);
+        }
+        
         // ========== 应用初始化 ==========
         
         // 初始化应用
@@ -4458,6 +4539,20 @@
                     showDataManagement(e);
                 }
             });
+            
+            // 为Emoji按钮添加单独的事件监听器（确保优先执行）
+            const emojiBtn = document.getElementById('emojiBtn');
+            if (emojiBtn) {
+                emojiBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log('[Emoji按钮] 点击事件触发');
+                    toggleEmojiPicker(e);
+                });
+                console.log('[初始化] Emoji按钮事件监听器已绑定');
+            } else {
+                console.error('[初始化] Emoji按钮未找到');
+            }
             
             console.log('[初始化] 事件委托已绑定');
             console.log('[初始化] ====================');
@@ -4786,64 +4881,6 @@
             document.getElementById('messageInput').value = suggestion;
             document.getElementById('suggestions').classList.add('hidden');
             sendMessage();
-        }
-
-        // 切换emoji选择器
-        function toggleEmojiPicker(event) {
-            console.log('[Emoji] toggleEmojiPicker函数被调用');
-            
-            const emojiPicker = document.getElementById('emojiPicker');
-            const suggestions = document.getElementById('suggestions');
-            
-            if (!emojiPicker) {
-                console.error('[Emoji] emojiPicker元素未找到');
-                return;
-            }
-            
-            // 如果提供了event对象，阻止默认行为和冒泡
-            if (event) {
-                event.preventDefault();
-                event.stopPropagation();
-            }
-            
-            // 隐藏建议列表
-            if (suggestions) {
-                suggestions.classList.add('hidden');
-            }
-            
-            // 切换emoji选择器
-            if (emojiPicker.classList.contains('hidden')) {
-                emojiPicker.classList.remove('hidden');
-                console.log('[Emoji] emoji选择器已显示');
-            } else {
-                emojiPicker.classList.add('hidden');
-                console.log('[Emoji] emoji选择器已隐藏');
-            }
-        }
-
-        // 插入emoji到输入框
-        function insertEmoji(emoji) {
-            const input = document.getElementById('messageInput');
-            const cursorPosition = input.selectionStart;
-            const currentValue = input.value;
-            
-            // 在光标位置插入emoji
-            const newValue = currentValue.slice(0, cursorPosition) + emoji + currentValue.slice(cursorPosition);
-            input.value = newValue;
-            
-            // 设置光标位置到emoji后面
-            const newCursorPosition = cursorPosition + emoji.length;
-            input.setSelectionRange(newCursorPosition, newCursorPosition);
-            
-            // 重新调整高度
-            autoResize(input);
-            
-            // 聚焦输入框
-            input.focus();
-            
-            // 保持emoji选择器开放方便连续添加多个emoji
-            const emojiPicker = document.getElementById('emojiPicker');
-            emojiPicker.classList.remove('hidden');
         }
 
         // 处理键盘事件

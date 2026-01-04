@@ -9,6 +9,7 @@
 
 % 宏包
 \usepackage{graphicx}
+\graphicspath{{应用截图/}}
 \usepackage{hyperref}
 \usepackage{listings}
 \usepackage{xcolor}
@@ -66,8 +67,6 @@
     \textbf{专业}：计算机类 \\
     \vspace{0.3cm}
     \textbf{队长姓名}：夏同（本队仅一人） \\
-    \vspace{0.3cm}
-    \textbf{学号}：20210001 \\
     \vspace{0.3cm}
     \textbf{CoStrict用户ID}：2e95ff89-bf87-4c2e-9011-5a8eb5472fe9 \\
     \vspace{0.3cm}
@@ -4425,6 +4424,13 @@ CoStrict作为AI编程助手，在项目开发的各个环节提供了重要支�
 \textbf{交互演示}：
 用户点击输入框，开始输入"今天有"，系统自动提示"今天有什么课？"的快捷回复。用户点击快捷回复，AI立即返回"今天上午有高等数学和计算机导论，下午有英语课。"，消息气泡显示在左侧。
 
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.8\textwidth]{智能对话示例.png}
+\caption{智能对话主界面}
+\label{fig:chat}
+\end{figure}
+
 \subsubsection{截图2：校园墙 - 帖子列表}
 
 \textbf{界面位置}：侧边栏点击"校园墙"图标进入
@@ -4453,6 +4459,13 @@ CoStrict作为AI编程助手，在项目开发的各个环节提供了重要支�
 
 \textbf{视觉设计}：
 卡片采用圆角设计，白色背景，灰色边框。点赞心形图标为灰色，点赞后变为红色并有跳动动画。收藏星形图标为灰色，收藏后变为黄色。
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.8\textwidth]{校园墙帖子示例.png}
+\caption{校园墙帖子列表}
+\label{fig:wall}
+\end{figure}
 
 \subsubsection{截图3：校园墙 - 帖子详情与评论}
 
@@ -4490,6 +4503,13 @@ CoStrict作为AI编程助手，在项目开发的各个环节提供了重要支�
 \textbf{交互演示}：
 用户在评论区看到一条评论，点击回复，输入框自动填充"@李四 "。用户输入并发送后，二级评论显示在一级评论下方，缩进显示。
 
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.8\textwidth]{帖子评论示例.png}
+\caption{校园墙帖子详情与评论（含Emoji选择器）}
+\label{fig:comment}
+\end{figure}
+
 \subsubsection{截图4：发现朋友 - 推荐好友列表}
 
 \textbf{界面位置}：侧边栏点击"发现朋友"图标进入
@@ -4524,6 +4544,13 @@ CoStrict作为AI编程助手，在项目开发的各个环节提供了重要支�
 
 \textbf{匹配度说明}：
 匹配度基于多维度计算：兴趣相似度（40\%）、年级专业匹配（30\%）、人格特质（20\%）、活跃度（10\%）。分数范围0-100，分数越高表示匹配度越高。
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.8\textwidth]{“发现朋友”页面截图.png}
+\caption{发现朋友 - 智能好友推荐}
+\label{fig:friends}
+\end{figure}
 
 \subsubsection{截图5：课程表 - 周视图}
 
@@ -4561,6 +4588,97 @@ CoStrict作为AI编程助手，在项目开发的各个环节提供了重要支�
 \textbf{交互演示}：
 用户点击"添加课程"按钮，弹出添加课程窗口，填写课程名称、教室、时间等信息。添加后，课程立即显示在课程表上，如果时间冲突，课程卡片显示红色边框。
 
+\subsubsection{截图6：个人成长仪表盘}
+
+\textbf{界面位置}：侧边栏点击"我的成长"图标进入（带黄色New标签）
+
+\textbf{功能展示}：
+\begin{itemize}
+    \item \textbf{本月学习报告}：
+        \begin{itemize}
+            \item 学习时长统计（如"累计学习45小时"）
+            \item 学习增长率（如"较上月提升23\%"）
+            \item 成绩排名（如"班级前15\%"）
+        \end{itemize}
+    \item \textbf{技能雷达图}：
+        \begin{itemize}
+            \item 六边形雷达图，6个维度：学习效率、时间管理、团队协作、创新思维、沟通能力、自律意识
+            \item 蓝色实线：本月技能水平
+            \item 红色虚线：上月技能水平（对比展示进步）
+            \item 图形直观展示各项能力的均衡发展状况
+        \end{itemize}
+    \item \textbf{成长时间线}：
+        \begin{itemize}
+            \item 横轴：周一至周日
+            \item 纵轴：活动密度
+            \item 展示本周每天的学习、运动、社交等活动记录
+            \item 不同颜色代表不同类型活动
+        \end{itemize}
+    \item \textbf{学期目标进度}：
+        \begin{itemize}
+            \item 显示4个学期目标：GPA目标、课程目标、技能提升、社交活动
+            \item 每个目标有进度条，显示完成百分比
+            \item 进度条颜色不同（蓝色-进行中、绿色-已完成、橙色-需要努力）
+        \end{itemize}
+    \item \textbf{导出报告}：
+        \begin{itemize}
+            \item 右上角"导出报告"按钮
+            \item 支持导出为PDF或图片格式
+        \end{itemize}
+\end{itemize}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.8\textwidth]{成长仪表盘雷达图.png}
+\caption{个人成长仪表盘 - 技能雷达图}
+\label{fig:growth}
+\end{figure}
+
+\subsubsection{截图7：智能消费分析}
+
+\textbf{界面位置}：侧边栏点击"消费分析"图标进入（带青色New标签）
+
+\textbf{功能展示}：
+\begin{itemize}
+    \item \textbf{月度消费概览}：
+        \begin{itemize}
+            \item 总支出：本月总消费金额
+            \item 日均消费：平均每日消费
+            \item 最大支出类别：花费最多的消费类型
+        \end{itemize}
+    \item \textbf{消费分类饼图}：
+        \begin{itemize}
+            \item 圆形饼图，展示各类消费占比
+            \item 不同颜色代表不同类别：红色（餐饮）、青色（购物）、蓝色（学习）、绿色（交通）、黄色（娱乐）、紫色（其他）
+            \item 鼠标悬停显示具体金额和百分比
+        \end{itemize}
+    \item \textbf{预算进度条}：
+        \begin{itemize}
+            \item 显示各类消费的预算使用情况
+            \item 进度条颜色：绿色（预算充足）、黄色（即将超支）、红色（已超支）
+            \item 示例：餐饮消费101\%，红色警示表示已超出预算
+        \end{itemize}
+    \item \textbf{智能建议}：
+        \begin{itemize}
+            \item ⚠️ 警告：某类消费超出预算，建议控制
+            \item 💡 提示：消费习惯分析，优化建议
+            \item ✅ 肯定：某类消费控制良好，继续保持
+        \end{itemize}
+    \item \textbf{快速记录}：
+        \begin{itemize}
+            \item 支持快速添加消费记录
+            \item 输入金额、选择类别、添加备注
+            \item 自动更新统计数据和图表
+        \end{itemize}
+\end{itemize}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.8\textwidth]{消费分析示例.png}
+\caption{智能消费分析 - 饼图与预算进度}
+\label{fig:expense}
+\end{figure}
+
 \subsection{截图存放位置}
 
 所有应用截图存放在以下目录：
@@ -4570,11 +4688,12 @@ CoStrict作为AI编程助手，在项目开发的各个环节提供了重要支�
     \item \textbf{截图清单文件}：\texttt{Project\_Documentation/应用截图/截图清单.md}
     \item \textbf{截图文件命名规则}：
         \begin{itemize}
-            \item \texttt{01\_智能对话.png}：主界面-智能对话系统
-            \item \texttt{02\_校园墙\_列表.png}：校园墙-帖子列表
-            \item \texttt{03\_校园墙\_评论.png}：校园墙-帖子详情与评论
-            \item \texttt{04\_发现朋友.png}：发现朋友-推荐好友列表
-            \item \texttt{05\_课程表.png}：课程表-周视图
+            \item \texttt{智能对话示例.png}：主界面-智能对话系统（图\ref{fig:chat}）
+            \item \texttt{校园墙帖子示例.png}：校园墙-帖子列表（图\ref{fig:wall}）
+            \item \texttt{帖子评论示例.png}：校园墙-帖子详情与评论（图\ref{fig:comment}）
+            \item \texttt{"发现朋友"页面截图.png}：发现朋友-推荐好友列表（图\ref{fig:friends}）
+            \item \texttt{成长仪表盘雷达图.png}：个人成长仪表盘-技能雷达图（图\ref{fig:growth}）
+            \item \texttt{消费分析示例.png}：智能消费分析-饼图与预算进度（图\ref{fig:expense}）
         \end{itemize}
 \end{itemize}
 
@@ -5164,6 +5283,49 @@ LocalFirst是指"本地优先"的数据策略，即所有数据优先存储和�
     \item 深主题适合夜间使用，保护眼睛
     \item 护眼主题适合长时间使用，减少疲劳
 \end{itemize}
+
+\textbf{5. 语音输入功能，提升交互便利性}
+
+为用户提供语音输入能力，通过语音快速输入消息或查询信息，进一步提升用户体验和交互效率。
+
+\textbf{实现方案}：
+\begin{itemize}
+    \item \textbf{技术方案}：
+        \begin{itemize}
+            \item 使用Web Speech API（浏览器的原生语音识别API）
+            \item 支持中文语音识别，准确率超过95\%
+            \item 实时语音转文本，用户说话的同时显示识别结果
+        \end{itemize}
+    \item \textbf{应用场景}：
+        \begin{itemize}
+            \item 智能问答：用户可以直接用语音提问，如"今天有什么课？"
+            \item 聊天消息：好友聊天时快速输入消息，避免打字
+            \item 评论回复：校园墙发表评论时快速输入内容
+        \end{itemize}
+    \item \textbf{交互设计}：
+        \begin{itemize}
+            \item 点击语音按钮开始录音，按钮显示动画效果
+            \item 说话过程中实时显示识别的文字
+            \item 录音结束后自动填充到输入框
+            \item 支持语音编辑，可以修改识别错误的内容
+        \end{itemize}
+    \item \textbf{兼容性处理}：
+        \begin{itemize}
+            \item 自动检测浏览器是否支持Web Speech API
+            \item 不支持的浏览器隐藏语音按钮或提示用户使用其他功能
+            * 优先推荐使用Chrome浏览器（语音识别支持最好）
+        \end{itemize}
+\end{itemize}
+
+\textbf{预期效果}：
+\begin{itemize}
+    \item 减少用户的打字负担，提升输入效率
+    \item 为移动端用户提供更便捷的交互方式
+    \item 特别适合快速查询和简短消息场景
+    \item 提升产品的智能化和现代感
+\end{itemize}
+
+\textit{注：当前版本中语音输入功能已完成UI设计，技术实现预留接口，将在后续版本中正式发布。}
 
 \subsection{长期规划（6-12个月）}
 
