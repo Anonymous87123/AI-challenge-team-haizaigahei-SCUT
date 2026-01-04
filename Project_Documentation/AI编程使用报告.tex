@@ -1,4 +1,4 @@
-\documentclass[12pt,a4paper]{article}
+﻿\documentclass[12pt,a4paper]{article}
 
 % 中文支持
 \usepackage[UTF8]{ctex}
@@ -565,10 +565,10 @@ function toggleLike(postId, currentLikes) {
 
 \textbf{实现效果}：
 \begin{itemize}
-    \item \textcolor{green}{✅} 防抖机制防止快速点击
-    \item \textcolor{green}{✅} 心跳动画流畅自然
-    \item \textcolor{green}{✅} 点赞状态实时更新
-    \item \textcolor{green}{✅} 数据持久化保存
+    \item \textcolor{green}{√} 防抖机制防止快速点击
+    \item \textcolor{green}{√} 心跳动画流畅自然
+    \item \textcolor{green}{√} 点赞状态实时更新
+    \item \textcolor{green}{√} 数据持久化保存
 \end{itemize}
 
 \subsection{评论系统嵌套回复功能}
@@ -609,7 +609,7 @@ function toggleLike(postId, currentLikes) {
   authorId: "user_001",
   author: "张三",
   content: "这个帖子很有趣！",
-  emoji: "😊",
+  emoji: "",
   likes: 5,
   createdAt: "2024-01-01T12:00:00Z",
   isReply: false,
@@ -624,7 +624,7 @@ function toggleLike(postId, currentLikes) {
   author: "李四",
   targetUser: "张三",  // 回复的目标用户
   content: "同意！我也这么觉得",
-  emoji: "👍",
+  emoji: "",
   likes: 2,
   createdAt: "2024-01-01T12:05:00Z",
   isReply: true
@@ -633,10 +633,10 @@ function toggleLike(postId, currentLikes) {
 
 \textbf{实现效果}：
 \begin{itemize}
-    \item \textcolor{green}{✅} 清晰的嵌套数据结构
-    \item \textcolor{green}{✅} 主评论与子回复视觉区分（缩进、背景色）
-    \item \textcolor{green}{✅} 头像颜色区分（蓝色渐变 vs 紫色渐变）
-    \item \textcolor{green}{✅} 回复逻辑正确（@目标用户）
+    \item \textcolor{green}{√} 清晰的嵌套数据结构
+    \item \textcolor{green}{√} 主评论与子回复视觉区分（缩进、背景色）
+    \item \textcolor{green}{√} 头像颜色区分（蓝色渐变 vs 紫色渐变）
+    \item \textcolor{green}{√} 回复逻辑正确（@目标用户）
 \end{itemize}
 
 \subsection{Bug 排查：点赞数据不保存}
@@ -704,9 +704,9 @@ function initializeApp() {
 
 \textbf{修复效果}：
 \begin{itemize}
-    \item \textcolor{green}{✅} 刷新页面后点赞状态保持
-    \item \textcolor{green}{✅} 数据结构正确初始化
-    \item \textcolor{green}{✅} 添加调试日志便于排查
+    \item \textcolor{green}{√} 刷新页面后点赞状态保持
+    \item \textcolor{green}{√} 数据结构正确初始化
+    \item \textcolor{green}{√} 添加调试日志便于排查
 \end{itemize}
 
 \subsection{页面跳转状态管理问题}
@@ -783,9 +783,9 @@ function addFriendFromPost(userId, userName) {
 
 \textbf{实现效果}：
 \begin{itemize}
-    \item \textcolor{green}{✅} 使用 dataset 保存状态，无需全局变量
-    \item \textcolor{green}{✅} 关闭时清理状态，避免内存泄漏
-    \item \textcolor{green}{✅} 添加好友后自动刷新，UI 立即更新
+    \item \textcolor{green}{√} 使用 dataset 保存状态，无需全局变量
+    \item \textcolor{green}{√} 关闭时清理状态，避免内存泄漏
+    \item \textcolor{green}{√} 添加好友后自动刷新，UI 立即更新
 \end{itemize}
 
 % 四、开发过程中的挑战与解决方案
@@ -1301,11 +1301,11 @@ class ResponseGenerator {
   addEmojis(response) {
     // 根据上下文添加表情
     if (response.includes('开心') || response.includes('成功')) {
-      response += ' 😊';
+      response += '';
     } else if (response.includes('加油') || response.includes('努力')) {
-      response += ' 💪';
+      response += '';
     } else if (response.includes('累了') || response.includes('辛苦')) {
-      response += ' ☕';
+      response += '';
     }
     
     return response;
@@ -1364,11 +1364,11 @@ export { ResponseGenerator };
 
 \textbf{实现效果}：
 \begin{itemize}
-    \item \textcolor{green}{✅} 意图识别准确率达到90\%以上
-    \item \textcolor{green}{✅} 实体抽取准确率高，可识别课程名、时间、地点等
-    \item \textcolor{green}{✅} 多轮对话上下文管理成功，支持省略和指代
-    \item \textcolor{green}{✅} 个性化回复自然流畅，符合用户画像
-    \item \textcolor{green}{✅} 对话引擎扩展性强，添加新场景只需修改JSON配置
+    \item \textcolor{green}{√} 意图识别准确率达到90\%以上
+    \item \textcolor{green}{√} 实体抽取准确率高，可识别课程名、时间、地点等
+    \item \textcolor{green}{√} 多轮对话上下文管理成功，支持省略和指代
+    \item \textcolor{green}{√} 个性化回复自然流畅，符合用户画像
+    \item \textcolor{green}{√} 对话引擎扩展性强，添加新场景只需修改JSON配置
 \end{itemize}
 
 \subsection{挑战2：校园墙社交系统复杂交互实现}
@@ -1686,11 +1686,11 @@ function formatTime(isoString) {
 
 \textbf{实现效果}：
 \begin{itemize}
-    \item \textcolor{green}{✅} 嵌套评论数据结构清晰，主评论和子回复层次分明
-    \item \textcolor{green}{✅} 视觉区分明显：主评论蓝色渐变头像，子回复粉色渐变头像
-    \item \textcolor{green}{✅} 支持最多2层嵌套，UI不会过于复杂
-    \item \textcolor{green}{✅} 时间显示智能：刚刚、5分钟前、2小时前、3天前
-    \item \textcolor{green}{✅} 数据持久化到LocalStorage，刷新页面后评论保持
+    \item \textcolor{green}{√} 嵌套评论数据结构清晰，主评论和子回复层次分明
+    \item \textcolor{green}{√} 视觉区分明显：主评论蓝色渐变头像，子回复粉色渐变头像
+    \item \textcolor{green}{√} 支持最多2层嵌套，UI不会过于复杂
+    \item \textcolor{green}{√} 时间显示智能：刚刚、5分钟前、2小时前、3天前
+    \item \textcolor{green}{√} 数据持久化到LocalStorage，刷新页面后评论保持
 \end{itemize}
 
 % 四、CoStrict 使用心得
@@ -1738,7 +1738,7 @@ function formatTime(isoString) {
 在向CoStrict提问时，首先明确说明项目的技术栈和当前上下文，这有助于CoStrict生成更贴合项目的代码。
 
 \begin{itemize}
-    \item \textcolor{green}{✅} 好的提问：
+    \item \textcolor{green}{√} 好的提问：
     \begin{verbatim}
     项目使用HTML5 + CSS3 + JavaScript ES6+，使用Tailwind CSS框架。
     实现校园墙点赞功能，要求：
@@ -1757,7 +1757,7 @@ function formatTime(isoString) {
 需求描述应该包含功能的目标、输入、输出、特殊情况处理等。
 
 \begin{itemize}
-    \item \textcolor{green}{✅} 好的提问：
+    \item \textcolor{green}{√} 好的提问：
     \begin{verbatim}
     实现嵌套评论功能，要求：
     1. 主评论回复帖子，子回复回复评论
@@ -1778,7 +1778,7 @@ function formatTime(isoString) {
 明确告诉CoStrict你期望的输出是什么（代码片段、完整文件、说明文档、测试用例等）。
 
 \begin{itemize}
-    \item \textcolor{green}{✅} 好的提问：
+    \item \textcolor{green}{√} 好的提问：
     \begin{verbatim}
     请提供一个完整的JavaScript类实现，包含：
     1. 类的构造函数
@@ -1799,7 +1799,7 @@ function formatTime(isoString) {
 当遇到Bug时，提供完整的错误堆栈、错误发生时的代码片段、期望行为和实际行为。
 
 \begin{itemize}
-    \item \textcolor{green}{✅} 好的提问：
+    \item \textcolor{green}{√} 好的提问：
     \begin{verbatim}
     错误信息：Uncaught TypeError: Cannot read properties of undefined (reading 'push')
     发生位置：toggleCommentLike函数的第15行
@@ -1823,7 +1823,7 @@ function formatTime(isoString) {
 提供清晰的问题复现步骤，帮助CoStrict快速定位问题。
 
 \begin{itemize}
-    \item \textcolor{green}{✅} 好的提问：
+    \item \textcolor{green}{√} 好的提问：
     \begin{verbatim}
     点赞功能有问题，复现步骤：
     1. 打开校园墙帖子列表
@@ -1842,7 +1842,7 @@ function formatTime(isoString) {
 当问题有多种解决方案时，可以请求CoStrict提供多个方案，并比较各自的优缺点。
 
 \begin{itemize}
-    \item \textcolor{green}{✅} 好的提问：
+    \item \textcolor{green}{√} 好的提问：
     \begin{verbatim}
     我的数据结构中有循环引用，JSON.stringify()报错。
     请提供3种解决方案，并说明各自的优缺点：
@@ -1893,7 +1893,7 @@ function formatTime(isoString) {
 
 CoStrict也可以作为代码审查工具，帮助识别代码中的问题和改进点。
 
-\textcolor{green}{✅} 好的提问：
+\textcolor{green}{√} 好的提问：
 \begin{verbatim}
 请审查这段代码，重点关注：
 1. 性能问题
@@ -2407,8 +2407,8 @@ CoStrict无法实时运行代码进行调试，只能根据描述和代码片段
 
 \subsubsection{需求描述要清晰}
 \begin{itemize}
-    \item \textcolor{green}{✅} 好的提问："实现校园墙点赞功能，需要心跳动画、防抖机制、状态持久化"
-    \item \textcolor{red}{❌} 不好的提问："实现点赞功能"
+    \item \textcolor{green}{√} 好的提问："实现校园墙点赞功能，需要心跳动画、防抖机制、状态持久化"
+    \item \textcolor{red}{×} 不好的提问："实现点赞功能"
 \end{itemize}
 
 \subsubsection{提供上下文}
