@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2025) (preloaded format=xelatex 2025.8.30)  4 JAN 2026 13:33
+This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2025) (preloaded format=xelatex 2025.8.30)  4 JAN 2026 14:52
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -256,6 +256,12 @@ Package: iftex 2024/12/12 v1.0g TeX engine tests
 \Gm@layoutvoffset=\dimen182
 \Gm@dimlist=\toks18
 )
+(e:/Program Files/LateX/texlive/2025/texmf-dist/tex/latex/grffile/grffile.sty
+Package: grffile 2019/11/11 v2.1 Extended file name support for graphics (legac
+y)
+Package grffile Info: This package is an empty stub for compatibility on input 
+line 40.
+
 (e:/Program Files/LateX/texlive/2025/texmf-dist/tex/latex/graphics/graphicx.sty
 Package: graphicx 2021/09/16 v1.2d Enhanced LaTeX Graphics (DPC,SPQR)
 
@@ -276,7 +282,7 @@ File: xetex.def 2022/09/22 v5.0n Graphics/color driver for xetex
 ))
 \Gin@req@height=\dimen183
 \Gin@req@width=\dimen184
-)
+))
 (e:/Program Files/LateX/texlive/2025/texmf-dist/tex/latex/hyperref/hyperref.sty
 Package: hyperref 2024-11-05 v7.01l Hypertext links for LaTeX
 
@@ -516,26 +522,26 @@ Package: fancyvrb 2024/01/20 4.5c verbatim text (tvz,hv)
 ) (./应用介绍.aux)
 \openout1 = `应用介绍.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 79.
-LaTeX Font Info:    ... okay on input line 79.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 79.
-LaTeX Font Info:    ... okay on input line 79.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 79.
-LaTeX Font Info:    ... okay on input line 79.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 79.
-LaTeX Font Info:    ... okay on input line 79.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 79.
-LaTeX Font Info:    ... okay on input line 79.
-LaTeX Font Info:    Checking defaults for TU/lmr/m/n on input line 79.
-LaTeX Font Info:    ... okay on input line 79.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 79.
-LaTeX Font Info:    ... okay on input line 79.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 79.
-LaTeX Font Info:    ... okay on input line 79.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 79.
-LaTeX Font Info:    ... okay on input line 79.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 79.
-LaTeX Font Info:    ... okay on input line 79.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 80.
+LaTeX Font Info:    ... okay on input line 80.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 80.
+LaTeX Font Info:    ... okay on input line 80.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 80.
+LaTeX Font Info:    ... okay on input line 80.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 80.
+LaTeX Font Info:    ... okay on input line 80.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 80.
+LaTeX Font Info:    ... okay on input line 80.
+LaTeX Font Info:    Checking defaults for TU/lmr/m/n on input line 80.
+LaTeX Font Info:    ... okay on input line 80.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 80.
+LaTeX Font Info:    ... okay on input line 80.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 80.
+LaTeX Font Info:    ... okay on input line 80.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 80.
+LaTeX Font Info:    ... okay on input line 80.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 80.
+LaTeX Font Info:    ... okay on input line 80.
 
 Package fontspec Info: 
 (fontspec)             Adjusting the maths setup (use [no-math] to avoid
@@ -543,57 +549,57 @@ Package fontspec Info:
 
 \symlegacymaths=\mathgroup4
 LaTeX Font Info:    Overwriting symbol font `legacymaths' in version `bold'
-(Font)                  OT1/cmr/m/n --> OT1/cmr/bx/n on input line 79.
-LaTeX Font Info:    Redeclaring math accent \acute on input line 79.
-LaTeX Font Info:    Redeclaring math accent \grave on input line 79.
-LaTeX Font Info:    Redeclaring math accent \ddot on input line 79.
-LaTeX Font Info:    Redeclaring math accent \tilde on input line 79.
-LaTeX Font Info:    Redeclaring math accent \bar on input line 79.
-LaTeX Font Info:    Redeclaring math accent \breve on input line 79.
-LaTeX Font Info:    Redeclaring math accent \check on input line 79.
-LaTeX Font Info:    Redeclaring math accent \hat on input line 79.
-LaTeX Font Info:    Redeclaring math accent \dot on input line 79.
-LaTeX Font Info:    Redeclaring math accent \mathring on input line 79.
-LaTeX Font Info:    Redeclaring math symbol \colon on input line 79.
-LaTeX Font Info:    Redeclaring math symbol \Gamma on input line 79.
-LaTeX Font Info:    Redeclaring math symbol \Delta on input line 79.
-LaTeX Font Info:    Redeclaring math symbol \Theta on input line 79.
-LaTeX Font Info:    Redeclaring math symbol \Lambda on input line 79.
-LaTeX Font Info:    Redeclaring math symbol \Xi on input line 79.
-LaTeX Font Info:    Redeclaring math symbol \Pi on input line 79.
-LaTeX Font Info:    Redeclaring math symbol \Sigma on input line 79.
-LaTeX Font Info:    Redeclaring math symbol \Upsilon on input line 79.
-LaTeX Font Info:    Redeclaring math symbol \Phi on input line 79.
-LaTeX Font Info:    Redeclaring math symbol \Psi on input line 79.
-LaTeX Font Info:    Redeclaring math symbol \Omega on input line 79.
-LaTeX Font Info:    Redeclaring math symbol \mathdollar on input line 79.
-LaTeX Font Info:    Redeclaring symbol font `operators' on input line 79.
+(Font)                  OT1/cmr/m/n --> OT1/cmr/bx/n on input line 80.
+LaTeX Font Info:    Redeclaring math accent \acute on input line 80.
+LaTeX Font Info:    Redeclaring math accent \grave on input line 80.
+LaTeX Font Info:    Redeclaring math accent \ddot on input line 80.
+LaTeX Font Info:    Redeclaring math accent \tilde on input line 80.
+LaTeX Font Info:    Redeclaring math accent \bar on input line 80.
+LaTeX Font Info:    Redeclaring math accent \breve on input line 80.
+LaTeX Font Info:    Redeclaring math accent \check on input line 80.
+LaTeX Font Info:    Redeclaring math accent \hat on input line 80.
+LaTeX Font Info:    Redeclaring math accent \dot on input line 80.
+LaTeX Font Info:    Redeclaring math accent \mathring on input line 80.
+LaTeX Font Info:    Redeclaring math symbol \colon on input line 80.
+LaTeX Font Info:    Redeclaring math symbol \Gamma on input line 80.
+LaTeX Font Info:    Redeclaring math symbol \Delta on input line 80.
+LaTeX Font Info:    Redeclaring math symbol \Theta on input line 80.
+LaTeX Font Info:    Redeclaring math symbol \Lambda on input line 80.
+LaTeX Font Info:    Redeclaring math symbol \Xi on input line 80.
+LaTeX Font Info:    Redeclaring math symbol \Pi on input line 80.
+LaTeX Font Info:    Redeclaring math symbol \Sigma on input line 80.
+LaTeX Font Info:    Redeclaring math symbol \Upsilon on input line 80.
+LaTeX Font Info:    Redeclaring math symbol \Phi on input line 80.
+LaTeX Font Info:    Redeclaring math symbol \Psi on input line 80.
+LaTeX Font Info:    Redeclaring math symbol \Omega on input line 80.
+LaTeX Font Info:    Redeclaring math symbol \mathdollar on input line 80.
+LaTeX Font Info:    Redeclaring symbol font `operators' on input line 80.
 LaTeX Font Info:    Encoding `OT1' has changed to `TU' for symbol font
-(Font)              `operators' in the math version `normal' on input line 79.
+(Font)              `operators' in the math version `normal' on input line 80.
 LaTeX Font Info:    Overwriting symbol font `operators' in version `normal'
-(Font)                  OT1/cmr/m/n --> TU/lmr/m/n on input line 79.
+(Font)                  OT1/cmr/m/n --> TU/lmr/m/n on input line 80.
 LaTeX Font Info:    Encoding `OT1' has changed to `TU' for symbol font
-(Font)              `operators' in the math version `bold' on input line 79.
+(Font)              `operators' in the math version `bold' on input line 80.
 LaTeX Font Info:    Overwriting symbol font `operators' in version `bold'
-(Font)                  OT1/cmr/bx/n --> TU/lmr/m/n on input line 79.
+(Font)                  OT1/cmr/bx/n --> TU/lmr/m/n on input line 80.
 LaTeX Font Info:    Overwriting symbol font `operators' in version `normal'
-(Font)                  TU/lmr/m/n --> TU/lmr/m/n on input line 79.
+(Font)                  TU/lmr/m/n --> TU/lmr/m/n on input line 80.
 LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `normal'
-(Font)                  OT1/cmr/m/it --> TU/lmr/m/it on input line 79.
+(Font)                  OT1/cmr/m/it --> TU/lmr/m/it on input line 80.
 LaTeX Font Info:    Overwriting math alphabet `\mathbf' in version `normal'
-(Font)                  OT1/cmr/bx/n --> TU/lmr/b/n on input line 79.
+(Font)                  OT1/cmr/bx/n --> TU/lmr/b/n on input line 80.
 LaTeX Font Info:    Overwriting math alphabet `\mathsf' in version `normal'
-(Font)                  OT1/cmss/m/n --> TU/lmss/m/n on input line 79.
+(Font)                  OT1/cmss/m/n --> TU/lmss/m/n on input line 80.
 LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `normal'
-(Font)                  OT1/cmtt/m/n --> TU/lmtt/m/n on input line 79.
+(Font)                  OT1/cmtt/m/n --> TU/lmtt/m/n on input line 80.
 LaTeX Font Info:    Overwriting symbol font `operators' in version `bold'
-(Font)                  TU/lmr/m/n --> TU/lmr/b/n on input line 79.
+(Font)                  TU/lmr/m/n --> TU/lmr/b/n on input line 80.
 LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `bold'
-(Font)                  OT1/cmr/bx/it --> TU/lmr/b/it on input line 79.
+(Font)                  OT1/cmr/bx/it --> TU/lmr/b/it on input line 80.
 LaTeX Font Info:    Overwriting math alphabet `\mathsf' in version `bold'
-(Font)                  OT1/cmss/bx/n --> TU/lmss/b/n on input line 79.
+(Font)                  OT1/cmss/bx/n --> TU/lmss/b/n on input line 80.
 LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `bold'
-(Font)                  OT1/cmtt/m/n --> TU/lmtt/b/n on input line 79.
+(Font)                  OT1/cmtt/m/n --> TU/lmtt/b/n on input line 80.
 
 *geometry* driver: auto-detecting
 *geometry* detected driver: xetex
@@ -629,16 +635,16 @@ LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `bold'
 * \@reversemarginfalse
 * (1in=72.27pt=25.4mm, 1cm=28.453pt)
 
-Package hyperref Info: Link coloring OFF on input line 79.
+Package hyperref Info: Link coloring OFF on input line 80.
 (./应用介绍.out) (./应用介绍.out)
 \@outlinefile=\write4
 \openout4 = `应用介绍.out'.
 
 \c@lstlisting=\count333
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <14.4> on input line 82.
+(Font)              <14.4> on input line 83.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <7> on input line 82.
+(Font)              <7> on input line 83.
 
 
 [1
@@ -665,11 +671,11 @@ LaTeX Font Info:    External font `cmex10' loaded for size
 
 [11]
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <12> on input line 452.
+(Font)              <12> on input line 453.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <8> on input line 452.
+(Font)              <8> on input line 453.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <6> on input line 452.
+(Font)              <6> on input line 453.
 
 
 [12]
@@ -727,7 +733,7 @@ File: lstmisc.sty 2024/09/23 1.10c (Carsten Heinz)
 
 [22]
 LaTeX Font Info:    Font shape `TU/lmtt/bx/n' in size <10.95> not available
-(Font)              Font shape `TU/lmtt/b/n' tried instead on input line 926.
+(Font)              Font shape `TU/lmtt/b/n' tried instead on input line 927.
 
 
 [23]
@@ -757,18 +763,31 @@ LaTeX Warning: `h' float specifier changed to `ht'.
 [33]
 
 [34]
+File: 应用截图/chat_demo.png Graphic file (type bmp)
+<应用截图/chat_demo.png>
+
 
 [35]
 
 [36]
 
 [37]
+File: 应用截图/wall_posts.png Graphic file (type bmp)
+<应用截图/wall_posts.png>
+
 
 [38]
 
 [39]
 
 [40]
+File: 应用截图/comment_emoji.png Graphic file (type bmp)
+<应用截图/comment_emoji.png>
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+
 
 [41]
 
@@ -781,6 +800,13 @@ LaTeX Warning: `h' float specifier changed to `ht'.
 [45]
 
 [46]
+File: 应用截图/discover_friends.png Graphic file (type bmp)
+<应用截图/discover_friends.png>
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+
 
 [47]
 
@@ -889,13 +915,17 @@ LaTeX Warning: `h' float specifier changed to `ht'.
 [99]
 
 [100]
-Overfull \hbox (4.69827pt too wide) in paragraph at lines 4168--4169
+
+[101]
+
+[102]
+Overfull \hbox (4.69827pt too wide) in paragraph at lines 4201--4202
 []\TU/SimSun(0)/b/n/12 仓 库\TU/SimSun(0)/m/n/12 ：| \TU/lmr/m/n/12 https://github
 .com/Anonymous87123/AI-challenge-team-haizaigahei-SCUT.git 
  []
 
 
-Underfull \hbox (badness 2229) in paragraph at lines 4184--4184
+Underfull \hbox (badness 2229) in paragraph at lines 4217--4217
 []\TU/SimSun(0)/m/n/12 队 长\TU/lmr/m/n/12 /\TU/SimSun(0)/m/n/12 核 心 开 发
  []
 
@@ -904,10 +934,6 @@ LaTeX Warning: `h' float specifier changed to `ht'.
 
 
 
-[101]
-
-[102]
-
 [103]
 
 [104]
@@ -915,33 +941,43 @@ LaTeX Warning: `h' float specifier changed to `ht'.
 [105]
 
 [106]
-File: 应用截图/智能对话示例.png Graphic file (type bmp)
-<应用截图/智能对话示例.png>
-
 
 [107]
-File: 应用截图/校园墙帖子示例.png Graphic file (type bmp)
-<应用截图/校园墙帖子示例.png>
-
 
 [108]
-File: 应用截图/帖子评论示例.png Graphic file (type bmp)
-<应用截图/帖子评论示例.png>
+File: 应用截图/chat_demo.png Graphic file (type bmp)
+<应用截图/chat_demo.png>
 
 
 [109]
-File: 应用截图/“发现朋友”页面截图.png Graphic file (type bmp)
-<应用截图/“发现朋友”页面截图.png>
+File: 应用截图/wall_posts.png Graphic file (type bmp)
+<应用截图/wall_posts.png>
 
 
 [110]
+File: 应用截图/comment_reply.png Graphic file (type bmp)
+<应用截图/comment_reply.png>
+
 
 [111]
-File: 应用截图/成长仪表盘雷达图.png Graphic file (type bmp)
-<应用截图/成长仪表盘雷达图.png>
+File: 应用截图/discover_friends.png Graphic file (type bmp)
+<应用截图/discover_friends.png>
 
 
 [112]
+
+[113]
+File: 应用截图/growth_progress.png Graphic file (type bmp)
+<应用截图/growth_progress.png>
+File: 应用截图/expense_records.png Graphic file (type bmp)
+<应用截图/expense_records.png>
+File: 应用截图/growth_radar.png Graphic file (type bmp)
+<应用截图/growth_radar.png>
+
+
+[114]
+
+[115]
 Missing character: There is no ⚠ (U+26A0) in font [lmroman12-regular]:mapping=t
 ex-text;!
 Missing character: There is no ️ (U+FE0F) in font SimSun/OT:script=hani;languag
@@ -952,16 +988,10 @@ Missing character: There is no ✅ (U+2705) in font [lmroman12-regular]:mapping=
 ex-text;!
 
 
-[113]
-File: 应用截图/消费分析示例.png Graphic file (type bmp)
-<应用截图/消费分析示例.png>
-
-
-[114]
-
-[115]
-
 [116]
+File: 应用截图/expense_analysis.png Graphic file (type bmp)
+<应用截图/expense_analysis.png>
+
 
 [117]
 
@@ -1000,22 +1030,95 @@ File: 应用截图/消费分析示例.png Graphic file (type bmp)
 [134]
 
 [135]
+File: 应用截图/weather.png Graphic file (type bmp)
+<应用截图/weather.png>
+File: 应用截图/bus_schedule.png Graphic file (type bmp)
+<应用截图/bus_schedule.png>
 
-[136] (./应用介绍.aux)
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+File: 应用截图/venue_hours.png Graphic file (type bmp)
+<应用截图/venue_hours.png>
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+
+
+[136]
+
+[137]
+
+[138]
+File: 应用截图/notifications.png Graphic file (type bmp)
+<应用截图/notifications.png>
+File: 应用截图/donation_list.png Graphic file (type bmp)
+<应用截图/donation_list.png>
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+File: 应用截图/donation_success.png Graphic file (type bmp)
+<应用截图/donation_success.png>
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+File: 应用截图/donation_history.png Graphic file (type bmp)
+<应用截图/donation_history.png>
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+
+
+[139]
+File: 应用截图/marketplace.png Graphic file (type bmp)
+<应用截图/marketplace.png>
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+
+
+[140]
+File: 应用截图/dark_mode.png Graphic file (type bmp)
+<应用截图/dark_mode.png>
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+
+
+[141]
+File: 应用截图/comment_reply.png Graphic file (type bmp)
+<应用截图/comment_reply.png>
+
+
+[142]
+
+[143]
+
+[144] (./应用介绍.aux)
  ***********
 LaTeX2e <2024-11-01> patch level 2
 L3 programming layer <2022/08/05>
  ***********
-Package rerunfilecheck Info: File `应用介绍.out' has not changed.
-(rerunfilecheck)             Checksum: 5EFDD4E46E2B7E0A3B80B6601EEF5A05;20943.
+
+
+Package rerunfilecheck Warning: File `应用介绍.out' has changed.
+(rerunfilecheck)                Rerun to get outlines right
+(rerunfilecheck)                or use package `bookmark'.
+
+Package rerunfilecheck Info: Checksums for `应用介绍.out':
+(rerunfilecheck)             Before: 5666B1FCB242EA703417D9F48DDA1067;21599
+(rerunfilecheck)             After:  FCDB5B7F218269586D40448F4EECBFF6;21700.
  ) 
 Here is how much of TeX's memory you used:
- 17282 strings out of 473832
- 378372 string characters out of 5723978
- 1092795 words of memory out of 5000000
- 40107 multiletter control sequences out of 15000+600000
+ 17400 strings out of 473832
+ 381978 string characters out of 5723978
+ 1092931 words of memory out of 5000000
+ 40209 multiletter control sequences out of 15000+600000
  564968 words of font info for 91 fonts, out of 8000000 for 9000
  1348 hyphenation exceptions out of 8191
  93i,16n,111p,377b,1877s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
-Output written on 应用介绍.pdf (136 pages).
+Output written on 应用介绍.pdf (144 pages).
